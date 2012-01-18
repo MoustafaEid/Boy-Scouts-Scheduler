@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boy-Scouts-Scheduler", "Boy-Scouts-Scheduler\Boy-Scouts-Scheduler.csproj", "{4E48D871-F793-40A0-8364-B8BE13824808}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boy-Scouts-Scheduler.Tests", "Boy-Scouts-Scheduler.Tests\Boy-Scouts-Scheduler.Tests.csproj", "{B7C18E80-FA20-458C-9696-D78BA2353993}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E48D871-F793-40A0-8364-B8BE13824808}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E48D871-F793-40A0-8364-B8BE13824808}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E48D871-F793-40A0-8364-B8BE13824808}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E48D871-F793-40A0-8364-B8BE13824808}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7C18E80-FA20-458C-9696-D78BA2353993}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7C18E80-FA20-458C-9696-D78BA2353993}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7C18E80-FA20-458C-9696-D78BA2353993}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7C18E80-FA20-458C-9696-D78BA2353993}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
