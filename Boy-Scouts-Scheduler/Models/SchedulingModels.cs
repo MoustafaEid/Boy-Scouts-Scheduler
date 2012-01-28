@@ -54,7 +54,6 @@ namespace Boy_Scouts_Scheduler.Models
         public int Capacity { get; set; }
         public virtual Event Event { get; set; }
         public virtual ICollection<TimeSlot> AvailableTimeSlots { get; set; } // Should null mean all time slots or none?
-
     }
 
     public class TimeSlot

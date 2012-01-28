@@ -1,0 +1,19 @@
+﻿@model IEnumerable<Boy_Scouts_Scheduler.Models.Station>
+
+@foreach (var item in Model) {
+    <tr data-pkey="@item.ID">
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Capacity)
+        </td>
+        <td class="rowControl hidden">
+            <a href="#makeRowEditable" class="makeRowEditable">Edit</a> |
+            <a href="#deleteRow" class="deleteRow">Delete</a>
+        </td>
+    </tr>
+}
