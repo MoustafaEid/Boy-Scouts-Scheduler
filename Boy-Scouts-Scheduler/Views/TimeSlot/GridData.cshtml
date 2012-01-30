@@ -1,0 +1,16 @@
+﻿@model IEnumerable<Boy_Scouts_Scheduler.Models.TimeSlot>
+
+@foreach (var item in Model) {
+    <tr data-pkey="@item.ID">
+        <td>
+            @Html.DisplayFor(modelItem => item.Start)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.End)
+        </td>
+        <td class="rowControl hidden">
+            <a href="#makeRowEditable" class="makeRowEditable">Edit</a> |
+            <a href="#deleteRow" class="deleteRow">Delete</a>
+        </td>
+    </tr>
+}
