@@ -26,26 +26,39 @@ namespace Boy_Scouts_Scheduler.Tests.Controllers
         }
 
         [TestMethod]
-        public void About()
+        public void Help()
         {
             // Arrange
             HomeController controller = new HomeController();
 
             // Act
-            ViewResult result = controller.About() as ViewResult;
+            ViewResult result = controller.Help() as ViewResult;
 
             // Assert
             Assert.IsNotNull(result);
         }
 
         [TestMethod]
-        public void Contact()
+        public void Import()
         {
             // Arrange
             HomeController controller = new HomeController();
 
             // Act
-            ViewResult result = controller.Contact() as ViewResult;
+            ViewResult result = controller.Import() as ViewResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void Schedules()
+        {
+            // Arrange
+            HomeController controller = new HomeController();
+
+            // Act
+            ViewResult result = controller.Schedules() as ViewResult;
 
             // Assert
             Assert.IsNotNull(result);
