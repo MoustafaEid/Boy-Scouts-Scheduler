@@ -15,17 +15,18 @@ namespace Boy_Scouts_Scheduler.Controllers
             return View();
         }
 
-        public ActionResult About()
+        public ActionResult Help()
         {
-            ViewBag.Message = "Your quintessential app description page.";
-
             return View();
         }
 
-        public ActionResult Contact()
+        public ActionResult Import()
         {
-            ViewBag.Message = "Your quintessential contact page.";
-
+            return View();
+        }
+        
+        public ActionResult Schedules()
+        {
             return View();
         }
     }

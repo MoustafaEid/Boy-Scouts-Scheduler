@@ -1,0 +1,13 @@
+﻿@model Boy_Scouts_Scheduler.Models.Group
+
+<tr @if (Model != null) {
+    @:data-pkey="@Model.ID"
+}>
+    <td>
+@if (ViewContext.RouteData.Values["Action"].ToString() == "Edit") {
+        <button class="editRow">Save</button><button class="cancelEditRow">Cancel</button>
+} else {
+        <button class="createRow">Create</button><button class="cancelCreateRow">Cancel</button>
+}
+    </td>
+</tr>
