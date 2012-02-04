@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boy-Scouts-Scheduler", "Boy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boy-Scouts-Scheduler.Tests", "Boy-Scouts-Scheduler.Tests\Boy-Scouts-Scheduler.Tests.csproj", "{B7C18E80-FA20-458C-9696-D78BA2353993}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boy-Scouts-Scheduler.Models", "Boy-Scouts-Scheduler.Models\Boy-Scouts-Scheduler.Models.csproj", "{FF4A2615-765B-4DC3-BFC0-5D20F2EF3D86}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{B7C18E80-FA20-458C-9696-D78BA2353993}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7C18E80-FA20-458C-9696-D78BA2353993}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7C18E80-FA20-458C-9696-D78BA2353993}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF4A2615-765B-4DC3-BFC0-5D20F2EF3D86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF4A2615-765B-4DC3-BFC0-5D20F2EF3D86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF4A2615-765B-4DC3-BFC0-5D20F2EF3D86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF4A2615-765B-4DC3-BFC0-5D20F2EF3D86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

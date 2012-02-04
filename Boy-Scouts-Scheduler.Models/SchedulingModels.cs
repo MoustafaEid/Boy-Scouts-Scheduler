@@ -40,7 +40,8 @@ namespace Boy_Scouts_Scheduler.Models
     }
 
     public class Group {
-        public int ID { get; set;}
+        public int ID { get; set; }
+        public string Name { get; set; }
         public virtual Event Event { get; set; }
         public virtual GroupType Type { get; set; }
         public virtual ICollection<Attendee> Members { get; set; }
@@ -51,6 +52,7 @@ namespace Boy_Scouts_Scheduler.Models
         public int ID { get; set;}
         public string Name { get; set; }
         public string Description { get; set; }
+        public string Location { get; set; }
         public int Capacity { get; set; }
         public virtual Event Event { get; set; }
         public virtual ICollection<TimeSlot> AvailableTimeSlots { get; set; } // Should null mean all time slots or none?
@@ -59,6 +61,7 @@ namespace Boy_Scouts_Scheduler.Models
     public class TimeSlot
     {
         public int ID { get; set; }
+        public string Name { get; set; }
         public virtual Event Event { get; set; }
         public DateTime? Start { get; set; }
         public DateTime? End { get; set; }

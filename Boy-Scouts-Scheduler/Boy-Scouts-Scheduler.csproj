@@ -103,7 +103,6 @@
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\SchedulingContext.cs" />
-    <Compile Include="Models\SchedulingModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +223,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\TimeSlot\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Boy-Scouts-Scheduler.Models\Boy-Scouts-Scheduler.Models.csproj">
+      <Project>{FF4A2615-765B-4DC3-BFC0-5D20F2EF3D86}</Project>
+      <Name>Boy-Scouts-Scheduler.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
