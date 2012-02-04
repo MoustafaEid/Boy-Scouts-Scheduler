@@ -55,6 +55,8 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult Create()
         {
+            ViewBag.TimeSlots = db.TimeSlots.ToList();
+
             return PartialView("Edit");
         }
 
@@ -80,6 +82,9 @@ namespace Boy_Scouts_Scheduler.Controllers
         public ActionResult Edit(int id)
         {
             Station station = db.Stations.Find(id);
+
+            ViewBag.TimeSlots = db.TimeSlots.ToList();
+
             return PartialView(station);
         }
 

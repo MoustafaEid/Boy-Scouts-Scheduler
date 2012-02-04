@@ -1,8 +1,33 @@
-﻿@model IEnumerable<Boy_Scouts_Scheduler.Models.Group>
+﻿@model IEnumerable<Boy_Scouts_Scheduler.Models.Attendee>
+
 @{
-    ViewBag.Title = "Groups";
+    ViewBag.Title = "Import Scouts. ";
+    ViewBag.Message = "Import indiviudal scout data here.";
 }
+
+<hgroup class="title">
+    <h1>@ViewBag.Title</h1>
+    <h2>@ViewBag.Message</h2>
+</hgroup>
+
+<article>
+    <p>
+     Use this page to import scout name using spreadsheet/doubleknot data. <br />
+
+      <form action="" method="post" enctype="multipart/form-data">
+  
+        <label for="file">Filename:</label>
+        <input type="file" name="file" id="file" />
+
+         <input type="submit" />
+      </form>
+    </p>
+</article>
+
 @{
+    ViewBag.Title = "Import";
+}
+<!--@{
 
     ViewBag.ItemsPerPage = ViewBag.ItemsPerPage ?? 20;
     ViewBag.ItemsPerPageOptions = ViewBag.ItemsPerPageOptions ?? new List<int>{ 10, 20, 50, 100 };
@@ -17,8 +42,8 @@
         orderBy = ViewBag.OrderBy,
         desc = ViewBag.Desc
     });
-}
-@helper AjaxGridNavigation(int currentPage, int pageCount, RouteValueDictionary currentRouteValues) {
+}-->
+<!--@helper AjaxGridNavigation(int currentPage, int pageCount, RouteValueDictionary currentRouteValues) {
     <div class="AjaxGridNavigation">
         @{
             int currentStart = (int)currentRouteValues["start"];
@@ -54,11 +79,9 @@
             </select>
         </span>
     </div>
-}
+}-->
 
-<h2>Group</h2>
-
-<div id="AjaxGridContainer">
+<!--<div id="AjaxGridContainer">
     <p>
         <a href="#insertEmptyRow" class="insertEmptyRow hidden">Create New</a>
     </p>
@@ -66,21 +89,21 @@
     <table id="AjaxGrid">
         <thead>
             <tr>
-                <th data-column-name="Name">
-                    <span class="reorder">Group Name</span>
-                    <a href="@Url.RouteUrl(new { orderBy = "Name", desc = true })" class="uparrow">&uarr;</a>
-                    <a href="@Url.RouteUrl(new { orderBy = "Name" })" class="downarrow">&darr;</a>
+                <th data-column-name="FirstName">
+                    <span class="reorder">@Html.DisplayNameFor(model => model.FirstName)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "FirstName", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "FirstName" })" class="downarrow">&darr;</a>
                 </th>
-                <th data-column-name="Rank">
-                    <span class="reorder">Group Rank</span>
-                    <a href="@Url.RouteUrl(new { orderBy = "Rank", desc = true })" class="uparrow">&uarr;</a>
-                    <a href="@Url.RouteUrl(new { orderBy = "Rank" })" class="downarrow">&darr;</a>
+                <th data-column-name="LastName">
+                    <span class="reorder">@Html.DisplayNameFor(model => model.LastName)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "LastName", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "LastName" })" class="downarrow">&darr;</a>
                 </th>
-                <!--<th data-column-name="Members">
-                    <span class="reorder">Group Members</span>
-                    <a href="@Url.RouteUrl(new { orderBy = "Members", desc = true })" class="uparrow">&uarr;</a>
-                    <a href="@Url.RouteUrl(new { orderBy = "Members" })" class="downarrow">&darr;</a>
-                </th>-->
+                <th data-column-name="Email">
+                    <span class="reorder">@Html.DisplayNameFor(model => model.Email)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "Email", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "Email" })" class="downarrow">&darr;</a>
+                </th>
                 <th class="hidden"></th>
             </tr>
         </thead>
@@ -351,4 +374,4 @@
             });
         });
     })(jQuery);
-</script>
+</script>-->

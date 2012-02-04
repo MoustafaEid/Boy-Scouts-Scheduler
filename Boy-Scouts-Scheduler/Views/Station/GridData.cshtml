@@ -6,11 +6,17 @@
             @Html.DisplayFor(modelItem => item.Name)
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.Capacity)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.Description)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Capacity)
+            @Html.DisplayFor(modelItem => item.Location)
         </td>
+        <!--<td>
+            @Html.DisplayFor(modelItem => item.AvailableTimeSlots)
+        </td>-->
         <td class="rowControl hidden">
             <a href="#makeRowEditable" class="makeRowEditable">Edit</a> |
             <a href="#deleteRow" class="deleteRow">Delete</a>

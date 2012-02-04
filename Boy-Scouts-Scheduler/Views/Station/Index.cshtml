@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Boy_Scouts_Scheduler.Models.Station>
 @{
-    ViewBag.Title = "Station";
+    ViewBag.Title = "Stations";
 }
 @{
 
@@ -71,16 +71,26 @@
                     <a href="@Url.RouteUrl(new { orderBy = "Name", desc = true })" class="uparrow">&uarr;</a>
                     <a href="@Url.RouteUrl(new { orderBy = "Name" })" class="downarrow">&darr;</a>
                 </th>
+                <th data-column-name="Capacity">
+                    <span class="reorder">@Html.DisplayNameFor(model => model.Capacity)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "Capacity", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "Capacity" })" class="downarrow">&darr;</a>
+                </th>
                 <th data-column-name="Description">
                     <span class="reorder">@Html.DisplayNameFor(model => model.Description)</span>
                     <a href="@Url.RouteUrl(new { orderBy = "Description", desc = true })" class="uparrow">&uarr;</a>
                     <a href="@Url.RouteUrl(new { orderBy = "Description" })" class="downarrow">&darr;</a>
                 </th>
                 <th data-column-name="Capacity">
-                    <span class="reorder">@Html.DisplayNameFor(model => model.Capacity)</span>
-                    <a href="@Url.RouteUrl(new { orderBy = "Capacity", desc = true })" class="uparrow">&uarr;</a>
-                    <a href="@Url.RouteUrl(new { orderBy = "Capacity" })" class="downarrow">&darr;</a>
+                    <span class="reorder">@Html.DisplayNameFor(model => model.Location)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "Location", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "Location" })" class="downarrow">&darr;</a>
                 </th>
+                <!--<th data-column-name="Time Slots">
+                    <span class="reorder">@Html.DisplayNameFor(model => model.AvailableTimeSlots)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "AvailableTimeSlots", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "AvailableTimeslots" })" class="downarrow">&darr;</a>
+                </th>-->
                 <th class="hidden"></th>
             </tr>
         </thead>
