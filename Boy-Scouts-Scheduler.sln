@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boy-Scouts-Scheduler.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boy-Scouts-Scheduler.Models", "Boy-Scouts-Scheduler.Models\Boy-Scouts-Scheduler.Models.csproj", "{FF4A2615-765B-4DC3-BFC0-5D20F2EF3D86}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boy-Scouts-Scheduling-Algorithm", "Boy-Scouts-Scheduling-Algorithm\Boy-Scouts-Scheduling-Algorithm.csproj", "{6A6DEE5D-43AD-4255-AD09-23D3234DB9B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{FF4A2615-765B-4DC3-BFC0-5D20F2EF3D86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF4A2615-765B-4DC3-BFC0-5D20F2EF3D86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF4A2615-765B-4DC3-BFC0-5D20F2EF3D86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A6DEE5D-43AD-4255-AD09-23D3234DB9B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A6DEE5D-43AD-4255-AD09-23D3234DB9B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A6DEE5D-43AD-4255-AD09-23D3234DB9B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A6DEE5D-43AD-4255-AD09-23D3234DB9B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
