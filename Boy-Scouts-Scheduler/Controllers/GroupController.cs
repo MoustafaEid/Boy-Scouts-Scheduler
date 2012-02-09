@@ -72,7 +72,7 @@ namespace Boy_Scouts_Scheduler.Controllers
                 db.SaveChanges();
                 return PartialView("GridData", new Group[] { group });
             }
-
+ 
             return PartialView("Edit", group);
         }
 
@@ -82,8 +82,9 @@ namespace Boy_Scouts_Scheduler.Controllers
         public ActionResult Edit(int id)
         {
             Group group = db.Groups.Find(id);
-            ViewBag.GroupTypes = db.GroupTypes.ToList();
 
+            ViewBag.GroupTypes = db.GroupTypes.ToList();
+            
             return PartialView(group);
         }
 

@@ -66,6 +66,8 @@ namespace Boy_Scouts_Scheduler.Controllers
         [HttpPost]
         public ActionResult Create(Station station)
         {
+            ViewBag.TimeSlots = db.TimeSlots.ToList();
+
             if (ModelState.IsValid)
             {
                 db.Stations.Add(station);
@@ -94,6 +96,8 @@ namespace Boy_Scouts_Scheduler.Controllers
         [HttpPost]
         public ActionResult Edit(Station station)
         {
+            ViewBag.TimeSlots = db.TimeSlots.ToList();
+
             if (ModelState.IsValid)
             {
                 db.Entry(station).State = EntityState.Modified;

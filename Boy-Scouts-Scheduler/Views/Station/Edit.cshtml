@@ -19,10 +19,10 @@
         @Html.EditorFor(model => model.Location)
         @Html.ValidationMessageFor(model => model.Location)
     </td>
-    <!--<td>
-        @Html.DropDownListFor(model => model.AvailableTimeSlots, new SelectList(ViewBag.TimeSlots, "ID", "Name")) 
+    <td>
+        @Html.DropDownListFor(model => model.AvailableTimeSlots, new MultiSelectList(ViewBag.TimeSlots, "ID", "Name")) 
         @Html.ValidationMessageFor(model => model.AvailableTimeSlots)
-    </td>-->
+    </td>
 
     <td>
 @if (ViewContext.RouteData.Values["Action"].ToString() == "Edit") {

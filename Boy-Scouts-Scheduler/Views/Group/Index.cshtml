@@ -73,8 +73,8 @@
                 </th>
                 <th data-column-name="Rank">
                     <span class="reorder">Group Rank</span>
-                    <a href="@Url.RouteUrl(new { orderBy = "Rank", desc = true })" class="uparrow">&uarr;</a>
-                    <a href="@Url.RouteUrl(new { orderBy = "Rank" })" class="downarrow">&darr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "GroupType.Name", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "GroupType.Name" })" class="downarrow">&darr;</a>
                 </th>
                 <!--<th data-column-name="Members">
                     <span class="reorder">Group Members</span>
