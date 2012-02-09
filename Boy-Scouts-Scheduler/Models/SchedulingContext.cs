@@ -8,7 +8,7 @@ namespace Boy_Scouts_Scheduler.Models
 {
     public class SchedulingContext : DbContext
     {
-        public SchedulingContext() : base("StationConnection") { }
+        public SchedulingContext() : base("DefaultConnectin") { }
 
         public DbSet<Site> Sites { get; set; }
         public DbSet<Event> Events { get; set; }
