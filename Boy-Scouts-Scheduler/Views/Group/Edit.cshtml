@@ -4,6 +4,14 @@
     @:data-pkey="@Model.ID"
 }>
     <td>
+        @Html.EditorFor(model => model.Name)
+        @Html.ValidationMessageFor(model => model.Name)
+    </td>
+    <td>
+        @Html.DropDownListFor(model => model.TypeID, new SelectList(ViewBag.GroupTypes, "ID", "Name")) 
+        @Html.ValidationMessageFor(model => model.Type.Name)
+    </td>
+    <td>
 @if (ViewContext.RouteData.Values["Action"].ToString() == "Edit") {
         <button class="editRow">Save</button><button class="cancelEditRow">Cancel</button>
 } else {

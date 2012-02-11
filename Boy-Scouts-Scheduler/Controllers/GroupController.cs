@@ -55,7 +55,7 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult Create()
         {
-            return PartialView("Edit");
+            return PartialEditView();
         }
 
         //
@@ -66,12 +66,12 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             if (ModelState.IsValid)
             {
+                group.Type = db.GroupTypes.Find(group.TypeID);
                 db.Groups.Add(group);
                 db.SaveChanges();
                 return PartialView("GridData", new Group[] { group });
             }
-
-            return PartialView("Edit", group);
+            return PartialEditView(group);
         }
 
         //
@@ -80,7 +80,7 @@ namespace Boy_Scouts_Scheduler.Controllers
         public ActionResult Edit(int id)
         {
             Group group = db.Groups.Find(id);
-            return PartialView(group);
+            return PartialEditView(group);
         }
 
         //
@@ -91,12 +91,12 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             if (ModelState.IsValid)
             {
+                group.Type = db.GroupTypes.Find(group.TypeID);
                 db.Entry(group).State = EntityState.Modified;
                 db.SaveChanges();
                 return PartialView("GridData", new Group[] { group });
             }
-
-            return PartialView(group);
+            return PartialEditView(group);
         }
 
         //
@@ -108,6 +108,12 @@ namespace Boy_Scouts_Scheduler.Controllers
             Group group = db.Groups.Find(id);
             db.Groups.Remove(group);
             db.SaveChanges();
+        }
+
+        protected PartialViewResult PartialEditView(Group group = null)
+        {
+            ViewBag.GroupTypes = db.GroupTypes.ToList();
+            return PartialView("Edit", group);
         }
 
         protected override void Dispose(bool disposing)
