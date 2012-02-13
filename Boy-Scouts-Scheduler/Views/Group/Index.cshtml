@@ -71,10 +71,10 @@
                     <a href="@Url.RouteUrl(new { orderBy = "Name", desc = true })" class="uparrow">&uarr;</a>
                     <a href="@Url.RouteUrl(new { orderBy = "Name" })" class="downarrow">&darr;</a>
                 </th>
-                <th data-column-name="Rank">
+                <th data-column-name="Type.Name">
                     <span class="reorder">Group Rank</span>
-                    <a href="@Url.RouteUrl(new { orderBy = "GroupType.Name", desc = true })" class="uparrow">&uarr;</a>
-                    <a href="@Url.RouteUrl(new { orderBy = "GroupType.Name" })" class="downarrow">&darr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "Type.Name", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "Type.Name" })" class="downarrow">&darr;</a>
                 </th>
                 <!--<th data-column-name="Members">
                     <span class="reorder">Group Members</span>
@@ -92,7 +92,7 @@
 </div>
 
 <style>
-    #AjaxGrid, #AjaxGrid input, #AjaxGrid button { clear: both; width: 100%; }
+    #AjaxGrid, #AjaxGrid input, #AjaxGrid select, #AjaxGrid button { clear: both; width: 100%; }
     #AjaxGrid thead { white-space: nowrap; }
     #AjaxGrid thead a, #AjaxGridContainer .AjaxGridNavigation a { text-decoration: none; }
     #AjaxGrid .error { background-color: #f66; color: #000; }

@@ -34,7 +34,7 @@ namespace Boy_Scouts_Scheduler.Models
 
     public class GroupType
     {
-        public int GroupTypeID { get; set; }
+        public int ID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
     }
@@ -42,6 +42,7 @@ namespace Boy_Scouts_Scheduler.Models
     public class Group {
         public int ID { get; set; }
         public string Name { get; set; }
+        public int TypeID { get; set; }
         public virtual Event Event { get; set; }
         public virtual GroupType Type { get; set; }
         public virtual ICollection<Attendee> Members { get; set; }

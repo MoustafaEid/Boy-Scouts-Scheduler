@@ -16,7 +16,37 @@
             events: []
         };
 
+        function displayMessage(message) {
+            $('#message').html(message).fadeIn();
+        }
+
+        function updateEvent(calEvent, event) {
+            displayMessage('<strong>Moved Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
+            $.post('/TimeSlot/Edit', {
+                ID: calEvent.id,
+                Name: calEvent.title,
+                Start: calEvent.start.toString().substring(0, 24),
+                End: calEvent.end.toString().substring(0, 24)
+            })
+                .done(function (data) {
+                    calEvent.key = $(data).attr('data-pkey');
+                    console.log('success', data, calEvent, $(data).attr('data-pkey'));
+                })
+                .fail(function (data) {
+                    console.log('failure', data);
+                });
+        }
+
         $(document).ready(function () {
+            $('#AjaxGrid tbody tr').each(function () {
+                var children = $(this).children();
+                eventData.events.push({
+                    id: $(this).attr('data-pkey'),
+                    title: $.trim(children.eq(0).html()),
+                    start: new Date(children.eq(1).html()),
+                    end: new Date(children.eq(2).html())
+                });
+            });
 
             $('#calendar').weekCalendar({
                 timeslotsPerHour: 4,
@@ -31,21 +61,20 @@
                 },
                 eventNew: function (calEvent, event) {
                     displayMessage('<strong>Added event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
-                    $.post('/TimeSlot/Create', { Start: calEvent.start.toString().substring(0, 24),
-                                                 End: calEvent.end.toString().substring(0, 24) })
+                    $.post('/TimeSlot/Create', {
+                        Start: calEvent.start.toString().substring(0, 24),
+                        End: calEvent.end.toString().substring(0, 24)
+                    })
                         .done(function (data) {
-                            console.log('success', data);
+                            calEvent.id = $(data).attr('data-pkey');
+                            console.log('success', data, calEvent, $(data).attr('data-pkey'));
                         })
                         .fail(function (data) {
                             console.log('failure', data);
                         });
                 },
-                eventDrop: function (calEvent, event) {
-                    displayMessage('<strong>Moved Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
-                },
-                eventResize: function (calEvent, event) {
-                    displayMessage('<strong>Resized Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
-                },
+                eventDrop: updateEvent,
+                eventResize: updateEvent,
                 eventClick: function (calEvent, event) {
                     displayMessage('<strong>Clicked Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
                 },
@@ -61,12 +90,7 @@
                 data: eventData
             });
 
-            function displayMessage(message) {
-                $('#message').html(message).fadeIn();
-            }
-
             $('<div id="message" class="ui-corner-all"></div>').prependTo($('body'));
-
         });
 
     </script>
@@ -74,8 +98,8 @@
 
 @{
 
-    ViewBag.ItemsPerPage = ViewBag.ItemsPerPage ?? 20;
-    ViewBag.ItemsPerPageOptions = ViewBag.ItemsPerPageOptions ?? new List<int> { 10, 20, 50, 100 };
+    ViewBag.ItemsPerPage = ViewBag.ItemsPerPage ?? 100;
+    ViewBag.ItemsPerPageOptions = ViewBag.ItemsPerPageOptions ?? new List<int> { 10, 20, 50, 100, 500 };
 
     int currentPage = ViewBag.Start / ViewBag.ItemsPerPage + 1;
     int pageCount = (ViewBag.Count - 1) / ViewBag.ItemsPerPage + 1;
@@ -146,6 +170,11 @@
     <table id="AjaxGrid">
         <thead>
             <tr>
+                <th data-column-name="Name">
+                    <span class="reorder">@Html.DisplayNameFor(model => model.Name)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "Start", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "Start" })" class="downarrow">&darr;</a>
+                </th>
                 <th data-column-name="Start">
                     <span class="reorder">@Html.DisplayNameFor(model => model.Start)</span>
                     <a href="@Url.RouteUrl(new { orderBy = "Start", desc = true })" class="uparrow">&uarr;</a>

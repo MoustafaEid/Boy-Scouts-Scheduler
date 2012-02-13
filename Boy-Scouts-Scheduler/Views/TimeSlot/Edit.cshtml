@@ -4,6 +4,10 @@
     @:data-pkey="@Model.ID"
 }>
     <td>
+        @Html.EditorFor(model => model.Name)
+        @Html.ValidationMessageFor(model => model.Name)
+    </td>
+    <td>
         @Html.EditorFor(model => model.Start)
         @Html.ValidationMessageFor(model => model.Start)
     </td>
