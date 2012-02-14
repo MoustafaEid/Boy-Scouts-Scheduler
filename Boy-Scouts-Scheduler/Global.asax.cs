@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Data.Entity;
+using Boy_Scouts_Scheduler.Models;
 
 namespace Boy_Scouts_Scheduler
 {
@@ -31,6 +33,9 @@ namespace Boy_Scouts_Scheduler
 
         protected void Application_Start()
         {
+#if DEBUG
+            Database.SetInitializer(new SchedulingContext.DevInitializer());
+#endif
             AreaRegistration.RegisterAllAreas();
 
             RegisterGlobalFilters(GlobalFilters.Filters);

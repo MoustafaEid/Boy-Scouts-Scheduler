@@ -8,8 +8,6 @@ namespace Boy_Scouts_Scheduler.Models
 {
     public class SchedulingContext : DbContext
     {
-        public SchedulingContext() : base("DefaultConnection") { }
-
         public DbSet<Site> Sites { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Attendee> Attendees { get; set; }
@@ -19,5 +17,18 @@ namespace Boy_Scouts_Scheduler.Models
         public DbSet<TimeSlot> TimeSlots { get; set; }
         public DbSet<Activity> Activities { get; set; }
         public DbSet<Constraint> Constraints { get; set; }
+
+        public class DevInitializer : DropCreateDatabaseIfModelChanges<SchedulingContext>
+        {
+            protected override void Seed(SchedulingContext context)
+            {
+                context.GroupTypes.Add(new GroupType() { Name = "Tiger" });
+                context.GroupTypes.Add(new GroupType() { Name = "Wolf" });
+                context.GroupTypes.Add(new GroupType() { Name = "Bear" });
+                context.GroupTypes.Add(new GroupType() { Name = "Webelos" });
+
+                context.SaveChanges();
+            }
+        }
     }
 }

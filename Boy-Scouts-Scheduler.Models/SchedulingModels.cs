@@ -64,8 +64,8 @@ namespace Boy_Scouts_Scheduler.Models
         public int ID { get; set; }
         public string Name { get; set; }
         public virtual Event Event { get; set; }
-        public DateTime? Start { get; set; }
-        public DateTime? End { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
     }
 
     public class Activity
