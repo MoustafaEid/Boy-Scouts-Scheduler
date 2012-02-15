@@ -76,7 +76,7 @@ namespace Boy_Scouts_Scheduler.Models
         public virtual TimeSlot TimeSlot { get; set; }
     }
 
-    public class Constraint
+    public class SchedulingConstraint
     {
         /* Null values will be assumed to be unconstrained */
         public int ID { get; set; }

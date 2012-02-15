@@ -1,6 +1,7 @@
-﻿@model IEnumerable<Boy_Scouts_Scheduler.Models.Station>
+﻿@model IEnumerable<Boy_Scouts_Scheduler.Models.SchedulingConstraint>
+
 @{
-    ViewBag.Title = "Stations";
+    ViewBag.Title = "Constraints";
 }
 @{
 
@@ -56,7 +57,7 @@
     </div>
 }
 
-<h2>Station</h2>
+<h2>Constraints</h2>
 
 <div id="AjaxGridContainer">
     <p>
@@ -67,24 +68,29 @@
         <thead>
             <tr>
                 <th data-column-name="Name">
-                    <span class="reorder">@Html.DisplayNameFor(model => model.Name)</span>
-                    <a href="@Url.RouteUrl(new { orderBy = "Name", desc = true })" class="uparrow">&uarr;</a>
-                    <a href="@Url.RouteUrl(new { orderBy = "Name" })" class="downarrow">&darr;</a>
+                    <span class="reorder">@Html.DisplayNameFor(model => model.Start)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "Start", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "Start" })" class="downarrow">&darr;</a>
                 </th>
                 <th data-column-name="Capacity">
-                    <span class="reorder">@Html.DisplayNameFor(model => model.Capacity)</span>
-                    <a href="@Url.RouteUrl(new { orderBy = "Capacity", desc = true })" class="uparrow">&uarr;</a>
-                    <a href="@Url.RouteUrl(new { orderBy = "Capacity" })" class="downarrow">&darr;</a>
+                    <span class="reorder">@Html.DisplayNameFor(model => model.End)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "End", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "End" })" class="downarrow">&darr;</a>
                 </th>
                 <th data-column-name="Description">
-                    <span class="reorder">@Html.DisplayNameFor(model => model.Description)</span>
-                    <a href="@Url.RouteUrl(new { orderBy = "Description", desc = true })" class="uparrow">&uarr;</a>
-                    <a href="@Url.RouteUrl(new { orderBy = "Description" })" class="downarrow">&darr;</a>
+                    <span class="reorder">@Html.DisplayNameFor(model => model.MinVisits)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "MinVisits", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "MinVisits" })" class="downarrow">&darr;</a>
                 </th>
                 <th data-column-name="Location">
-                    <span class="reorder">@Html.DisplayNameFor(model => model.Location)</span>
-                    <a href="@Url.RouteUrl(new { orderBy = "Location", desc = true })" class="uparrow">&uarr;</a>
-                    <a href="@Url.RouteUrl(new { orderBy = "Location" })" class="downarrow">&darr;</a>
+                    <span class="reorder">@Html.DisplayNameFor(model => model.MaxVisits)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "MaxVisits", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "MaxVisits" })" class="downarrow">&darr;</a>
+                </th>
+                <th data-column-name="Location">
+                    <span class="reorder">@Html.DisplayNameFor(model => model.Priority)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "Priority", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "Priority" })" class="downarrow">&darr;</a>
                 </th>
                 <th class="hidden"></th>
             </tr>
@@ -357,3 +363,4 @@
         });
     })(jQuery);
 </script>
+

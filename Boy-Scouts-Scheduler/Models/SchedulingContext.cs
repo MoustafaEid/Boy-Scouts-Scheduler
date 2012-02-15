@@ -16,7 +16,7 @@ namespace Boy_Scouts_Scheduler.Models
         public DbSet<Station> Stations { get; set; }
         public DbSet<TimeSlot> TimeSlots { get; set; }
         public DbSet<Activity> Activities { get; set; }
-        public DbSet<Constraint> Constraints { get; set; }
+        public DbSet<SchedulingConstraint> SchedulingConstraints { get; set; }
 
         public class DevInitializer : DropCreateDatabaseIfModelChanges<SchedulingContext>
         {

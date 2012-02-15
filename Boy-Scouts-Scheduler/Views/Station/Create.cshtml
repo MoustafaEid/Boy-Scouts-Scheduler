@@ -1,20 +1,19 @@
 ﻿@model Boy_Scouts_Scheduler.Models.Station
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Create";
 }
 
-<h2>Edit</h2>
+<h2>Create</h2>
 
 <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
 <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
 
-@using (Html.BeginForm()) {
+@using (Html.BeginForm())
+{
     @Html.ValidationSummary(true)
     <fieldset>
         <legend>Station</legend>
-
-        @Html.HiddenFor(model => model.ID)
 
         <div class="editor-label">
             @Html.LabelFor(model => model.Name)
@@ -48,6 +47,17 @@
             @Html.ValidationMessageFor(model => model.Capacity)
         </div>
 
+            @{
+                int[] dayCount = new int[5];
+            }
+@*            @foreach (var item in ViewBag.TimeSlots) {
+                if (item.DayOfWeek == DayOfWeek.Monday) { dayCount[0]++; }
+                if (item.DayOfWeek == DayOfWeek.Tuesday) { dayCount[1]++; }
+                if (item.DayOfWeek == DayOfWeek.Wednesday) { dayCount[2]++; }
+                if (item.DayOfWeek == DayOfWeek.Thursday) { dayCount[3]++; }
+                if (item.DayOfWeek == DayOfWeek.Friday) { dayCount[4]++; }
+            }*@
+
         <div>
             <table>
                 <tr>                
@@ -61,20 +71,24 @@
                 @{
                     bool[] slots = new bool[25];
                 }
-                @for (int i = 0; i < 5; i++) {
+
+                @for (int i = 0; i < 5; i++)
+                {
                     <tr>
-                        @for (int j = 0; j < 5; j++) {
-                            <td>@Html.CheckBoxFor(model => slots[i])</td>
+                        @for (int j = 0; j < dayCount[i]; j++)
+                        {
+                            <td>@Html.CheckBoxFor(model => slots[j])</td>
                         }
                     </tr>
                 }
 
             </table>
         </div>
-
+        
         <p>
-            <input type="submit" value="Save" />
+            <input type="submit" value="Create" />
         </p>
+
     </fieldset>
 }
 

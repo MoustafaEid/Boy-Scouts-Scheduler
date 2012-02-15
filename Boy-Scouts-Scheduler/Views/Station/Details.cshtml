@@ -1,0 +1,68 @@
+﻿@model Boy_Scouts_Scheduler.Models.Station
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Station</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Name)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Name)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Description)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Description)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Location)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Location)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Capacity)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Capacity)
+    </div>
+
+    <div>
+            <table>
+                <tr>                
+                    <th>@Html.Label("Monday")</th>
+                    <th>@Html.Label("Tuesday")</th>
+                    <th>@Html.Label("Wednesday")</th>
+                    <th>@Html.Label("Thursday")</th>   
+                    <th>@Html.Label("Friday")</th>
+                </tr>
+
+                @{
+                    bool[] slots = new bool[25];
+                }
+                @for (int i = 0; i < 5; i++) {
+                    <tr>
+                        @for (int j = 0; j < 5; j++) {
+                            <td>@Html.CheckBoxFor(model => slots[i])</td>
+                        }
+                    </tr>
+                }
+
+            </table>
+        </div>
+
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

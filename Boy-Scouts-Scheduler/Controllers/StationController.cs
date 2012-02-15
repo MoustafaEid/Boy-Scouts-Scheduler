@@ -10,13 +10,13 @@ using System.Web.Mvc;
 using Boy_Scouts_Scheduler.Models;
 
 namespace Boy_Scouts_Scheduler.Controllers
-{
+{ 
     public class StationController : Controller
     {
         private SchedulingContext db = new SchedulingContext();
 
         //
-        // GET: /Station/
+        // GET: /NewStation/
 
         public ViewResult Index(int start = 0, int itemsPerPage = 20, string orderBy = "ID", bool desc = false)
         {
@@ -42,81 +42,82 @@ namespace Boy_Scouts_Scheduler.Controllers
         }
 
         //
-        // GET: /Default5/RowData/5
+        // GET: /NewStation/Details/5
 
-        public ActionResult RowData(int id)
+        public ViewResult Details(int id)
         {
             Station station = db.Stations.Find(id);
-            return PartialView("GridData", new Station[] { station });
+            return View(station);
         }
 
         //
-        // GET: /Station/Create
+        // GET: /NewStation/Create
 
         public ActionResult Create()
         {
-            ViewBag.TimeSlots = db.TimeSlots.ToList();
-
-            return PartialView("Edit");
-        }
+            //ViewBag.TimeSlots = db.TimeSlots.ToList();
+            return View();
+        } 
 
         //
-        // POST: /Station/Create
+        // POST: /NewStation/Create
 
         [HttpPost]
         public ActionResult Create(Station station)
         {
-            ViewBag.TimeSlots = db.TimeSlots.ToList();
-
             if (ModelState.IsValid)
             {
                 db.Stations.Add(station);
                 db.SaveChanges();
-                return PartialView("GridData", new Station[] { station });
+                return RedirectToAction("Index");  
             }
 
-            return PartialView("Edit", station);
+            return View(station);
         }
-
+        
         //
-        // GET: /Station/Edit/5
-
+        // GET: /NewStation/Edit/5
+ 
         public ActionResult Edit(int id)
         {
             Station station = db.Stations.Find(id);
-
-            ViewBag.TimeSlots = db.TimeSlots.ToList();
-
-            return PartialView(station);
+            return View(station);
         }
 
         //
-        // POST: /Station/Edit/5
+        // POST: /NewStation/Edit/5
 
         [HttpPost]
         public ActionResult Edit(Station station)
         {
-            ViewBag.TimeSlots = db.TimeSlots.ToList();
-
             if (ModelState.IsValid)
             {
                 db.Entry(station).State = EntityState.Modified;
                 db.SaveChanges();
-                return PartialView("GridData", new Station[] { station });
+                return RedirectToAction("Index");
             }
-
-            return PartialView(station);
+            return View(station);
         }
 
         //
-        // POST: /Station/Delete/5
-
-        [HttpPost]
-        public void Delete(int id)
+        // GET: /NewStation/Delete/5
+ 
+        public ActionResult Delete(int id)
         {
+            Station station = db.Stations.Find(id);
+            return View(station);
+        }
+
+        //
+        // POST: /NewStation/Delete/5
+
+        [HttpPost, ActionName("Delete")]
+        public ActionResult DeleteConfirmed(int id)
+        {            
             Station station = db.Stations.Find(id);
             db.Stations.Remove(station);
             db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
