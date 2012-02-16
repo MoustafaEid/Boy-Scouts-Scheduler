@@ -1,7 +1,6 @@
 ﻿@model IEnumerable<Boy_Scouts_Scheduler.Models.SchedulingConstraint>
-
 @{
-    ViewBag.Title = "Constraints";
+    ViewBag.Title = "SchedulingConstraint";
 }
 @{
 
@@ -57,46 +56,46 @@
     </div>
 }
 
-<h2>Constraints</h2>
+<h2>SchedulingConstraint</h2>
 
 <div id="AjaxGridContainer">
     <p>
-        @Html.ActionLink("Create New", "Create")
+        <a href="#insertEmptyRow" class="insertEmptyRow hidden">Create New</a>
     </p>
     @AjaxGridNavigation(currentPage, pageCount, currentRouteValues)
     <table id="AjaxGrid">
         <thead>
             <tr>
-                <th data-column-name="Name">
-                    <span class="reorder">@Html.DisplayNameFor(model => model.Start)</span>
-                    <a href="@Url.RouteUrl(new { orderBy = "Start", desc = true })" class="uparrow">&uarr;</a>
-                    <a href="@Url.RouteUrl(new { orderBy = "Start" })" class="downarrow">&darr;</a>
+                <th data-column-name="Group">
+                    <span class="reorder">@Html.DisplayNameFor(model => model.Group)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "Group", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "Group" })" class="downarrow">&darr;</a>
                 </th>
-                <th data-column-name="Capacity">
-                    <span class="reorder">@Html.DisplayNameFor(model => model.End)</span>
-                    <a href="@Url.RouteUrl(new { orderBy = "End", desc = true })" class="uparrow">&uarr;</a>
-                    <a href="@Url.RouteUrl(new { orderBy = "End" })" class="downarrow">&darr;</a>
+                <th data-column-name="GroupType">
+                    <span class="reorder">@Html.DisplayNameFor(model => model.GroupType)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "GroupType", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "GroupType" })" class="downarrow">&darr;</a>
                 </th>
-                <th data-column-name="Description">
+                <th data-column-name="Station">
+                    <span class="reorder">@Html.DisplayNameFor(model => model.Station)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "Station", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "Station" })" class="downarrow">&darr;</a>
+                </th>
+                <th data-column-name="MinVisits">
                     <span class="reorder">@Html.DisplayNameFor(model => model.MinVisits)</span>
                     <a href="@Url.RouteUrl(new { orderBy = "MinVisits", desc = true })" class="uparrow">&uarr;</a>
                     <a href="@Url.RouteUrl(new { orderBy = "MinVisits" })" class="downarrow">&darr;</a>
                 </th>
-                <th data-column-name="Location">
+                <th data-column-name="MaxVisits">
                     <span class="reorder">@Html.DisplayNameFor(model => model.MaxVisits)</span>
                     <a href="@Url.RouteUrl(new { orderBy = "MaxVisits", desc = true })" class="uparrow">&uarr;</a>
                     <a href="@Url.RouteUrl(new { orderBy = "MaxVisits" })" class="downarrow">&darr;</a>
-                </th>
-                <th data-column-name="Location">
-                    <span class="reorder">@Html.DisplayNameFor(model => model.Priority)</span>
-                    <a href="@Url.RouteUrl(new { orderBy = "Priority", desc = true })" class="uparrow">&uarr;</a>
-                    <a href="@Url.RouteUrl(new { orderBy = "Priority" })" class="downarrow">&darr;</a>
                 </th>
                 <th class="hidden"></th>
             </tr>
         </thead>
         <tbody>
-            @{Html.RenderAction("GridData", new { start = ViewBag.Start });}
+@{Html.RenderAction("GridData", new { start = ViewBag.Start });}
         </tbody>
     </table>
     @AjaxGridNavigation(currentPage, pageCount, currentRouteValues)
@@ -363,4 +362,3 @@
         });
     })(jQuery);
 </script>
-

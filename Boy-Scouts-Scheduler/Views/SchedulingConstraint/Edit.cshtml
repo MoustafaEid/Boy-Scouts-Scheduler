@@ -1,67 +1,33 @@
 ﻿@model Boy_Scouts_Scheduler.Models.SchedulingConstraint
 
-@{
-    ViewBag.Title = "Edit";
+<tr @if (Model != null) {
+    @:data-pkey="@Model.ID"
+}>
+    <td>
+        @Html.EditorFor(model => model.Group)
+        @Html.ValidationMessageFor(model => model.Group)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.GroupType)
+        @Html.ValidationMessageFor(model => model.GroupType)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.Station)
+        @Html.ValidationMessageFor(model => model.Station)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.MinVisits)
+        @Html.ValidationMessageFor(model => model.MinVisits)
+    </td>
+    <td>
+        @Html.EditorFor(model => model.MaxVisits)
+        @Html.ValidationMessageFor(model => model.MaxVisits)
+    </td>
+    <td>
+@if (ViewContext.RouteData.Values["Action"].ToString() == "Edit") {
+        <button class="editRow">Save</button><button class="cancelEditRow">Cancel</button>
+} else {
+        <button class="createRow">Create</button><button class="cancelCreateRow">Cancel</button>
 }
-
-<h2>Edit</h2>
-
-<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
-<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
-
-@using (Html.BeginForm()) {
-    @Html.ValidationSummary(true)
-    <fieldset>
-        <legend>SchedulingConstraint</legend>
-
-        @Html.HiddenFor(model => model.ID)
-
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Start)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Start)
-            @Html.ValidationMessageFor(model => model.Start)
-        </div>
-
-        <div class="editor-label">
-            @Html.LabelFor(model => model.End)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.End)
-            @Html.ValidationMessageFor(model => model.End)
-        </div>
-
-        <div class="editor-label">
-            @Html.LabelFor(model => model.MinVisits)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.MinVisits)
-            @Html.ValidationMessageFor(model => model.MinVisits)
-        </div>
-
-        <div class="editor-label">
-            @Html.LabelFor(model => model.MaxVisits)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.MaxVisits)
-            @Html.ValidationMessageFor(model => model.MaxVisits)
-        </div>
-
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Priority)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Priority)
-            @Html.ValidationMessageFor(model => model.Priority)
-        </div>
-
-        <p>
-            <input type="submit" value="Save" />
-        </p>
-    </fieldset>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+    </td>
+</tr>

@@ -23,9 +23,5 @@ namespace Boy_Scouts_Scheduler.Controllers
             return View();
         }
         
-        public ActionResult Schedules()
-        {
-            return View();
-        }
     }
 }

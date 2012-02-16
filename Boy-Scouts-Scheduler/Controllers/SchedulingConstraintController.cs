@@ -10,7 +10,7 @@ using System.Web.Mvc;
 using Boy_Scouts_Scheduler.Models;
 
 namespace Boy_Scouts_Scheduler.Controllers
-{ 
+{
     public class SchedulingConstraintController : Controller
     {
         private SchedulingContext db = new SchedulingContext();
@@ -29,6 +29,9 @@ namespace Boy_Scouts_Scheduler.Controllers
             return View();
         }
 
+        //
+        // GET: /SchedulingConstraint/GridData/?start=0&itemsPerPage=20&orderBy=ID&desc=true
+
         public ActionResult GridData(int start = 0, int itemsPerPage = 20, string orderBy = "ID", bool desc = false)
         {
             Response.AppendHeader("X-Total-Row-Count", db.SchedulingConstraints.Count().ToString());
@@ -39,12 +42,12 @@ namespace Boy_Scouts_Scheduler.Controllers
         }
 
         //
-        // GET: /SchedulingConstraint/Details/5
+        // GET: /Default5/RowData/5
 
-        public ViewResult Details(int id)
+        public ActionResult RowData(int id)
         {
             SchedulingConstraint schedulingconstraint = db.SchedulingConstraints.Find(id);
-            return View(schedulingconstraint);
+            return PartialView("GridData", new SchedulingConstraint[] { schedulingconstraint });
         }
 
         //
@@ -52,10 +55,9 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult Create()
         {
-            ViewBag.Groups = db.Groups.ToList();
-            ViewBag.Stations = db.Stations.ToList();
-            return View();
-        } 
+            //return PartialView("Edit");
+            return PartialEditView();
+        }
 
         //
         // POST: /SchedulingConstraint/Create
@@ -65,23 +67,24 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             if (ModelState.IsValid)
             {
-                schedulingconstraint.Station = db.Stations.Find(schedulingconstraint.Station.ID);
                 schedulingconstraint.Group = db.Groups.Find(schedulingconstraint.Group.ID);
+                schedulingconstraint.GroupType = db.GroupTypes.Find(schedulingconstraint.GroupType.ID);
+                schedulingconstraint.Station = db.Stations.Find(schedulingconstraint.Station.ID);
                 db.SchedulingConstraints.Add(schedulingconstraint);
                 db.SaveChanges();
-                return RedirectToAction("Index");  
+                return PartialView("GridData", new SchedulingConstraint[] { schedulingconstraint });
             }
 
-            return View(schedulingconstraint);
+            return PartialEditView(schedulingconstraint);
         }
-        
+
         //
         // GET: /SchedulingConstraint/Edit/5
- 
+
         public ActionResult Edit(int id)
         {
             SchedulingConstraint schedulingconstraint = db.SchedulingConstraints.Find(id);
-            return View(schedulingconstraint);
+            return PartialEditView(schedulingconstraint);
         }
 
         //
@@ -92,34 +95,34 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             if (ModelState.IsValid)
             {
-                schedulingconstraint.Station = db.Stations.Find(schedulingconstraint.Station.ID);
                 schedulingconstraint.Group = db.Groups.Find(schedulingconstraint.Group.ID);
+                schedulingconstraint.GroupType = db.GroupTypes.Find(schedulingconstraint.GroupType.ID);
+                schedulingconstraint.Station = db.Stations.Find(schedulingconstraint.Station.ID);
                 db.Entry(schedulingconstraint).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return PartialView("GridData", new SchedulingConstraint[] { schedulingconstraint });
             }
-            return View(schedulingconstraint);
-        }
 
-        //
-        // GET: /SchedulingConstraint/Delete/5
- 
-        public ActionResult Delete(int id)
-        {
-            SchedulingConstraint schedulingconstraint = db.SchedulingConstraints.Find(id);
-            return View(schedulingconstraint);
+            return PartialEditView(schedulingconstraint);
         }
 
         //
         // POST: /SchedulingConstraint/Delete/5
 
-        [HttpPost, ActionName("Delete")]
-        public ActionResult DeleteConfirmed(int id)
-        {            
+        [HttpPost]
+        public void Delete(int id)
+        {
             SchedulingConstraint schedulingconstraint = db.SchedulingConstraints.Find(id);
             db.SchedulingConstraints.Remove(schedulingconstraint);
             db.SaveChanges();
-            return RedirectToAction("Index");
+        }
+
+        protected PartialViewResult PartialEditView(SchedulingConstraint schedulingconstraint = null)
+        {
+            ViewBag.GroupTypes = db.GroupTypes.ToList();
+            ViewBag.Groups = db.Groups.ToList();
+            ViewBag.Station = db.Stations.ToList();
+            return PartialView("Edit", schedulingconstraint);
         }
 
         protected override void Dispose(bool disposing)

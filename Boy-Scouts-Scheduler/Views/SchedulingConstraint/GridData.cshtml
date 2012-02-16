@@ -3,10 +3,13 @@
 @foreach (var item in Model) {
     <tr data-pkey="@item.ID">
         <td>
-            @Html.DisplayFor(modelItem => item.Start)
+            @Html.DisplayFor(modelItem => item.Group)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.End)
+            @Html.DisplayFor(modelItem => item.GroupType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Station)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.MinVisits)
@@ -14,13 +17,9 @@
         <td>
             @Html.DisplayFor(modelItem => item.MaxVisits)
         </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Priority)
-        </td>
         <td class="rowControl hidden">
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+            <a href="#makeRowEditable" class="makeRowEditable">Edit</a> |
+            <a href="#deleteRow" class="deleteRow">Delete</a>
         </td>
     </tr>
 }

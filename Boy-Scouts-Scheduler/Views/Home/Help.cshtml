@@ -1,5 +1,6 @@
 ﻿@{
-    ViewBag.Title = "About Us";
+    ViewBag.Title = "Help";
+    ViewBag.Message = "Select your help topic.";
 }
 
 <hgroup class="title">
@@ -9,51 +10,34 @@
 
 <article>
     <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin luctus tincidunt justo nec tempor. 
-        Aliquam erat volutpat. Fusce facilisis ullamcorper consequat. Vestibulum non sapien lectus. Nam 
-        mi augue, posuere at tempus vel, dignissim vitae nulla. Nullam at quam eu sapien mattis ultrices. 
-        Quisque quis leo mi, at lobortis dolor. Nullam scelerisque facilisis placerat. Fusce a augue 
-        erat, malesuada euismod dui. Duis iaculis risus id felis volutpat elementum. Fusce blandit iaculis 
-        quam a cursus. Cras varius tincidunt cursus. Morbi justo eros, adipiscing ac placerat sed, posuere 
-        et mi. Suspendisse vulputate viverra aliquet. Duis non enim a nibh consequat mollis ac tempor 
-        lorem. Phasellus elit leo, semper eu luctus et, suscipit at lacus. In hac habitasse platea 
-        dictumst. Duis dignissim justo sit amet nulla pulvinar sodales.
+        If help is needed beyond what is available in the help topics to the right, <br />
+        Please feel free to contact the 'Cub Scout Scheduler' developers below. <br />
+
+        <div>
+        Michael Diekema
+        </div>
+        <div>
+        Andrew Edwards
+        </div>
+        <div>
+        Moustafa Eid
+        </div>
+        <div>   
+        Stephen Halter
+        </div>
+
     </p>
 
-    <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin luctus tincidunt justo nec tempor. 
-        Aliquam erat volutpat. Fusce facilisis ullamcorper consequat. Vestibulum non sapien lectus. Nam 
-        mi augue, posuere at tempus vel, dignissim vitae nulla. Nullam at quam eu sapien mattis ultrices. 
-        Quisque quis leo mi, at lobortis dolor. Nullam scelerisque facilisis placerat. Fusce a augue 
-        erat, malesuada euismod dui. Duis iaculis risus id felis volutpat elementum. Fusce blandit iaculis 
-        quam a cursus. Cras varius tincidunt cursus. Morbi justo eros, adipiscing ac placerat sed, posuere 
-        et mi. Suspendisse vulputate viverra aliquet. Duis non enim a nibh consequat mollis ac tempor 
-        lorem. Phasellus elit leo, semper eu luctus et, suscipit at lacus. In hac habitasse platea 
-        dictumst. Duis dignissim justo sit amet nulla pulvinar sodales.
-    </p>
-
-    <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin luctus tincidunt justo nec tempor. 
-        Aliquam erat volutpat. Fusce facilisis ullamcorper consequat. Vestibulum non sapien lectus. Nam 
-        mi augue, posuere at tempus vel, dignissim vitae nulla. Nullam at quam eu sapien mattis ultrices. 
-        Quisque quis leo mi, at lobortis dolor. Nullam scelerisque facilisis placerat. Fusce a augue 
-        erat, malesuada euismod dui. Duis iaculis risus id felis volutpat elementum. Fusce blandit iaculis 
-        quam a cursus. Cras varius tincidunt cursus. Morbi justo eros, adipiscing ac placerat sed, posuere 
-        et mi. Suspendisse vulputate viverra aliquet. Duis non enim a nibh consequat mollis ac tempor 
-        lorem. Phasellus elit leo, semper eu luctus et, suscipit at lacus. In hac habitasse platea 
-        dictumst. Duis dignissim justo sit amet nulla pulvinar sodales.
-    </p>
 </article>
 
 <aside>
-    <h3>Aside Title</h3>
-    <p>
-        Fusce facilisis ullamcorper consequat. Vestibulum non sapien lectus. Nam 
-        mi augue, posuere at tempus vel, dignissim vitae nulla.
-    </p>
-    <ul>
-        <li>@Html.ActionLink("Home", "Index", "Home")</li>
-        <li>@Html.ActionLink("About", "About", "Home")</li>
-        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-    </ul>
+    <h3>Help Topics</h3>
+        <ul>
+            <li>@Html.ActionLink("Imports", "ImportHelp", "Home")</li>
+            <li>@Html.ActionLink("Time Slots", "TimeSlotHelp", "Home")</li>
+            <li>@Html.ActionLink("Groups", "GroupHelp", "Home")</li>
+            <li>@Html.ActionLink("Stations", "StationHelp", "Home")</li>
+            <li>@Html.ActionLink("Constraints", "ConstraintHelp", "Home")</li>
+            <li>@Html.ActionLink("Schedules", "ScheduleHelp", "Home")</li>
+        </ul>
 </aside>
