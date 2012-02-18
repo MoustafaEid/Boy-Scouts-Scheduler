@@ -15,22 +15,22 @@
     <body>
         <header>
             <div class="content-wrapper">
-                <div class="float-left">
+                <div>
                     <p class="site-title">@Html.ActionLink("Cub Scouts Scheduler", "Index", "Home")</p>
                 </div>
-                <div class="float-right">
-                    <section id="login">
+                <div>
+                   <!-- <section id="login">
                         @Html.Partial("_LogOnPartial")
-                    </section>
+                    </section>-->
                     <nav>
                         <ul id="menu">
                             <li>@Html.ActionLink("Home", "Index", "Home")</li>
                             <!--<li>@Html.ActionLink("Import", "Index", "Import")</li>-->
                             <li>@Html.ActionLink("Time Slots", "Index", "TimeSlot")</li>
-                            <li>@Html.ActionLink("Groups", "Index", "Group")</li>
                             <li>@Html.ActionLink("Stations", "Index", "Station")</li>
+                            <li>@Html.ActionLink("Groups", "Index", "Group")</li>
                             <li>@Html.ActionLink("Constraints", "Index", "SchedulingConstraint")</li> 
-                            <!--<li>@Html.ActionLink("Schedules", "Schedules", "Home")</li>-->
+                            <li>@Html.ActionLink("Schedule", "Index", "Home")</li>
                             <li>@Html.ActionLink("Help", "Help", "Home")</li>
                         </ul>
                     </nav>

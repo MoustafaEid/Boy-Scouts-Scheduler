@@ -3,13 +3,13 @@
 @foreach (var item in Model) {
     <tr data-pkey="@item.ID">
         <td>
-            @Html.DisplayFor(modelItem => item.Group)
+            @Html.DisplayFor(modelItem => item.Group.Name)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.GroupType)
+            @Html.DisplayFor(modelItem => item.GroupType.Name)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Station)
+            @Html.DisplayFor(modelItem => item.Station.Name)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.MinVisits)

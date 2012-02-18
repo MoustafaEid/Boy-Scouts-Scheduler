@@ -45,6 +45,9 @@ namespace Boy_Scouts_Scheduler.Models
         public int TypeID { get; set; }
         public virtual Event Event { get; set; }
         public virtual GroupType Type { get; set; }
+        public virtual Station Preference1 { get; set; }
+        public virtual Station Preference2 { get; set; }
+        public virtual Station Preference3 { get; set; }
         public virtual ICollection<Attendee> Members { get; set; }
     }
 

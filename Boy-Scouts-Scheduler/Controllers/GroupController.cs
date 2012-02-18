@@ -115,6 +115,7 @@ namespace Boy_Scouts_Scheduler.Controllers
         protected PartialViewResult PartialEditView(Group group = null)
         {
             ViewBag.GroupTypes = db.GroupTypes.ToList();
+            ViewBag.Stations = db.Stations.ToList();
             return PartialView("Edit", group);
         }
 

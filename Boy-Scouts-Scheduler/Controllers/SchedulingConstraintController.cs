@@ -121,7 +121,7 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             ViewBag.GroupTypes = db.GroupTypes.ToList();
             ViewBag.Groups = db.Groups.ToList();
-            ViewBag.Station = db.Stations.ToList();
+            ViewBag.Stations = db.Stations.ToList();
             return PartialView("Edit", schedulingconstraint);
         }
 

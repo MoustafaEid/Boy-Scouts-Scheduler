@@ -4,16 +4,16 @@
     @:data-pkey="@Model.ID"
 }>
     <td>
-        @Html.EditorFor(model => model.Group)
-        @Html.ValidationMessageFor(model => model.Group)
+        @Html.DropDownListFor(model => model.Group.ID, new SelectList(ViewBag.Groups, "ID", "Name"))
+        @Html.ValidationMessageFor(model => model.Group.Name)
     </td>
     <td>
-        @Html.EditorFor(model => model.GroupType)
-        @Html.ValidationMessageFor(model => model.GroupType)
+        @Html.DropDownListFor(model => model.GroupType.ID, new SelectList(ViewBag.GroupTypes, "ID", "Name"))
+        @Html.ValidationMessageFor(model => model.GroupType.Name)
     </td>
     <td>
-        @Html.EditorFor(model => model.Station)
-        @Html.ValidationMessageFor(model => model.Station)
+        @Html.DropDownListFor(model => model.Station.ID, new SelectList(ViewBag.Stations, "ID", "Name"))
+        @Html.ValidationMessageFor(model => model.Station.Name)
     </td>
     <td>
         @Html.EditorFor(model => model.MinVisits)
