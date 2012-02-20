@@ -17,18 +17,15 @@ namespace Boy_Scouts_Scheduler.Models
         public DbSet<TimeSlot> TimeSlots { get; set; }
         public DbSet<Activity> Activities { get; set; }
         public DbSet<SchedulingConstraint> SchedulingConstraints { get; set; }
-
-        public class DevInitializer : DropCreateDatabaseIfModelChanges<SchedulingContext>
+        
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            protected override void Seed(SchedulingContext context)
+            modelBuilder.Entity<Station>().HasMany<TimeSlot>(s => s.AvailableTimeSlots).WithMany(t => t.OpenStations).Map(m =>
             {
-                context.GroupTypes.Add(new GroupType() { Name = "Tiger" });
-                context.GroupTypes.Add(new GroupType() { Name = "Wolf" });
-                context.GroupTypes.Add(new GroupType() { Name = "Bear" });
-                context.GroupTypes.Add(new GroupType() { Name = "Webelos" });
-
-                context.SaveChanges();
-            }
+                m.ToTable("StationTimeSlots");
+                m.MapLeftKey("StationID");
+                m.MapRightKey("TimeSlotID");
+            });
         }
     }
 }

@@ -69,6 +69,7 @@ namespace Boy_Scouts_Scheduler.Models
         public virtual Event Event { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
+        public virtual ICollection<Station> OpenStations { get; set; }
     }
 
     public class Activity

@@ -34,7 +34,7 @@ namespace Boy_Scouts_Scheduler
         protected void Application_Start()
         {
 #if DEBUG
-            Database.SetInitializer(new SchedulingContext.DevInitializer());
+            Database.SetInitializer(new DevInitializer());
 #endif
             AreaRegistration.RegisterAllAreas();
 
