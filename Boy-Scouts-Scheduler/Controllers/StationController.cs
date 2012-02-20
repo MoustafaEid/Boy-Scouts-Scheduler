@@ -42,7 +42,7 @@ namespace Boy_Scouts_Scheduler.Controllers
         }
 
         //
-        // GET: /NewStation/Details/5
+        // GET: /Station/Details/5
 
         public ViewResult Details(int id)
         {
@@ -51,56 +51,69 @@ namespace Boy_Scouts_Scheduler.Controllers
         }
 
         //
-        // GET: /NewStation/Create
+        // GET: /Station/Create
 
         public ActionResult Create()
         {
-            //ViewBag.TimeSlots = db.TimeSlots.ToList();
+            PrepareTimeSlotCheckBoxes();
             return View();
         } 
 
         //
-        // POST: /NewStation/Create
+        // POST: /Station/Create
 
         [HttpPost]
-        public ActionResult Create(Station station)
+        public ActionResult Create(Station station, int[] TimeSlotIDs)
         {
             if (ModelState.IsValid)
             {
+                station.AvailableTimeSlots = new List<TimeSlot>();
+                foreach (var timeSlotID in TimeSlotIDs) {
+                    station.AvailableTimeSlots.Add(db.TimeSlots.Find(timeSlotID));
+                }
                 db.Stations.Add(station);
                 db.SaveChanges();
-                return RedirectToAction("Index");  
+                return RedirectToAction("Index");
             }
-
-            return View(station);
+            PrepareTimeSlotCheckBoxes();
+            return View("Edit", station);
         }
         
         //
-        // GET: /NewStation/Edit/5
+        // GET: /Station/Edit/5
  
         public ActionResult Edit(int id)
         {
             Station station = db.Stations.Find(id);
+            PrepareTimeSlotCheckBoxes();
             return View(station);
         }
 
         //
-        // POST: /NewStation/Edit/5
+        // POST: /Station/Edit/5
 
         [HttpPost]
-        public ActionResult Edit(Station station)
+        public ActionResult Edit(Station station, int[] TimeSlotIDs)
         {
             if (ModelState.IsValid)
             {
+                var availableTimeSlots = new List<TimeSlot>();
+                foreach (var timeSlotID in TimeSlotIDs) {
+                    availableTimeSlots.Add(db.TimeSlots.Find(timeSlotID));
+                }
+                db.Stations.Attach(station);
+                db.Entry(station).Collection(s => s.AvailableTimeSlots).Load();
+                station.AvailableTimeSlots = availableTimeSlots;
                 db.Entry(station).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            PrepareTimeSlotCheckBoxes();
             return View(station);
         }
 
         //
-        // GET: /NewStation/Delete/5
+        // GET: /Station/Delete/5
  
         public ActionResult Delete(int id)
         {
@@ -109,7 +122,7 @@ namespace Boy_Scouts_Scheduler.Controllers
         }
 
         //
-        // POST: /NewStation/Delete/5
+        // POST: /Station/Delete/5
 
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
@@ -118,6 +131,18 @@ namespace Boy_Scouts_Scheduler.Controllers
             db.Stations.Remove(station);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+        
+        protected void PrepareTimeSlotCheckBoxes() {
+            // TODO: select timeslots only from current event
+            ViewBag.TimeSlots =
+                (from slot in db.TimeSlots
+                group slot by new
+                {
+                    y = slot.Start.Year,
+                    m = slot.Start.Month,
+                    d = slot.Start.Day
+                }).ToList().Select(g => g.OrderBy(slot => slot.Start).GetEnumerator()).ToArray();
         }
 
         protected override void Dispose(bool disposing)

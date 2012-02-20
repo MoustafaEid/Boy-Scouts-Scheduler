@@ -1,4 +1,6 @@
 ﻿@model Boy_Scouts_Scheduler.Models.Station
+@using Boy_Scouts_Scheduler.Models
+@using System.Collections
 
 @{
     ViewBag.Title = "Create";
@@ -46,43 +48,38 @@
             @Html.EditorFor(model => model.Capacity)
             @Html.ValidationMessageFor(model => model.Capacity)
         </div>
-
-            @{
-                int[] dayCount = new int[5];
-            }
-@*            @foreach (var item in ViewBag.TimeSlots) {
-                if (item.DayOfWeek == DayOfWeek.Monday) { dayCount[0]++; }
-                if (item.DayOfWeek == DayOfWeek.Tuesday) { dayCount[1]++; }
-                if (item.DayOfWeek == DayOfWeek.Wednesday) { dayCount[2]++; }
-                if (item.DayOfWeek == DayOfWeek.Thursday) { dayCount[3]++; }
-                if (item.DayOfWeek == DayOfWeek.Friday) { dayCount[4]++; }
-            }*@
-
         <div>
             <table>
-                <tr>                
-                    <th>@Html.Label("Monday")</th>
-                    <th>@Html.Label("Tuesday")</th>
-                    <th>@Html.Label("Wednesday")</th>
-                    <th>@Html.Label("Thursday")</th>   
-                    <th>@Html.Label("Friday")</th>
-                </tr>
-
-                @{
-                    bool[] slots = new bool[25];
-                }
-
-                @for (int i = 0; i < 5; i++)
+            @{
+    int numDays = ((Array)ViewBag.TimeSlots).Length;
+    bool timeSlotsRemaining = true;
+            }
+            @while (timeSlotsRemaining)
+            {
+                timeSlotsRemaining = false;
+                <tr>
+                @for (int i = 0; i < numDays; i++)
                 {
-                    <tr>
-                        @for (int j = 0; j < dayCount[i]; j++)
-                        {
-                            <td>@Html.CheckBoxFor(model => slots[j])</td>
-                        }
-                    </tr>
+                    var dayEnumerator = (IEnumerator) ViewBag.TimeSlots[i];
+                    if (dayEnumerator.MoveNext())
+                    {
+                        var slot = dayEnumerator.Current as TimeSlot;
+                        timeSlotsRemaining = true;
+                        <td>
+                            <input type="checkbox" name="TimeSlotIDs" value="@slot.ID" id="check-@slot.ID" checked="checked" />
+                            <label for="check-@slot.ID" style="font-size:80%; font-weight: normal; display: inline;">@slot.Name</label>
+                        </td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
                 }
-
+                </tr>
+            }
             </table>
+            <button type="button" onclick="javascript:$('input[name=\'TimeSlotIDs\']').attr('checked', 'checked')">Select All</button>
+            <button type="button" onclick="javascript:$('input[name=\'TimeSlotIDs\']').removeAttr('checked')">Select None</button>
         </div>
         
         <p>
