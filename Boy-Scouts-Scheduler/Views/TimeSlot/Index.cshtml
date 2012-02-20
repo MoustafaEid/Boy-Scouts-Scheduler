@@ -7,93 +7,6 @@
     <link href="@Url.Content("~/Content/jquery.weekcalendar.css")" ~/Content/rel="stylesheet" type="text/css" />
 	<script src="@Url.Content("~/Scripts/date.js")" type="text/javascript"></script>
 	<script src="@Url.Content("~/Scripts/jquery.weekcalendar.js")" type="text/javascript"></script>
-    <script type='text/javascript'>
-        var year = new Date().getFullYear();
-        var month = new Date().getMonth();
-        var day = new Date().getDate();
-
-        var eventData = {
-            events: []
-        };
-
-        function displayMessage(message) {
-            $('#message').html(message).fadeIn();
-        }
-
-        function updateEvent(calEvent, event) {
-            displayMessage('<strong>Moved Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
-            $.post('/TimeSlot/Edit', {
-                ID: calEvent.id,
-                Name: calEvent.title,
-                Start: calEvent.start.toString().substring(0, 24),
-                End: calEvent.end.toString().substring(0, 24)
-            })
-                .done(function (data) {
-                    calEvent.key = $(data).attr('data-pkey');
-                    console.log('success', data, calEvent, $(data).attr('data-pkey'));
-                })
-                .fail(function (data) {
-                    console.log('failure', data);
-                });
-        }
-
-        $(document).ready(function () {
-            $('#AjaxGrid tbody tr').each(function () {
-                var children = $(this).children();
-                eventData.events.push({
-                    id: $(this).attr('data-pkey'),
-                    title: $.trim(children.eq(0).html()),
-                    start: new Date(children.eq(1).html()),
-                    end: new Date(children.eq(2).html())
-                });
-            });
-
-            $('#calendar').weekCalendar({
-                timeslotsPerHour: 4,
-                height: function (calendar) {
-                    return $(window).height() - $('h1').outerHeight(true);
-                },
-                eventRender: function (calEvent, event) {
-                    if (calEvent.end.getTime() < new Date().getTime()) {
-                        event.css('backgroundColor', '#aaa');
-                        event.find('.time').css({ 'backgroundColor': '#999', 'border': '1px solid #888' });
-                    }
-                },
-                eventNew: function (calEvent, event) {
-                    displayMessage('<strong>Added event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
-                    $.post('/TimeSlot/Create', {
-                        Start: calEvent.start.toString().substring(0, 24),
-                        End: calEvent.end.toString().substring(0, 24)
-                    })
-                        .done(function (data) {
-                            calEvent.id = $(data).attr('data-pkey');
-                            console.log('success', data, calEvent, $(data).attr('data-pkey'));
-                        })
-                        .fail(function (data) {
-                            console.log('failure', data);
-                        });
-                },
-                eventDrop: updateEvent,
-                eventResize: updateEvent,
-                eventClick: function (calEvent, event) {
-                    displayMessage('<strong>Clicked Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
-                },
-                eventMouseover: function (calEvent, $event) {
-                    displayMessage('<strong>Mouseover Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
-                },
-                eventMouseout: function (calEvent, event) {
-                    displayMessage('<strong>Mouseout Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
-                },
-                noEvents: function () {
-                    displayMessage('There are no events for this week');
-                },
-                data: eventData
-            });
-
-            $('<div id="message" class="ui-corner-all"></div>').prependTo($('body'));
-        });
-
-    </script>
 }
 
 @{
@@ -113,6 +26,7 @@
         desc = ViewBag.Desc
     });
 }
+
 @helper AjaxGridNavigation(int currentPage, int pageCount, RouteValueDictionary currentRouteValues) {
     <div class="AjaxGridNavigation">
         @{
@@ -455,4 +369,94 @@
             });
         });
     })(jQuery);
+</script>
+<script>
+    var eventData = {
+        events: []
+    };
+
+    function displayMessage(message) {
+        $('#message').html(message).fadeIn();
+    }
+
+    function updateEvent(calEvent, event) {
+        $.post('/TimeSlot/Edit', {
+            ID: calEvent.id,
+            Name: calEvent.title,
+            Start: calEvent.start.toString().substring(0, 24),
+            End: calEvent.end.toString().substring(0, 24)
+        })
+                .done(function (data) {
+                    calEvent.key = $(data).attr('data-pkey');
+                    $('#AjaxGrid tbody').prepend(data);
+                    displayMessage('<strong>Moved Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
+                    //console.log('success', data, calEvent, $(data).attr('data-pkey'));
+                })
+                .fail(function (data) {
+                    displayMessage('<strong>Moved Event Failed</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
+                    //console.log('failure', data);
+                });
+    }
+
+    $(document).ready(function () {
+        $('#AjaxGrid tbody tr').each(function () {
+            var children = $(this).children();
+            eventData.events.push({
+                id: $(this).attr('data-pkey'),
+                title: $.trim(children.eq(0).html()),
+                start: new Date(children.eq(1).html()),
+                end: new Date(children.eq(2).html())
+            });
+        });
+
+        $('#calendar').weekCalendar({
+            date: new Date("@ViewBag.StartDate"),
+            timeslotsPerHour: 2,
+            firstDayOfWeek: 1,
+            daysToShow: 5,
+            businessHours: { start: 8, end: 18, limitDisplay: true },
+            height: function (calendar) {
+                //return $(window).height() - $('h1').outerHeight(true);
+                return 500;
+            },
+            eventRender: function (calEvent, event) {
+                if (calEvent.end.getTime() < new Date().getTime()) {
+                    event.css('backgroundColor', '#aaa');
+                    event.find('.time').css({ 'backgroundColor': '#999', 'border': '1px solid #888' });
+                }
+            },
+            eventNew: function (calEvent, event) {
+                $.post('/TimeSlot/Create', {
+                    Start: calEvent.start.toString().substring(0, 24),
+                    End: calEvent.end.toString().substring(0, 24)
+                })
+                        .done(function (data) {
+                            calEvent.id = $(data).attr('data-pkey');
+                            $('#AjaxGrid tbody tr[data-pkey="' + calEvent.id + '"]').prepend(data);
+                            //console.log('success', data, calEvent, $(data).attr('data-pkey'));
+                        })
+                        .fail(function (data) {
+                            displayMessage('<strong>Added event Failed</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
+                            //console.log('failure', data);
+                        });
+            },
+            eventDrop: updateEvent,
+            eventResize: updateEvent,
+            eventClick: function (calEvent, event) {
+                displayMessage('<strong>Clicked Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
+            },
+            eventMouseover: function (calEvent, $event) {
+                displayMessage('<strong>Mouseover Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
+            },
+            eventMouseout: function (calEvent, event) {
+                displayMessage('<strong>Mouseout Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
+            },
+            noEvents: function () {
+                displayMessage('There are no events for this week');
+            },
+            data: eventData
+        });
+
+        $('<div id="message" class="ui-corner-all"></div>').prependTo($('body'));
+    });
 </script>

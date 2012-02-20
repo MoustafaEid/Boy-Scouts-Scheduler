@@ -18,7 +18,7 @@ namespace Boy_Scouts_Scheduler.Controllers
         //
         // GET: /TimeSlot/
 
-        public ViewResult Index(int start = 0, int itemsPerPage = 20, string orderBy = "ID", bool desc = false)
+        public ViewResult Index(int start = 0, int itemsPerPage = 100, string orderBy = "ID", bool desc = false)
         {
             ViewBag.Count = db.TimeSlots.Count();
             ViewBag.Start = start;
@@ -26,13 +26,15 @@ namespace Boy_Scouts_Scheduler.Controllers
             ViewBag.OrderBy = orderBy;
             ViewBag.Desc = desc;
 
+            ViewBag.StartDate = db.Events.First().Start; // TODO: Deal with multiple events
+
             return View();
         }
 
         //
         // GET: /TimeSlot/GridData/?start=0&itemsPerPage=20&orderBy=ID&desc=true
 
-        public ActionResult GridData(int start = 0, int itemsPerPage = 20, string orderBy = "ID", bool desc = false)
+        public ActionResult GridData(int start = 0, int itemsPerPage = 100, string orderBy = "ID", bool desc = false)
         {
             Response.AppendHeader("X-Total-Row-Count", db.TimeSlots.Count().ToString());
             ObjectQuery<TimeSlot> timeslots = (db as IObjectContextAdapter).ObjectContext.CreateObjectSet<TimeSlot>();
