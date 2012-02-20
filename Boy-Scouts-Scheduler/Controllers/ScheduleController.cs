@@ -18,6 +18,7 @@ namespace Boy_Scouts_Scheduler.Controllers
         public ActionResult Generate()
         {
             List<Activity> schedule;
+            IEnumerator<Activity> enumerator;
 
             IEnumerable<Group> groupData = 
                 from item in db.Groups
@@ -36,6 +37,12 @@ namespace Boy_Scouts_Scheduler.Controllers
                 select item;
                 
            //schedule = Boy-Scouts-Scheduler.Scheduler.Schedule(groupData, stationData, timeslotData, constraintData);
+           //enumerator = schedule.GetEnumerator();
+
+            //while (enumerator.MoveNext())
+            //{
+            //    db.Activities.Add(enumerator.Current);
+            //}
 
             return View(); //ScheduleView(schedule);
         }
