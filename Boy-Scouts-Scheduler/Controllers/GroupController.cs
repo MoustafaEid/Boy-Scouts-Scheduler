@@ -68,6 +68,9 @@ namespace Boy_Scouts_Scheduler.Controllers
             if (ModelState.IsValid)
             {
                 group.Type = db.GroupTypes.Find(group.TypeID);
+                group.Preference1 = db.Stations.Find(group.Preference1.ID);
+                group.Preference2 = db.Stations.Find(group.Preference2.ID);
+                group.Preference3 = db.Stations.Find(group.Preference3.ID);
                 db.Groups.Add(group);
                 db.SaveChanges();
                 return PartialView("GridData", new Group[] { group });
@@ -93,10 +96,17 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             if (ModelState.IsValid)
             {
-                group.Type = db.GroupTypes.Find(group.TypeID);
-                db.Entry(group).State = EntityState.Modified;
+                Group origGroup = db.Groups
+                                    .Include(g => g.Preference1)
+                                    .Include(g => g.Preference2)
+                                    .Include(g => g.Preference3)
+                                    .Single(g => g.ID == group.ID);
+                db.Entry(origGroup).CurrentValues.SetValues(group);
+                origGroup.Preference1 = db.Stations.Find(group.Preference1.ID);
+                origGroup.Preference2 = db.Stations.Find(group.Preference2.ID);
+                origGroup.Preference3 = db.Stations.Find(group.Preference3.ID);
                 db.SaveChanges();
-                return PartialView("GridData", new Group[] { group });
+                return PartialView("GridData", new Group[] { origGroup });
             }
             return PartialEditView(group);
         }
@@ -116,6 +126,7 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             ViewBag.GroupTypes = db.GroupTypes.ToList();
             ViewBag.Stations = db.Stations.ToList();
+            ViewBag.Stations.Insert(0, new Station { ID = -1 }); // Allow null preferences
             return PartialView("Edit", group);
         }
 

@@ -12,15 +12,15 @@
         @Html.ValidationMessageFor(model => model.Type.Name)
     </td>
     <td>
-        @Html.DropDownListFor(model => model.Preference1, new SelectList(ViewBag.Stations, "ID", "Name")) 
+        @Html.DropDownListFor(model => model.Preference1.ID, new SelectList(ViewBag.Stations, "ID", "Name"))
         @Html.ValidationMessageFor(model => model.Preference1.Name)
     </td>
     <td>
-        @Html.DropDownListFor(model => model.Preference2, new SelectList(ViewBag.Stations, "ID", "Name")) 
+        @Html.DropDownListFor(model => model.Preference2.ID, new SelectList(ViewBag.Stations, "ID", "Name")) 
         @Html.ValidationMessageFor(model => model.Preference2.Name)
     </td>
     <td>
-        @Html.DropDownListFor(model => model.Preference3, new SelectList(ViewBag.Stations, "ID", "Name")) 
+        @Html.DropDownListFor(model => model.Preference3.ID, new SelectList(ViewBag.Stations, "ID", "Name")) 
         @Html.ValidationMessageFor(model => model.Preference3.Name)
     </td>
     <td>
