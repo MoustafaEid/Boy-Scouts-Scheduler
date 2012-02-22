@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 
-namespace Boy_Scouts_Scheduling_Algorithm_MD
+namespace Boy_Scouts_Scheduler.Algorithm
 {
     //this is a utility class that scores the generated schedules based on certain criteria
     public static class Score
     {
         public static uint ScoreSchedule(
             List<List<Dictionary<Group, Station>>> schedule, IList<Group> groups,
-            Dictionary<Group, Dictionary<Station, HillClimbingScheduler.StationAssignmentRange>> groupStationVisitRange)
+			Dictionary<Group, Dictionary<Station, HillClimbingAlgorithm.StationAssignmentRange>> groupStationVisitRange)
         {
             return ScoreTopPicks(schedule, groups) - (GetNumConstraintsViolated(groupStationVisitRange) * 10);
         }
 
-        public static uint ScoreTopPicks(List<List<Dictionary<Group, Station>>> schedule , IList<Group> groups)
+        private static uint ScoreTopPicks(List<List<Dictionary<Group, Station>>> schedule , IList<Group> groups)
         {
             uint[] scores = new uint[5] { 20, 7, 4, 2, 1 };
             uint score = 0;
@@ -60,8 +59,8 @@ namespace Boy_Scouts_Scheduling_Algorithm_MD
          * to a station twice, then the penalty is much greater than if they were
          * underassigned to that station only once
          */
-        public static uint GetNumConstraintsViolated(Dictionary<Group,
-            Dictionary<Station, HillClimbingScheduler.StationAssignmentRange>> groupStationVisitRange)
+        private static uint GetNumConstraintsViolated(Dictionary<Group,
+			Dictionary<Station, HillClimbingAlgorithm.StationAssignmentRange>> groupStationVisitRange)
         {
             uint[] penalties = new uint[5] {0,1,3,6,10};
             uint score = 0;
@@ -72,7 +71,12 @@ namespace Boy_Scouts_Scheduling_Algorithm_MD
             return score;
         }
 
-        public static uint GetDistanceScore(List<List<Dictionary<Group, Station>>> schedule, IList<Group> groups)
+        private static uint GetDistanceScore(List<List<Dictionary<Group, Station>>> schedule, IList<Group> groups)
+        {
+            return 0;
+        }
+
+        static uint ScoreDistances()
         {
             return 0;
         }

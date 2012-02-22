@@ -1,0 +1,34 @@
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\bin\Boy-Scouts-Scheduler.dll
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\bin\Boy-Scouts-Scheduler.pdb
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\bin\EntityFramework.dll
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\bin\Microsoft.Web.Optimization.dll
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\bin\System.Web.Helpers.dll
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\bin\System.Web.Mvc.dll
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\bin\System.Web.Providers.dll
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\bin\System.Web.Razor.dll
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\bin\System.Web.WebPages.Deployment.dll
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\bin\System.Web.WebPages.dll
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\bin\System.Web.WebPages.Razor.dll
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\bin\EntityFramework.xml
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\obj\Debug\Boy-Scouts-Scheduler.dll
+C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\obj\Debug\Boy-Scouts-Scheduler.pdb
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\Boy-Scouts-Scheduler.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\Boy-Scouts-Scheduler.pdb
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\Boy-Scouts-Scheduler.Models.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\EntityFramework.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\Microsoft.Web.Optimization.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\System.Web.Helpers.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\System.Web.Mvc.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\System.Web.Providers.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\System.Web.Razor.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\System.Web.WebPages.Deployment.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\System.Web.WebPages.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\System.Web.WebPages.Razor.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\Boy-Scouts-Scheduler.Models.pdb
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\bin\EntityFramework.xml
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\obj\Debug\Boy-Scouts-Scheduler.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler\obj\Debug\Boy-Scouts-Scheduler.pdb

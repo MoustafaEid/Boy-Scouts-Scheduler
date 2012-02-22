@@ -1,0 +1,5 @@
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler.Models\bin\Debug\Boy-Scouts-Scheduler.Models.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler.Models\bin\Debug\Boy-Scouts-Scheduler.Models.pdb
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler.Models\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler.Models\obj\Debug\Boy-Scouts-Scheduler.Models.dll
+C:\Users\Moustafa Eid\Documents\Visual Studio 2010\Projects\Boy Scouts\Boy-Scouts-Scheduler.Models\obj\Debug\Boy-Scouts-Scheduler.Models.pdb

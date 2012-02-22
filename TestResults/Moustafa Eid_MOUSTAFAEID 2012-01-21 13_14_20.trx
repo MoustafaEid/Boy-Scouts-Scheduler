@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="5ea88e1f-430b-4a3d-ab5e-11c7892ed985" name="Moustafa Eid@MOUSTAFAEID 2012-01-21 13:14:20" runUser="MoustafaEid\Moustafa Eid" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestSettings name="Default Test Settings" id="da0086be-b947-43f4-bd80-d1b62904fdf0">
+    <Deployment runDeploymentRoot="Moustafa Eid_MOUSTAFAEID 2012-01-21 13_14_20">
+      <DeploymentItem filename="C:\Users\Moustafa Eid\Desktop\Boy Scouts\Boy-Scouts-Scheduler\bin\Boy-Scouts-Scheduler.dll" />
+    </Deployment>
+    <Execution>
+      <TestTypeSpecific />
+      <AgentRule name="Execution Agents">
+      </AgentRule>
+    </Execution>
+  </TestSettings>
+  <Times creation="2012-01-21T13:14:20.9571744-05:00" queuing="2012-01-21T13:14:31.0033395-05:00" start="2012-01-21T13:14:31.2483535-05:00" finish="2012-01-21T13:14:35.2271759-05:00" />
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" error="0" failed="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+  <TestDefinitions>
+    <UnitTest name="About" storage="c:\users\moustafa eid\desktop\boy scouts\boy-scouts-scheduler.tests\bin\debug\boy-scouts-scheduler.tests.dll" id="ef944df8-6dde-4589-edaf-9dc99040c444">
+      <Execution id="2c432b82-bbaf-4769-ae76-01e466bdcaa8" />
+      <TestMethod codeBase="C:/Users/Moustafa Eid/Desktop/Boy Scouts/Boy-Scouts-Scheduler.Tests/bin/Debug/Boy-Scouts-Scheduler.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="Boy_Scouts_Scheduler.Tests.Controllers.HomeControllerTest, Boy-Scouts-Scheduler.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="About" />
+    </UnitTest>
+    <UnitTest name="Index" storage="c:\users\moustafa eid\desktop\boy scouts\boy-scouts-scheduler.tests\bin\debug\boy-scouts-scheduler.tests.dll" id="0bcc3094-8969-3ebe-3e39-eb7fb05249e7">
+      <Execution id="ecde9197-b4ff-462b-9a0e-5fa8e4b74317" />
+      <TestMethod codeBase="C:/Users/Moustafa Eid/Desktop/Boy Scouts/Boy-Scouts-Scheduler.Tests/bin/Debug/Boy-Scouts-Scheduler.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="Boy_Scouts_Scheduler.Tests.Controllers.HomeControllerTest, Boy-Scouts-Scheduler.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="Index" />
+    </UnitTest>
+    <UnitTest name="Contact" storage="c:\users\moustafa eid\desktop\boy scouts\boy-scouts-scheduler.tests\bin\debug\boy-scouts-scheduler.tests.dll" id="c9e22535-3c19-31f4-8258-a44a93bf4c9e">
+      <Execution id="5acb0de3-33a5-4fe6-9fdc-0470f24ee0ff" />
+      <TestMethod codeBase="C:/Users/Moustafa Eid/Desktop/Boy Scouts/Boy-Scouts-Scheduler.Tests/bin/Debug/Boy-Scouts-Scheduler.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="Boy_Scouts_Scheduler.Tests.Controllers.HomeControllerTest, Boy-Scouts-Scheduler.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="Contact" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="0bcc3094-8969-3ebe-3e39-eb7fb05249e7" executionId="ecde9197-b4ff-462b-9a0e-5fa8e4b74317" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ef944df8-6dde-4589-edaf-9dc99040c444" executionId="2c432b82-bbaf-4769-ae76-01e466bdcaa8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c9e22535-3c19-31f4-8258-a44a93bf4c9e" executionId="5acb0de3-33a5-4fe6-9fdc-0470f24ee0ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="ecde9197-b4ff-462b-9a0e-5fa8e4b74317" testId="0bcc3094-8969-3ebe-3e39-eb7fb05249e7" testName="Index" computerName="MOUSTAFAEID" duration="00:00:00.8038840" startTime="2012-01-21T13:14:31.3463591-05:00" endTime="2012-01-21T13:14:34.7989531-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ecde9197-b4ff-462b-9a0e-5fa8e4b74317">
+    </UnitTestResult>
+    <UnitTestResult executionId="2c432b82-bbaf-4769-ae76-01e466bdcaa8" testId="ef944df8-6dde-4589-edaf-9dc99040c444" testName="About" computerName="MOUSTAFAEID" duration="00:00:00.0422589" startTime="2012-01-21T13:14:34.8469559-05:00" endTime="2012-01-21T13:14:34.8885574-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2c432b82-bbaf-4769-ae76-01e466bdcaa8">
+    </UnitTestResult>
+    <UnitTestResult executionId="5acb0de3-33a5-4fe6-9fdc-0470f24ee0ff" testId="c9e22535-3c19-31f4-8258-a44a93bf4c9e" testName="Contact" computerName="MOUSTAFAEID" duration="00:00:00.0389744" startTime="2012-01-21T13:14:34.9091577-05:00" endTime="2012-01-21T13:14:34.9551603-05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5acb0de3-33a5-4fe6-9fdc-0470f24ee0ff">
+    </UnitTestResult>
+  </Results>
+</TestRun>

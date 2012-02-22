@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
-using System.Windows.Forms;
 
-namespace Boy_Scouts_Scheduling_Algorithm_MD
+namespace Boy_Scouts_Scheduler.Algorithm
 {
     /*
      * MDD 2/02/2012
@@ -80,7 +79,7 @@ namespace Boy_Scouts_Scheduling_Algorithm_MD
         }
     }
 
-    public static class HillClimbingScheduler
+	public static class HillClimbingAlgorithm
     {
         //each group must visit a station between minVisit and maxVisit times
         public struct StationAssignmentRange
@@ -329,153 +328,59 @@ namespace Boy_Scouts_Scheduling_Algorithm_MD
                 }
             }
 
-            StringBuilder messageBoxOutput = new StringBuilder(256);
-            uint numViolatedConstraints = Score.GetNumConstraintsViolated(groupStationVisitRange);
-            messageBoxOutput.Append("Number of constraints violated " + numViolatedConstraints + "\n");
-
 
             /* 
              * Now we have generated a schedule -- go back and fix any violated constraints that we can.
              * Loop through all values in groupStationVisitRange and check that the min value is 0 in
              * all cases -- if the min value is > 0, then a group needs to be assigned to that station
-             * more times.  We need to use for loops, since the collection may be changed as we
-             * find new constraints that are violated.
+             * more times 
             */
-            //List<Group> groupList = new List<Group> (groupStationVisitRange.Keys);
-
-            //for (int groupNum = 0; groupNum < groupList.Count; groupNum++)
+            //foreach (var pair in groupStationVisitRange)
             //{
-            //    Group currentGroup = groupList[groupNum];
-            //    Dictionary<Station, StationAssignmentRange> groupAssignments = groupStationVisitRange[currentGroup];
-            //    List<Station> stationList = new List<Station>(groupAssignments.Keys);
-
-            //    for (int stationNum = 0; stationNum < stationList.Count; stationNum++)
+            //    foreach (var pair1 in pair.Value)
             //    {
-            //        Station currentStation = stationList[stationNum];
-
             //        //if the group is underassigned to a station, pick a random slot where they're
-            //        //assigned to a different station and see if giving them that station won't
-            //        //introduce another violation
-            //        if (groupAssignments[currentStation].minVisits > 0)
+            //        //unassigned and see if giving them that station won't introduce another violation
+            //        if (pair1.Value.minVisits > 0)
             //        {
-            //            messageBoxOutput.Append("Attempting to fix a constraint -- day " + day\n");
-            //            bool constraintFixed = false;
-            //            for (int attempts = 0; attempts < 10 && !constraintFixed; attempts++)
+            //            Group underAssignedGroup = pair.Key;
+            //            int campDayNum = random.Next((int)numCampDays);
+            //            int slotNum = random.Next((int)slotsPerDay[campDayNum]);
+            //            Dictionary<Group, Station> Assignments = generatedSchedule[campDayNum][slotNum];
+
+            //            if (Assignments.ContainsKey(underAssignedGroup) &&
+            //                !Assignments[underAssignedGroup].Equals(pair1.Key))
             //            {
-            //                Group underAssignedGroup = currentGroup;
-            //                Station underAssignedStation = currentStation;
+            //                //foreach group in Assignments
+            //                //if the group is not the underAssignedGroup and their minVisit number < 0 or null
+            //                //and the underAssignedGroup is allowed to be assigned to that station again
+            //                //assign them to underAssignedGroup's current station and assign
+            //                //underAssignedGroup to the other station
 
-            //                int campDayNum = random.Next((int)numCampDays);
-            //                int slotNum = random.Next((int)slotsPerDay[campDayNum]);
-            //                Dictionary<Group, Station> Assignments = generatedSchedule[campDayNum][slotNum];
 
-            //                if (Assignments.ContainsKey(currentGroup) &&
-            //                    !Assignments[currentGroup].Equals(currentStation))
+            //                //for (int lcv = 0; lcv < Assignments.Count; lcv++) //var pair2 in Assignments)
+            //                foreach (var pair2 in Assignments)
             //                {
-            //                    List<Group> assignedGroups = new List<Group>(Assignments.Keys);
+            //                    Dictionary<Group, Station>.KeyCollection assignmentKeys = Assignments.Keys;
+            //                    //Assignments.Intersect(KeyValuePair<Group, Station> 
+            //                    //Assignments.Keys
+            //                    //Station otherGroupStation = Assignments[Assignments.Keys[lcv]];
+            //                    Group otherGroup = pair2.Key;
+            //                    Station otherGroupStation = pair2.Value;
 
-            //                    //foreach group in Assignments
-            //                    //if the group is not the underAssignedGroup and their minVisit number < 0 or null
-            //                    //and the underAssignedGroup is allowed to be assigned to that station again
-            //                    //assign them to underAssignedGroup's current station and assign
-            //                    //underAssignedGroup to the other station
-            //                    for (int assignedGroupNum = 0; assignedGroupNum < assignedGroups.Count; assignedGroupNum++)
+            //                    uint? otherGroupMinVisits =
+            //                        groupStationVisitRange[otherGroup][otherGroupStation].minVisits;
+
+            //                    uint? underAssignedGroupMaxVisits =
+            //                        groupStationVisitRange[underAssignedGroup][otherGroupStation].maxVisits;
+
+            //                    if (otherGroup != underAssignedGroup &&
+            //                        (otherGroupMinVisits < 0 || !otherGroupMinVisits.HasValue) &&
+            //                        (underAssignedGroupMaxVisits > 0 || !underAssignedGroupMaxVisits.HasValue))
             //                    {
-            //                        Group currentAssignedGroup = assignedGroups[assignedGroupNum];
-
-            //                        if (!currentAssignedGroup.Equals(underAssignedGroup))
-            //                        {
-            //                            Station currentAssignedStation = Assignments[currentAssignedGroup];
-
-            //                            uint? otherGroupCurrentStationMinVisits =
-            //                                groupStationVisitRange[currentAssignedGroup][currentAssignedStation].minVisits;
-
-            //                            uint? otherGroupOtherStationMaxVisits =
-            //                                groupStationVisitRange[currentAssignedGroup][underAssignedStation].maxVisits;
-
-            //                            uint? underAssignedGroupOtherStationMaxVisits =
-            //                                groupStationVisitRange[underAssignedGroup][currentAssignedStation].maxVisits;
-
-            //                            bool otherGroupCanSwitchStations =
-            //                                (!otherGroupCurrentStationMinVisits.HasValue ||
-            //                                otherGroupCurrentStationMinVisits < 0) &&
-            //                                (!otherGroupOtherStationMaxVisits.HasValue ||
-            //                                otherGroupOtherStationMaxVisits > 0);
-
-            //                            bool underAssignedGroupCanSwitchStations =
-            //                                !underAssignedGroupOtherStationMaxVisits.HasValue ||
-            //                                underAssignedGroupOtherStationMaxVisits > 0;
-
-            //                            //if the underassigned group is allowed to visit the other station
-            //                            //again and the other group is allowed to vist the underassigned group's
-            //                            //station, then swap assignments and update groupStationVisitRange
-            //                            if (underAssignedGroupCanSwitchStations && otherGroupCanSwitchStations)
-            //                            {
-            //                                Station temp = new Station(
-            //                                    currentAssignedStation.Name,
-            //                                    currentAssignedStation.Capacity,
-            //                                    currentAssignedStation.Availabilities);
-            //                                Assignments[currentAssignedGroup] = Assignments[underAssignedGroup];
-            //                                Assignments[underAssignedGroup] = temp;
-
-
-            //                                //now update the groupStationVisitRange for the underassigned group and other group
-            //                                //u_g_u_s_minVisits = underassigned group underassigned station min visits
-            //                                uint? u_g_u_s_minVisits = groupStationVisitRange[underAssignedGroup][underAssignedStation].minVisits;
-            //                                uint? u_g_u_s_maxVisits = groupStationVisitRange[underAssignedGroup][underAssignedStation].maxVisits;
-            //                                uint? u_g_c_s_minVisits = groupStationVisitRange[underAssignedGroup][currentAssignedStation].minVisits;
-            //                                uint? u_g_c_s_maxVisits = groupStationVisitRange[underAssignedGroup][currentAssignedStation].maxVisits;
-
-            //                                //c_g_c_s_minVisits = current group current stations min visits
-            //                                uint? c_g_u_s_minVisits = groupStationVisitRange[currentAssignedGroup][underAssignedStation].minVisits;
-            //                                uint? c_g_u_s_maxVisits = groupStationVisitRange[currentAssignedGroup][underAssignedStation].maxVisits;
-            //                                uint? c_g_c_s_minVisits = groupStationVisitRange[currentAssignedGroup][currentAssignedStation].minVisits;
-            //                                uint? c_g_c_s_maxVisits = groupStationVisitRange[currentAssignedGroup][currentAssignedStation].maxVisits;
-
-            //                                if (u_g_u_s_minVisits.HasValue)
-            //                                    u_g_u_s_minVisits++;
-
-            //                                if (u_g_u_s_maxVisits.HasValue)
-            //                                    u_g_u_s_maxVisits++;
-
-            //                                if (u_g_c_s_minVisits.HasValue)
-            //                                    u_g_c_s_minVisits--;
-
-            //                                if (u_g_c_s_minVisits.HasValue)
-            //                                    u_g_c_s_minVisits--;
-
-            //                                if (c_g_u_s_minVisits.HasValue)
-            //                                    c_g_u_s_minVisits--;
-
-            //                                if (c_g_u_s_minVisits.HasValue)
-            //                                    c_g_u_s_minVisits--;
-
-            //                                if (c_g_c_s_minVisits.HasValue)
-            //                                    c_g_c_s_minVisits++;
-
-            //                                if (c_g_c_s_minVisits.HasValue)
-            //                                    c_g_c_s_minVisits++;
-
-            //                                groupStationVisitRange[underAssignedGroup].Remove(underAssignedStation);
-            //                                groupStationVisitRange[underAssignedGroup].Add(underAssignedStation,
-            //                                    new StationAssignmentRange(u_g_u_s_minVisits, u_g_u_s_maxVisits));
-
-            //                                groupStationVisitRange[underAssignedGroup].Remove(currentAssignedStation);
-            //                                groupStationVisitRange[underAssignedGroup].Add(currentAssignedStation,
-            //                                    new StationAssignmentRange(u_g_c_s_minVisits, u_g_c_s_maxVisits));
-
-            //                                groupStationVisitRange[currentAssignedGroup].Remove(underAssignedStation);
-            //                                groupStationVisitRange[currentAssignedGroup].Add(underAssignedStation,
-            //                                    new StationAssignmentRange(c_g_u_s_minVisits, c_g_u_s_maxVisits));
-
-            //                                groupStationVisitRange[currentAssignedGroup].Remove(currentAssignedStation);
-            //                                groupStationVisitRange[currentAssignedGroup].Add(currentAssignedStation,
-            //                                    new StationAssignmentRange(c_g_c_s_minVisits, c_g_c_s_maxVisits));
-                                            
-            //                                constraintFixed = true;
-            //                                break;
-            //                            }
-            //                        }
+            //                        Station temp = Assignments[underAssignedGroup];
+            //                        Assignments[underAssignedGroup] = Assignments[otherGroup];
+            //                        Assignments[otherGroup] = temp;
             //                    }
             //                }
             //            }
@@ -484,13 +389,13 @@ namespace Boy_Scouts_Scheduling_Algorithm_MD
             //}
 
             //now we are ready to start hill climbing, so keep track of the top scoring schedule so far
-            //uint score = Score.ScoreSchedule(generatedSchedule, groupCopy, groupStationVisitRange);
-            //MessageBox.Show(score.ToString());
-
-            messageBoxOutput.Append("New number of violated constraints is " + Score.GetNumConstraintsViolated(groupStationVisitRange) + "\n");
-            MessageBox.Show(messageBoxOutput.ToString());
             uint score = Score.ScoreSchedule(generatedSchedule, groupCopy, groupStationVisitRange);
-            //MessageBox.Show(score.ToString());
+            //for (int lcv = 0; lcv < 100; lcv++)
+            //{
+                
+            //    score = Score.ScoreSchedule(generatedSchedule, groupCopy, groupStationVisitRange);
+            //}
+            MessageBox.Show(score.ToString());
             return generatedSchedule;
         }
 
