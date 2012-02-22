@@ -54,8 +54,8 @@
         <div>
             <table>
             @{
-    int numDays = ((Array)ViewBag.TimeSlots).Length;
-    bool timeSlotsRemaining = true;
+                int numDays = ViewBag.TimeSlots.Length;
+                bool timeSlotsRemaining = true;
             }
             @while (timeSlotsRemaining)
             {
@@ -63,10 +63,10 @@
                 <tr>
                 @for (int i = 0; i < numDays; i++)
                 {
-                    var dayEnumerator = (IEnumerator) ViewBag.TimeSlots[i];
+                    IEnumerator<TimeSlot> dayEnumerator = ViewBag.TimeSlots[i];
                     if (dayEnumerator.MoveNext())
                     {
-                        var slot = dayEnumerator.Current as TimeSlot;
+                        TimeSlot slot = dayEnumerator.Current;
                         timeSlotsRemaining = true;
                         <td>
                             <input type="checkbox" name="TimeSlotIDs" value="@slot.ID" id="check-@slot.ID"
