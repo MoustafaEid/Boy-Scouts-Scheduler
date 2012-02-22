@@ -10,11 +10,13 @@ namespace Boy_Scouts_Scheduler.Models
     {
         protected override void Seed(SchedulingContext context)
         {
+            //Seed Group Types to database
             context.GroupTypes.Add(new GroupType { Name = "Tiger" });
             context.GroupTypes.Add(new GroupType { Name = "Wolf" });
             context.GroupTypes.Add(new GroupType { Name = "Bear" });
             context.GroupTypes.Add(new GroupType { Name = "Webelos" });
 
+            //Seed test event to database
             context.Events.Add(new Event
             {
                 Name = "Dev Event",
@@ -23,6 +25,7 @@ namespace Boy_Scouts_Scheduler.Models
             });
             context.SaveChanges();
 
+            //See test TimeSlots to database
             Event primaryEvent = context.Events.First();
             context.TimeSlots.Add(new TimeSlot
             {
@@ -189,7 +192,360 @@ namespace Boy_Scouts_Scheduler.Models
                 Start = new DateTime(2012, 3, 9, 13, 0, 0),
                 End = new DateTime(2012, 3, 9, 14, 0, 0)
             });
+            context.SaveChanges();
 
+            //create ICollection for time slots for each station
+            ICollection<TimeSlot> timeslots = context.TimeSlots.ToList();
+
+            //Seed testing stations to database
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Fishing",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Knots",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Songs & Skits",
+                Description = "",
+                Location = "",
+                Capacity = 1, 
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Wood Projects",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Outdoor Cooking",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Arts & Crafts",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Creeking",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Chess",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Knight Training",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Volleyball",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Flag Football",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Trading Post",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Webelos Craftsman Activity Pin",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Webelos Forester Activity Pin",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Webelos Naturalist Activity Pin",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Webelos Artist Activity Pin",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Webelos Aquanaut Activity Pin",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "BB",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Archery",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Swimming",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Kickball",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.Stations.Add(new Station
+            {
+                Event = primaryEvent,
+                Name = "Leaf Rubbing",
+                Description = "",
+                Location = "",
+                Capacity = 1,
+                AvailableTimeSlots = timeslots
+            });
+            context.SaveChanges();
+
+            ////create ICollection for time slots for each station
+            //ICollection<GroupType> grouptypes = context.GroupTypes.ToArray();
+
+            ////Seed groups
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Tegyr",
+            //    Type = context.GroupTypes.Find("Tiger"),
+            //    Preference1 = context.Stations.Find("Webelos Artist Activity Pin"),
+            //    //Preference2 = null,
+            //    //Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Galahad",
+            //    Type = context.GroupTypes.Find(1),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Gawain",
+            //    Type = context.GroupTypes.Find(1),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Gareth",
+            //    Type = context.GroupTypes.Find(1),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Bors de Ganis",
+            //    Type = context.GroupTypes.Find(1),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Kay",
+            //    Type = context.GroupTypes.Find(2),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Gaheris",
+            //    Type = context.GroupTypes.Find(2),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Percivale",
+            //    Type = context.GroupTypes.Find(2),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Percivale",
+            //    Type = context.GroupTypes.Find(2),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Lionel",
+            //    Type = context.GroupTypes.Find(2),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Tristan",
+            //    Type = context.GroupTypes.Find(3),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Bedivere",
+            //    Type = context.GroupTypes.Find(3),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Dagonet",
+            //    Type = context.GroupTypes.Find(3),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Geriant",
+            //    Type = context.GroupTypes.Find(3),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Lamorak",
+            //    Type = context.GroupTypes.Find(3),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
+            //context.Groups.Add(new Group
+            //{
+            //    Event = primaryEvent,
+            //    Name = "Sir Lancelot",
+            //    Type = context.GroupTypes.Find(3),
+            //    Preference1 = null,
+            //    Preference2 = null,
+            //    Preference3 = null
+            //});
             context.SaveChanges();
         }
     }

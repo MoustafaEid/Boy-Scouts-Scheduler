@@ -12,6 +12,8 @@
     <p>
         If help is needed beyond what is available in the help topics to the right, <br />
         Please feel free to contact the 'Cub Scout Scheduler' developers below. <br />
+        
+        <br />
 
         <div>
         Michael Diekema
@@ -30,14 +32,4 @@
 
 </article>
 
-<aside>
-    <h3>Help Topics</h3>
-        <ul>
-            <li>@Html.ActionLink("Imports", "ImportHelp", "Home")</li>
-            <li>@Html.ActionLink("Time Slots", "TimeSlotHelp", "Home")</li>
-            <li>@Html.ActionLink("Groups", "GroupHelp", "Home")</li>
-            <li>@Html.ActionLink("Stations", "StationHelp", "Home")</li>
-            <li>@Html.ActionLink("Constraints", "ConstraintHelp", "Home")</li>
-            <li>@Html.ActionLink("Schedules", "ScheduleHelp", "Home")</li>
-        </ul>
-</aside>
+<aside>@{ Html.RenderPartial("HelpAside"); }</aside>

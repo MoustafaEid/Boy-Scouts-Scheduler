@@ -11,17 +11,6 @@ namespace Boy_Scouts_Scheduler.Controllers
         public ActionResult Index()
         {
             return View();
-        }
-
-        public ActionResult Help()
-        {
-            return View();
-        }
-
-        public ActionResult Import()
-        {
-            return View();
-        }
-        
+        }   
     }
 }
