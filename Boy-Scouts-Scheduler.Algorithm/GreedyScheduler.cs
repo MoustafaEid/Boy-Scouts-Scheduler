@@ -4,18 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 
-namespace Boy_Scouts_Scheduler.Algorithm
+namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 {
 	public class Group
 	{
+		public int ID;
 		public string Name;
 		public int Rank;
 		public int StationPick1;
 		public int StationPick2;
 		public int StationPick3;
 
-		public Group(string N, int R, int S1 = -1, int S2 = -1, int S3 = -1)
+		public Group(int id, string N, int R, int S1 = -1, int S2 = -1, int S3 = -1)
 		{
+			ID = id;
 			Name = N;
 			Rank = R;
 			StationPick1 = S1;
@@ -38,13 +40,15 @@ namespace Boy_Scouts_Scheduler.Algorithm
 
 	public class Station
 	{
+		public int ID;
 		public string Name;
 		public int Capacity;
 		public List<Availability> Avail;
 		public int totalAvailabltSlots;
 
-		public Station(string N, int C, List<Availability> A)
+		public Station(int id, string N, int C, List<Availability> A)
 		{
+			ID = id;
 			Name = N;
 			Capacity = C;
 			Avail = A;
@@ -83,31 +87,6 @@ namespace Boy_Scouts_Scheduler.Algorithm
 		}
 	}
 
-	public class TimeSlot
-	{
-		public List<Assignment> Assignments;
-
-		public TimeSlot()
-		{
-			Assignments = new List<Assignment>();
-		}
-	}
-
-	public class ScheduleStatus
-	{
-		public List<Group> FreeGroups;
-		public int ConstraintsMet;
-	}
-
-	public class Schedule
-	{
-		public List<TimeSlot> Monday;
-		public List<TimeSlot> Wednesday;
-		public List<TimeSlot> Tuesday;
-		public List<TimeSlot> Thursday;
-		public List<TimeSlot> Friday;
-	}
-
 	public static class GreedyScheduler
 	{
 		// is it okay to get any of the picks, or the first pick is more preferrable?
@@ -133,12 +112,133 @@ namespace Boy_Scouts_Scheduler.Algorithm
 		// station day slot
 		private static int[, ,] StationSlotAssignmentsCounts = new int[MAXN, MAXN, MAXN];
 		private static int[] StationAssignmentsCounts = new int[MAXN];
-		
-		public static Dictionary<int, int>[,] Schedule(List<Group> groups, List<Station> stations, List<Constraint> Constraints, int slotsPerDay)
+
+		private static Dictionary<int, KeyValuePair<int, int>> timeSlotsDaySlotsPairs = new Dictionary<int, KeyValuePair<int, int>>();
+
+		private static void convertTimeSlotsToDaySlots(ICollection<Models.TimeSlot> T)
+		{
+			List<Availability> A = new List<Availability>();
+			int i, j;
+
+			int minDay = 1 << 30;
+
+			foreach (Models.TimeSlot t in T)
+			{
+				int dayNumber = (int)t.Start.DayOfWeek;
+
+				minDay = Math.Min(minDay, dayNumber);
+
+				for (i = 0; i < A.Count; i++)
+				{
+					if (A[i].DayNumber == dayNumber)
+					{
+						A[i].Slots.Add(t.ID);
+						break;
+					}
+				}
+
+				if (i == A.Count)
+					A.Add(new Availability(dayNumber, new List<int>(new int[] { t.ID })));
+			}
+
+			for (i = 0; i < A.Count; i++)
+			{
+				for (j = 0; j < A[i].Slots.Count; j++)
+				{
+					timeSlotsDaySlotsPairs[A[i].Slots[j]] = new KeyValuePair<int, int>(A[i].DayNumber - minDay + 1, j + 1);
+				}
+			}
+		}
+
+		private static KeyValuePair<int, int> timeSlotToDaySlot(Models.TimeSlot T)
+		{
+			return timeSlotsDaySlotsPairs[T.ID];
+		}
+
+		private static List<Availability> timeSlotsToAvailability(ICollection<Models.TimeSlot> T)
+		{
+			List<Availability> ret = new List<Availability>();
+			int i;
+
+			foreach (Models.TimeSlot t in T)
+			{
+				KeyValuePair<int, int> DS = timeSlotToDaySlot(t);
+
+				for (i = 0; i < ret.Count; i++)
+				{
+					if (ret[i].DayNumber == DS.Key)
+					{
+						ret[i].Slots.Add(DS.Value);
+						break;
+					}
+				}
+
+				if (i == ret.Count)
+				{
+					ret.Add(new Availability(DS.Key, new List<int>(new int[] { DS.Value })));
+				}
+			}
+
+			for (i = 0; i < ret.Count; i++)
+			{
+				ret[i].Slots.Sort();
+			}
+
+			return ret;
+		}
+
+		public static List<Models.Activity> getSchedule(List<Models.Group> groups, List<Models.Station> stations, List<Models.SchedulingConstraint> constraints, List<Models.Group> slots)
+		{
+			List<Models.Activity> schedule = new List<Models.Activity>();
+
+			List<Group> G = new List<Group>();
+			List<Station> S = new List<Station>();
+			List<Constraint> C = new List<Constraint>();
+
+			int i;
+
+			foreach (Models.Station s in stations)
+				S.Add(new Station(s.ID, s.Name, s.Capacity, timeSlotsToAvailability(s.AvailableTimeSlots)));
+
+			foreach (Models.Group x in groups)
+			{
+				int p1 = -1, p2 = -2, p3 = -3;
+
+				for (i = 0; i < S.Count; i++)
+				{
+					if (x.Preference1 != null && x.Preference1.ID == S[i].ID) p1 = i;
+					if (x.Preference2 != null && x.Preference2.ID == S[i].ID) p2 = i;
+					if (x.Preference3 != null && x.Preference3.ID == S[i].ID) p3 = i;
+				}
+
+				G.Add(new Group(x.ID, x.Name, x.Type.ID, p1, p2, p3));
+			}
+
+			foreach (Models.SchedulingConstraint c in constraints)
+			{
+				// TODO: group ranks in constraints
+				if (c.Group == null)
+					continue;
+
+				Group g = G[0];
+				Station s = S[0];
+
+				for (i = 0; i < G.Count; i++) if (G[i].ID == c.Group.ID) g = G[i];
+				for (i = 0; i < S.Count; i++) if (S[i].ID == c.Station.ID) s = S[i];
+
+
+				// int? vs int
+				C.Add(new Constraint(g, s, (int)c.MinVisits));
+			}
+
+			return schedule;
+		}
+
+		private static Dictionary<int, int>[,] Schedule(List<Group> groups, List<Station> stations, List<Constraint> Constraints, int slotsPerDay)
 		{
 			// start monday end Friday
 			int dayStart = 1, dayEnd = 5;
-			int Day, Slot, i,j, k;
+			int Day, Slot, i, j, k;
 
 			totalSlotsPerDay = slotsPerDay;
 			AllStations = stations;
@@ -179,7 +279,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
 						{
 							Station curStation = stations[i];
 
-							if (!isStationAvailableAtSlot(curStation, Day, Slot) || StationSlotAssignmentsCounts[i, Day,Slot] >= curStation.Capacity)
+							if (!isStationAvailableAtSlot(curStation, Day, Slot) || StationSlotAssignmentsCounts[i, Day, Slot] >= curStation.Capacity)
 								continue;
 
 							for (j = 0; j < groups.Count; j++)
@@ -213,7 +313,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
 						// Assign the Group to the station
 						GroupStationAssignments[groupSelected, stationSelected]++;
 						// Assign the Group's rank to the station
-						GroupRankStationAssignments[ AllGroups[groupSelected].Rank, stationSelected]++;
+						GroupRankStationAssignments[AllGroups[groupSelected].Rank, stationSelected]++;
 
 						StationSlotAssignmentsCounts[stationSelected, Day, Slot]++;
 						StationAssignmentsCounts[stationSelected]++;
@@ -246,7 +346,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
 
 		private static bool canHappenGroupStationAssignment(int groupID, int stationID)
 		{
-			return GroupStationAssignments[ groupID, stationID ] <= 400;
+			return GroupStationAssignments[groupID, stationID] <= 400;
 		}
 
 		private static bool canHappenGroupRankStationAssignment(int groupRank, int stationID)
@@ -270,7 +370,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
 		private static int score(Dictionary<int, int>[,] masterSchedule, Station S, Group G, int Day, int Slot)
 		{
 			int ret = 0;
-			
+
 			int i, j;
 
 			// check if other constraints will be violated if this assignment happens.
@@ -304,7 +404,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
 			int nNoPicks = 0;
 
 			// Check how many groups get their second pick instead of first, and how many groups aren't getting any picks
-			
+
 			// Copy the total assignment count for stations.
 			int[] StationAssignmentsCountsTemp = (int[])StationAssignmentsCounts.Clone();
 			StationAssignmentsCountsTemp[stationIndex]++;
@@ -313,7 +413,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
 
 			for (i = 0; i < AllGroups.Count; i++)
 			{
-				if( AllGroups[i].StationPick1 == -1 )
+				if (AllGroups[i].StationPick1 == -1)
 					continue;
 
 				stationPick1AvailableSlots = AllGroups[i].StationPick1 == -1 ? 0 : AllStations[AllGroups[i].StationPick1].totalAvailabltSlots - StationAssignmentsCountsTemp[AllGroups[i].StationPick1];
@@ -367,41 +467,6 @@ namespace Boy_Scouts_Scheduler.Algorithm
 			}
 
 			ret *= s.Capacity;
-
-			return ret;
-		}
-
-
-		private static ScheduleStatus getScheduleStatus(Dictionary<int, int>[,] schedule)
-		{
-			ScheduleStatus ret = new ScheduleStatus();
-			ret.FreeGroups = new List<Group>();
-
-			int Day, Slot;
-			int i;
-
-			HashSet<int> groups = new HashSet<int>();
-
-			for (Day = 1; Day <= 5; Day++)
-			{
-				for (Slot = 1; Slot <= totalSlotsPerDay; Slot++)
-				{
-					Dictionary<int, int> D = schedule[Day, Slot];
-
-					foreach (KeyValuePair<int, int> P in D)
-					{
-						groups.Add(P.Key);
-					}
-				}
-			}
-
-			for (i = 0; i < AllGroups.Count; i++)
-			{
-				if (!groups.Contains(i))
-				{
-					ret.FreeGroups.Add(AllGroups[i]);
-				}
-			}
 
 			return ret;
 		}
