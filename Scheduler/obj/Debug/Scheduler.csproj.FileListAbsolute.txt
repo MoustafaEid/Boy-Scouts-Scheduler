@@ -1,5 +1,0 @@
-C:\Users\Moustafa Eid\Desktop\Boy Scouts\Scheduler\bin\Debug\Scheduler.dll
-C:\Users\Moustafa Eid\Desktop\Boy Scouts\Scheduler\bin\Debug\Scheduler.pdb
-C:\Users\Moustafa Eid\Desktop\Boy Scouts\Scheduler\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\Moustafa Eid\Desktop\Boy Scouts\Scheduler\obj\Debug\Scheduler.dll
-C:\Users\Moustafa Eid\Desktop\Boy Scouts\Scheduler\obj\Debug\Scheduler.pdb
