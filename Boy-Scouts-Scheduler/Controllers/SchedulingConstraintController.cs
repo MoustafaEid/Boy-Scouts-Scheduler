@@ -38,7 +38,10 @@ namespace Boy_Scouts_Scheduler.Controllers
             ObjectQuery<SchedulingConstraint> schedulingconstraints = (db as IObjectContextAdapter).ObjectContext.CreateObjectSet<SchedulingConstraint>();
             schedulingconstraints = schedulingconstraints.OrderBy("it." + orderBy + (desc ? " desc" : ""));
 
-            return PartialView(schedulingconstraints.Skip(start).Take(itemsPerPage));
+            return PartialView(schedulingconstraints.Include(c => c.Group)
+                                                    .Include(c => c.GroupType)
+                                                    .Include(c => c.Station)
+                                                    .Skip(start).Take(itemsPerPage));
         }
 
         //
@@ -46,7 +49,11 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult RowData(int id)
         {
-            SchedulingConstraint schedulingconstraint = db.SchedulingConstraints.Find(id);
+            SchedulingConstraint schedulingconstraint = db.SchedulingConstraints
+                                                          .Include(c => c.Group)
+                                                          .Include(c => c.GroupType)
+                                                          .Include(c => c.Station)
+                                                          .Where(c => c.ID == id).Single();
             return PartialView("GridData", new SchedulingConstraint[] { schedulingconstraint });
         }
 

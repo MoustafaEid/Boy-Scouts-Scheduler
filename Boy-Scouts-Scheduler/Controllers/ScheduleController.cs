@@ -17,6 +17,7 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult Generate()
         {
+            List<List<Dictionary<Group, Station>>> generated;
             List<Activity> schedule;
             IEnumerator<Activity> enumerator;
 
@@ -35,10 +36,14 @@ namespace Boy_Scouts_Scheduler.Controllers
             IEnumerable<SchedulingConstraint> constraintData =
                 from item in db.SchedulingConstraints
                 select item;
-                
-           //schedule = Boy-Scouts-Scheduler.Scheduler.Schedule(groupData, stationData, timeslotData, constraintData);
-           //enumerator = schedule.GetEnumerator();
 
+           // call algorithm to generate schedule
+           // generated = Boy-Scouts-Scheduler.Algorithm.GenerateSchedule(groupData, stationData, timeslotData, constraintData);\
+           
+           // convert generated schedule to list of activities
+           // schedule = Boy-Scouts-Scheduler.Alogrithm.ConvertToActivity(generated)
+           
+            //enumerator = schedule.GetEnumerator();
             //while (enumerator.MoveNext())
             //{
             //    db.Activities.Add(enumerator.Current);
