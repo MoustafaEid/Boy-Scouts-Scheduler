@@ -3,10 +3,100 @@
     ViewBag.Title = "Schedule";
 }
 
-<h2>Schedule</h2>
+@section html_head {
+    <link href="@Url.Content("~/Content/jquery.weekcalendar.css")" ~/Content/rel="stylesheet" type="text/css" />
+	<script src="@Url.Content("~/Scripts/date.js")" type="text/javascript"></script>
+	<script src="@Url.Content("~/Scripts/jquery.weekcalendar.js")" type="text/javascript"></script>
+}
 
+<h2>Schedule</h2>
+<p>Select Schedule For:</p>
+<input type="radio" name="scheduleFor" value="group" id="scheduleForGroup" checked="checked" /><label for="scheduleForGroup">Group</label>
+<input type="radio" name="scheduleFor" value="station" id="scheduleForStation" /><label for="scheduleForStation">Station</label>
+@Html.DropDownList("groupDropDown", new SelectList(ViewBag.Groups, "ID", "Name"), "All")
+@Html.DropDownList("stationDropDown", new SelectList(ViewBag.Stations, "ID", "Name"), "All", new { @class = "hide" })
 <div id="AjaxGridContainer">
     <p>
         @Html.ActionLink("Click to Generate Schedule", "Generate", "Schedule")
     </p>
 </div>
+<div id="calendars"></div>
+<script>
+    function convertActivitiesToEvents(activities) {
+        var eventData = { events: [] };
+        for (var activity in activities) {
+            eventData.events.push({
+                id: activities[activity].ID,
+                title: activities[activity].Name,
+                start: new Date(activities[activity].Start),
+                end: new Date(activities[activity].End)
+            });
+        }
+        return eventData;
+    }
+
+    function addCalendar(eventData) {
+        $('<div></div>').appendTo('#calendars').weekCalendar({
+            date: new Date("@ViewBag.StartDate"),
+            timeslotsPerHour: 2,
+            firstDayOfWeek: 1,
+            daysToShow: 5,
+            businessHours: { start: 8, end: 18, limitDisplay: true },
+            height: function (calendar) {
+                //return $(window).height() - $('h1').outerHeight(true);
+                return 500;
+            },
+            eventRender: function (calEvent, event) {
+                if (calEvent.end.getTime() < new Date().getTime()) {
+                    event.css('backgroundColor', '#aaa');
+                    event.find('.time').css({ 'backgroundColor': '#999', 'border': '1px solid #888' });
+                }
+            },
+            data: eventData
+        });
+    }
+
+    $(document).ready(function () {
+        $('input[name="scheduleFor"]').change(function () {
+            if ($(this).val() === 'group') {
+                $('#stationDropDown').addClass('hide');
+                $('#groupDropDown').removeClass('hide').change();
+            } else {
+                $('#groupDropDown').addClass('hide');
+                $('#stationDropDown').removeClass('hide').change();
+            }
+        });
+
+        $('#groupDropDown, #stationDropDown').change(function () {
+            var lookup = {
+                'group': {
+                    'dropDownID': 'groupDropDown',
+                    'actionUrl': '@Html.Raw(Url.Action("GroupActivities"))'
+                },
+                'station': {
+                    'dropDownID': 'stationDropDown',
+                    'actionUrl': '@Html.Raw(Url.Action("StationActivities"))'
+                }
+            };
+            var dropDownType = this.id === 'groupDropDown' ? 'group' : 'station';
+            if ($(this).val()) {
+                $.post(lookup[dropDownType].actionUrl, { ID: $(this).val() })
+                    .done(function (data) {
+                        $('#calendars').children().remove();
+                        addCalendar(convertActivitiesToEvents(data));
+                    });
+            } else {
+                $('#calendars').children().remove();
+                $('#' + lookup[dropDownType].dropDownID + ' option:gt(0)').each(function () {
+                    var name = $(this).text();
+                    $.post(lookup[dropDownType].actionUrl, { ID: $(this).val() })
+                        .done(function (data) {
+                            $('#calendars').append('<h2>' + name + '</h2>');
+                            addCalendar(convertActivitiesToEvents(data));
+                        });
+                });
+            }
+        });
+        $('#groupDropDown').change();
+    });
+</script>
