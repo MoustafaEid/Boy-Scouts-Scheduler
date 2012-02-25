@@ -17,7 +17,7 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult Generate()
         {
-            List<Activity> schedule;
+			IEnumerable<Activity> schedule;
             IEnumerator<Activity> enumerator;
 
             IEnumerable<Group> groupData = 

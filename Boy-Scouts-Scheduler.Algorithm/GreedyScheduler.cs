@@ -115,7 +115,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 		private static Dictionary<int, KeyValuePair<int, int>> timeSlotsDaySlotsPairs = new Dictionary<int, KeyValuePair<int, int>>();
 
-		private static void convertTimeSlotsToDaySlots(ICollection<Models.TimeSlot> T)
+		private static void convertTimeSlotsToDaySlots(IEnumerable<Models.TimeSlot> T)
 		{
 			List<Availability> A = new List<Availability>();
 			int i, j;
@@ -143,6 +143,8 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			for (i = 0; i < A.Count; i++)
 			{
+				totalSlotsPerDay = Math.Max(totalSlotsPerDay, A[i].Slots.Count);
+
 				for (j = 0; j < A[i].Slots.Count; j++)
 				{
 					timeSlotsDaySlotsPairs[A[i].Slots[j]] = new KeyValuePair<int, int>(A[i].DayNumber - minDay + 1, j + 1);
@@ -187,15 +189,17 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			return ret;
 		}
 
-		public static List<Models.Activity> getSchedule(List<Models.Group> groups, List<Models.Station> stations, List<Models.SchedulingConstraint> constraints, List<Models.Group> slots)
+		public static IEnumerable<Models.Activity> getSchedule(IEnumerable<Models.Group> groups, IEnumerable<Models.Station> stations, IEnumerable<Models.SchedulingConstraint> constraints, IEnumerable<Models.TimeSlot> slots)
 		{
-			List<Models.Activity> schedule = new List<Models.Activity>();
+			IEnumerable<Models.Activity> schedule = new List<Models.Activity>();
 
 			List<Group> G = new List<Group>();
 			List<Station> S = new List<Station>();
 			List<Constraint> C = new List<Constraint>();
 
 			int i;
+
+			convertTimeSlotsToDaySlots(slots);
 
 			foreach (Models.Station s in stations)
 				S.Add(new Station(s.ID, s.Name, s.Capacity, timeSlotsToAvailability(s.AvailableTimeSlots)));
@@ -231,20 +235,20 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 				C.Add(new Constraint(g, s, (int)c.MinVisits));
 			}
 
+			Dictionary<int, int>[,] masterSchedule = Schedule(G, S, C);
 			return schedule;
 		}
 
-		private static Dictionary<int, int>[,] Schedule(List<Group> groups, List<Station> stations, List<Constraint> Constraints, int slotsPerDay)
+		private static Dictionary<int, int>[,] Schedule(List<Group> groups, List<Station> stations, List<Constraint> Constraints)
 		{
 			// start monday end Friday
 			int dayStart = 1, dayEnd = 5;
 			int Day, Slot, i, j, k;
 
-			totalSlotsPerDay = slotsPerDay;
 			AllStations = stations;
 			AllGroups = groups;
 			AllConstraints = Constraints;
-
+			
 			// Schedule
 			Dictionary<int, int>[,] masterSchedule = new Dictionary<int, int>[10, 20];
 
@@ -259,9 +263,10 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 					ConstraintMet[i] = false;
 				}
 
+
 			for (Day = dayStart; Day <= dayEnd; Day++)
 			{
-				for (Slot = 1; Slot <= slotsPerDay; Slot++)
+				for (Slot = 1; Slot <= totalSlotsPerDay; Slot++)
 				{
 					masterSchedule[Day, Slot] = new Dictionary<int, int>();
 
