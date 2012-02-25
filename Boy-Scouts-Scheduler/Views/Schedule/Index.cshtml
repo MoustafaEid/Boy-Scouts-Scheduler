@@ -17,7 +17,7 @@
 @Html.DropDownList("stationDropDown", new SelectList(ViewBag.Stations, "ID", "Name"), "All", new { @class = "hide" })
 <div id="AjaxGridContainer">
     <p>
-        @Html.ActionLink("Click to Generate Schedule", "Generate", "Schedule")
+            @Html.ActionLink("Click to Generate Schedule", "Generate", "Schedule", new { onclick = "javascript:$(this).addClass('hide')" })
     </p>
 </div>
 <div id="calendars"></div>

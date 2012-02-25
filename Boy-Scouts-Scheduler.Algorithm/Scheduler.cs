@@ -10,19 +10,19 @@ namespace Boy_Scouts_Scheduler.Algorithm
 	{
         public static IEnumerable<Models.Activity> Schedule(IEnumerable<Models.Group> groups, IEnumerable<Models.Station> stations, IEnumerable<Models.SchedulingConstraint> constraints, IEnumerable<Models.TimeSlot> slots)
 		{
-			IEnumerable<Models.Activity> Greedy = GreedyAlgorithm.GreedyScheduler.getSchedule(groups, stations, constraints, slots);
-			/*IEnumerable<Models.Activity> HillClimbing = HillClimbingAlgorithm.GenerateSchedule(groups, stations, constraints, slots);
+            //IEnumerable<Models.Activity> Greedy = GreedyAlgorithm.GreedyScheduler.getSchedule(groups, stations, constraints, slots);
+            IEnumerable<Models.Activity> HillClimbing = HillClimbingAlgorithm.GenerateSchedule(groups, stations, constraints, slots);
 
-			// compare scores
+            // compare scores
 
-			int GreedyScore = 0;
-			int HillClimbingScore = 0;
+            //int GreedyScore = 0;
+            //int HillClimbingScore = 0;
 
-			if (GreedyScore > HillClimbingScore)
-				return Greedy;
+            //if (GreedyScore > HillClimbingScore)
+            //    return Greedy;
 
-			return HillClimbing;*/
-			return Greedy;
+            return HillClimbing;
+			//return Greedy;
 		}
 	}
 }

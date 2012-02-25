@@ -571,38 +571,38 @@ namespace Boy_Scouts_Scheduler.Models
             });
             context.SaveChanges();
 
-            // Seed Activities
-            context.Activities.Add(new Activity
-            {
-                Station = context.Stations.Where(s => s.ID == 1).Single(),
-                Group = context.Groups.Where(g => g.ID == 1).Single(),
-                TimeSlot = context.TimeSlots.Where(t => t.ID == 1).Single()
-            });
-            context.Activities.Add(new Activity
-            {
-                Station = context.Stations.Where(s => s.ID == 2).Single(),
-                Group = context.Groups.Where(g => g.ID == 2).Single(),
-                TimeSlot = context.TimeSlots.Where(t => t.ID == 2).Single()
-            });
-            context.Activities.Add(new Activity
-            {
-                Station = context.Stations.Where(s => s.ID == 3).Single(),
-                Group = context.Groups.Where(g => g.ID == 3).Single(),
-                TimeSlot = context.TimeSlots.Where(t => t.ID == 3).Single()
-            });
-            context.Activities.Add(new Activity
-            {
-                Station = context.Stations.Where(s => s.ID == 4).Single(),
-                Group = context.Groups.Where(g => g.ID == 4).Single(),
-                TimeSlot = context.TimeSlots.Where(t => t.ID == 4).Single()
-            });
-            context.Activities.Add(new Activity
-            {
-                Station = context.Stations.Where(s => s.ID == 5).Single(),
-                Group = context.Groups.Where(g => g.ID == 5).Single(),
-                TimeSlot = context.TimeSlots.Where(t => t.ID == 5).Single()
-            });
-            context.SaveChanges();
+            //// Seed Activities
+            //context.Activities.Add(new Activity
+            //{
+            //    Station = context.Stations.Where(s => s.ID == 1).Single(),
+            //    Group = context.Groups.Where(g => g.ID == 1).Single(),
+            //    TimeSlot = context.TimeSlots.Where(t => t.ID == 1).Single()
+            //});
+            //context.Activities.Add(new Activity
+            //{
+            //    Station = context.Stations.Where(s => s.ID == 2).Single(),
+            //    Group = context.Groups.Where(g => g.ID == 2).Single(),
+            //    TimeSlot = context.TimeSlots.Where(t => t.ID == 2).Single()
+            //});
+            //context.Activities.Add(new Activity
+            //{
+            //    Station = context.Stations.Where(s => s.ID == 3).Single(),
+            //    Group = context.Groups.Where(g => g.ID == 3).Single(),
+            //    TimeSlot = context.TimeSlots.Where(t => t.ID == 3).Single()
+            //});
+            //context.Activities.Add(new Activity
+            //{
+            //    Station = context.Stations.Where(s => s.ID == 4).Single(),
+            //    Group = context.Groups.Where(g => g.ID == 4).Single(),
+            //    TimeSlot = context.TimeSlots.Where(t => t.ID == 4).Single()
+            //});
+            //context.Activities.Add(new Activity
+            //{
+            //    Station = context.Stations.Where(s => s.ID == 5).Single(),
+            //    Group = context.Groups.Where(g => g.ID == 5).Single(),
+            //    TimeSlot = context.TimeSlots.Where(t => t.ID == 5).Single()
+            //});
+            //context.SaveChanges();
 
         }
     }

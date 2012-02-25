@@ -17,6 +17,8 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult Generate()
         {
+            db.Database.SqlQuery<object>("TRUNCATE TABLE [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities]").ToList();
+
 			IEnumerable<Activity> schedule;
             IEnumerator<Activity> enumerator;
 
@@ -49,9 +51,11 @@ namespace Boy_Scouts_Scheduler.Controllers
                    TimeSlot = enumerator.Current.TimeSlot,
                    Station = enumerator.Current.Station
                });
+
+               db.SaveChanges();
            }
 
-           return View(); //ScheduleView(schedule);
+           return RedirectToAction("Index");
         }
 
         //
