@@ -8,9 +8,9 @@ namespace Boy_Scouts_Scheduler.Algorithm
 {
 	class Scheduler
 	{
-		public static Dictionary<int, int>[,] Schedule(List<Group> groups, List<Station> stations, List<Constraint> Constraints, int slotsPerDay)
+		public static List<Models.Activity> Schedule(List<Models.Group> groups, List<Models.Station> stations, List<Models.SchedulingConstraint> constraints, List<Models.Group> slots)
 		{
-			return GreedyScheduler.Schedule(groups, stations, Constraints, slotsPerDay);
+			return GreedyAlgorithm.GreedyScheduler.getSchedule(groups, stations, constraints, slots);
 		}
 	}
 }

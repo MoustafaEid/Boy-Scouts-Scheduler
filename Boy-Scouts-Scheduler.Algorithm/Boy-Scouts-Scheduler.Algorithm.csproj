@@ -46,6 +46,12 @@
     <Compile Include="Scheduler.cs" />
     <Compile Include="Score.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Boy-Scouts-Scheduler.Models\Boy-Scouts-Scheduler.Models.csproj">
+      <Project>{FF4A2615-765B-4DC3-BFC0-5D20F2EF3D86}</Project>
+      <Name>Boy-Scouts-Scheduler.Models</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -395,7 +395,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
                 
             //    score = Score.ScoreSchedule(generatedSchedule, groupCopy, groupStationVisitRange);
             //}
-            MessageBox.Show(score.ToString());
+            //MessageBox.Show(score.ToString());
             return generatedSchedule;
         }
 
