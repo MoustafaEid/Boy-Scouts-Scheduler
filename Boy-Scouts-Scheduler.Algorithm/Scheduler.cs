@@ -8,7 +8,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
 {
 	class Scheduler
 	{
-		public static List<Models.Activity> Schedule(List<Models.Group> groups, List<Models.Station> stations, List<Models.SchedulingConstraint> constraints, List<Models.Group> slots)
+        public static IEnumerable<Models.Activity> Schedule(IEnumerable<Models.Group> groups, IEnumerable<Models.Station> stations, IEnumerable<Models.SchedulingConstraint> constraints, IEnumerable<Models.TimeSlot> slots)
 		{
 			return GreedyAlgorithm.GreedyScheduler.getSchedule(groups, stations, constraints, slots);
 		}
