@@ -114,6 +114,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 		private static int[] StationAssignmentsCounts = new int[MAXN];
 
 		private static Dictionary<int, KeyValuePair<int, int>> timeSlotsDaySlotsPairs = new Dictionary<int, KeyValuePair<int, int>>();
+		private static int[,] daySlotsTimeSlotsPairs = new int[MAXN, MAXN];
 
 		private static void convertTimeSlotsToDaySlots(IEnumerable<Models.TimeSlot> T)
 		{
@@ -147,7 +148,10 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 				for (j = 0; j < A[i].Slots.Count; j++)
 				{
-					timeSlotsDaySlotsPairs[A[i].Slots[j]] = new KeyValuePair<int, int>(A[i].DayNumber - minDay + 1, j + 1);
+					int D = A[i].DayNumber - minDay + 1;
+					int S = j + 1;
+					timeSlotsDaySlotsPairs[A[i].Slots[j]] = new KeyValuePair<int, int>(D,S);
+					daySlotsTimeSlotsPairs[D, S] = A[i].Slots[j];
 				}
 			}
 		}
@@ -155,6 +159,11 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 		private static KeyValuePair<int, int> timeSlotToDaySlot(Models.TimeSlot T)
 		{
 			return timeSlotsDaySlotsPairs[T.ID];
+		}
+
+		private static int daySlotToTimeSlot(int Day, int Slot)
+		{
+			return daySlotsTimeSlotsPairs[Day, Slot];
 		}
 
 		private static List<Availability> timeSlotsToAvailability(ICollection<Models.TimeSlot> T)
@@ -191,22 +200,26 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 		public static IEnumerable<Models.Activity> getSchedule(IEnumerable<Models.Group> groups, IEnumerable<Models.Station> stations, IEnumerable<Models.SchedulingConstraint> constraints, IEnumerable<Models.TimeSlot> slots)
 		{
-			IEnumerable<Models.Activity> schedule = new List<Models.Activity>();
+			List<Models.Activity> schedule = new List<Models.Activity>();
 
 			List<Group> G = new List<Group>();
 			List<Station> S = new List<Station>();
 			List<Constraint> C = new List<Constraint>();
 
-			int i;
+			int i,j,k;
 
 			convertTimeSlotsToDaySlots(slots);
+
+			List<Models.Group> tmpallGroups = new List<Models.Group>(groups.ToArray());
+			List<Models.Station> tmpallStations = new List<Models.Station>(stations.ToArray());
+			List<Models.TimeSlot> tmpallSlots = new List<Models.TimeSlot>(slots.ToArray());
 
 			foreach (Models.Station s in stations)
 				S.Add(new Station(s.ID, s.Name, s.Capacity, timeSlotsToAvailability(s.AvailableTimeSlots)));
 
 			foreach (Models.Group x in groups)
 			{
-				int p1 = -1, p2 = -2, p3 = -3;
+				int p1 = -1, p2 = -1, p3 = -1;
 
 				for (i = 0; i < S.Count; i++)
 				{
@@ -236,6 +249,32 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			}
 
 			Dictionary<int, int>[,] masterSchedule = Schedule(G, S, C);
+
+			for (i = 1; i <= 5; i++)
+			{
+				for (j = 1; j <= totalSlotsPerDay; j++)
+				{
+					int slotID = daySlotToTimeSlot(i, j);
+					Models.TimeSlot T = new Models.TimeSlot();
+
+					foreach (Models.TimeSlot t in slots)
+						if (t.ID == slotID)
+							T = t;
+
+					foreach (KeyValuePair<int, int> P in masterSchedule[i, j])
+					{
+						Models.Activity A = new Models.Activity();
+
+						A.Group = tmpallGroups[P.Key];
+						A.Station = tmpallStations[P.Value];
+
+						A.TimeSlot = T;
+
+						schedule.Add(A);
+					}
+				}
+			}
+
 			return schedule;
 		}
 
