@@ -38,7 +38,7 @@ namespace Boy_Scouts_Scheduler.Controllers
                 select item;
 
            // call algorithm to generate schedule
-           schedule = Boy_Scouts_Scheduler.Algorithm.Scheduler.Schedule(groupData, stationData, timeslotData, constraintData);
+           schedule = Boy_Scouts_Scheduler.Algorithm.Scheduler.Schedule(groupData, stationData, constraintData, timeslotData);
 
            enumerator = schedule.GetEnumerator();
            while (enumerator.MoveNext())
