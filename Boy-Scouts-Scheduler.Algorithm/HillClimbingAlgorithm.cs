@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Boy_Scouts_Scheduler.Algorithm
 {
-    public static class HillClimbingAlgorithmModel
+	public static class HillClimbingAlgorithm
     {
         public struct StationAssignmentRange
         {
