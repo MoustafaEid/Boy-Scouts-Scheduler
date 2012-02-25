@@ -43,9 +43,9 @@ namespace Boy_Scouts_Scheduler.Algorithm
             }
         }
 
-        public static IList<Models.Activity> GenerateSchedule
-           (IList<Models.Group> modelGroups, IList<Models.Station> modelStations,
-           IList<Models.SchedulingConstraint> modelConstraints, IList<Models.TimeSlot> modelTimeSlots)
+        public static IEnumerable<Models.Activity> GenerateSchedule
+           (IEnumerable<Models.Group> modelGroups, IEnumerable<Models.Station> modelStations,
+           IEnumerable<Models.SchedulingConstraint> modelConstraints, IEnumerable<Models.TimeSlot> modelTimeSlots)
         {
             Random random = new Random();
 
@@ -223,7 +223,8 @@ namespace Boy_Scouts_Scheduler.Algorithm
         }
 
         private static void initializeGroupStationVisitRange(
-            IList<Models.SchedulingConstraint> constraints, IList<Models.Group> groups, IList<Models.Station> stations,
+            IEnumerable<Models.SchedulingConstraint> constraints, IEnumerable<Models.Group> groups,
+            IEnumerable<Models.Station> stations,
             ref Dictionary<Models.Group, Dictionary<Models.Station, StationAssignmentRange>> groupStationVisitRange)
         {
             //first, initialize the groups so there are no constraints for all days of camp
@@ -257,8 +258,8 @@ namespace Boy_Scouts_Scheduler.Algorithm
             }
         }
 
-        private static void initializeGroupStationAssignments(IList<Models.Group> groups,
-            IList<Models.Station> stations,
+        private static void initializeGroupStationAssignments(IEnumerable<Models.Group> groups,
+            IEnumerable<Models.Station> stations,
             ref Dictionary<Models.Group, Dictionary<Models.Station, int>> groupStationAssignments)
         {
             foreach (Models.Group group in groups)
