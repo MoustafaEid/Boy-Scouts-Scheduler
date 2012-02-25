@@ -65,7 +65,46 @@ namespace Boy_Scouts_Scheduler.Controllers
             ViewBag.OrderBy = orderBy;
             ViewBag.Desc = desc;
 
+            ViewBag.StartDate = db.Events.First().Start; // TODO: Deal with multiple events
+            ViewBag.Groups = db.Groups;
+            ViewBag.Stations = db.Stations;
+
             return View();
+        }
+
+        public JsonResult GroupActivities(int ID)
+        {
+            return Json((from activity in db.Activities
+                        where activity.Group.ID == ID
+                        select new {
+                            ID = activity.ID,
+                            StationName = activity.Station.Name,
+                            Start = activity.TimeSlot.Start,
+                            End = activity.TimeSlot.End
+                        }).AsEnumerable().Select(a => new {
+                            ID = a.ID,
+                            Name = a.StationName,
+                            Start = a.Start.ToString(),
+                            End = a.End.ToString()
+                        }));
+        }
+
+        public JsonResult StationActivities(int ID)
+        {
+            return Json((from activity in db.Activities
+                        where activity.Station.ID == ID
+                        select new
+                        {
+                            ID = activity.ID,
+                            GroupName = activity.Group.Name,
+                            Start = activity.TimeSlot.Start,
+                            End = activity.TimeSlot.End
+                        }).AsEnumerable().Select(a => new {
+                            ID = a.ID,
+                            Name = a.GroupName,
+                            Start = a.Start.ToString(),
+                            End = a.End.ToString()
+                        }));
         }
 
         //
