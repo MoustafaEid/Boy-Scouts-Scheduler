@@ -383,12 +383,11 @@
         $.post('/TimeSlot/Edit', {
             ID: calEvent.id,
             Name: calEvent.title,
-            Start: calEvent.start.toString().substring(0, 24),
-            End: calEvent.end.toString().substring(0, 24)
+            Start: calEvent.start.toISOString(),
+            End: calEvent.end.toISOString()
         })
                 .done(function (data) {
                     calEvent.key = $(data).attr('data-pkey');
-                    $('#AjaxGrid tbody').prepend(data);
                     displayMessage('<strong>Moved Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
                     //console.log('success', data, calEvent, $(data).attr('data-pkey'));
                 })
@@ -427,8 +426,8 @@
             },
             eventNew: function (calEvent, event) {
                 $.post('/TimeSlot/Create', {
-                    Start: calEvent.start.toString().substring(0, 24),
-                    End: calEvent.end.toString().substring(0, 24)
+                    Start: calEvent.start.toISOString(),
+                    End: calEvent.end.toISOString()
                 })
                         .done(function (data) {
                             calEvent.id = $(data).attr('data-pkey');
