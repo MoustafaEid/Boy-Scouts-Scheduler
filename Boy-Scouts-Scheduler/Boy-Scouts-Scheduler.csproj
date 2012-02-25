@@ -217,6 +217,10 @@
     <Content Include="Views\TimeSlot\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Boy-Scouts-Scheduler.Algorithm\Boy-Scouts-Scheduler.Algorithm.csproj">
+      <Project>{DB6585DB-B6EC-4994-99AA-E6D21117B19E}</Project>
+      <Name>Boy-Scouts-Scheduler.Algorithm</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Boy-Scouts-Scheduler.Models\Boy-Scouts-Scheduler.Models.csproj">
       <Project>{FF4A2615-765B-4DC3-BFC0-5D20F2EF3D86}</Project>
       <Name>Boy-Scouts-Scheduler.Models</Name>
