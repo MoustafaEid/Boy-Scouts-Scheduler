@@ -236,16 +236,10 @@
     <Content Include="Views\Import\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Station\Details.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\Station\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Station\Edit.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Station\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Station\GridData.cshtml" />
