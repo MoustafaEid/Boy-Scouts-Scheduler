@@ -77,13 +77,15 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 	{
 		public Group G;
 		public Station S;
-		public int nTimes;
+		public int minVisits;
+		public int maxVisits;
 
-		public Constraint(Group g, Station s, int n)
+		public Constraint(Group g, Station s, int minV, int maxV)
 		{
 			G = g;
 			S = s;
-			nTimes = n;
+			minVisits = minV;
+			maxVisits = maxV;
 		}
 	}
 
@@ -245,7 +247,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 
 				// int? vs int
-				C.Add(new Constraint(g, s, (int)c.MinVisits));
+				C.Add(new Constraint(g, s, (int)c.MinVisits, (int)c.MaxVisits));
 			}
 
 			Dictionary<int, int>[,] masterSchedule = Schedule(G, S, C);
@@ -318,6 +320,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 						int groupSelected = -1;
 						int stationSelected = -1;
 						int maxScore = -1 << 30;
+						int minStationAssignment = 1 << 30;
 
 						for (i = 0; i < stations.Count; i++)
 						{
@@ -337,13 +340,13 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 								int s = score(masterSchedule, curStation, curGroup, Day, Slot);
 
-								if (s > maxScore)
+								if (s > maxScore || s == maxScore && StationAssignmentsCounts[i] < minStationAssignment)
 								{
 									maxScore = s;
 									groupSelected = groupNum;
 									stationSelected = i;
+									minStationAssignment = StationAssignmentsCounts[i];
 								}
-
 							}
 						}
 
@@ -390,7 +393,15 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 		private static bool canHappenGroupStationAssignment(int groupID, int stationID)
 		{
-			return GroupStationAssignments[groupID, stationID] <= 400;
+			int i;
+
+			for (i = 0; i < AllConstraints.Count; i++)
+			{
+				if (AllConstraints[i].G == AllGroups[groupID] && AllConstraints[i].S == AllStations[stationID])
+					return GroupStationAssignments[groupID, stationID] < AllConstraints[i].maxVisits;
+			}
+
+			return GroupStationAssignments[groupID, stationID] <= 2;
 		}
 
 		private static bool canHappenGroupRankStationAssignment(int groupRank, int stationID)
