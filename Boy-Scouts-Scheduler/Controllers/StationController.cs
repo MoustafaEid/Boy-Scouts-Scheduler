@@ -42,15 +42,6 @@ namespace Boy_Scouts_Scheduler.Controllers
         }
 
         //
-        // GET: /Station/Details/5
-
-        public ViewResult Details(int id)
-        {
-            Station station = db.Stations.Find(id);
-            return View(station);
-        }
-
-        //
         // GET: /Station/Create
 
         public ActionResult Create()
@@ -114,24 +105,32 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         //
         // GET: /Station/Delete/5
- 
-        public ActionResult Delete(int id)
+
+        [HttpPost]
+        public void Delete(int id)
         {
-            Station station = db.Stations.Find(id);
-            return View(station);
-        }
-
-        //
-        // POST: /Station/Delete/5
-
-        [HttpPost, ActionName("Delete")]
-        public ActionResult DeleteConfirmed(int id)
-        {            
             Station station = db.Stations.Find(id);
             db.Stations.Remove(station);
             db.SaveChanges();
-            return RedirectToAction("Index");
         }
+
+        //public ActionResult Delete(int id)
+        //{
+        //    Station station = db.Stations.Find(id);
+        //    return View(station);
+        //}
+
+        ////
+        //// POST: /Station/Delete/5
+
+        //[HttpPost, ActionName("Delete")]
+        //public ActionResult DeleteConfirmed(int id)
+        //{            
+        //    Station station = db.Stations.Find(id);
+        //    db.Stations.Remove(station);
+        //    db.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
         
         protected void PrepareTimeSlotCheckBoxes() {
             // TODO: select timeslots only from current event
