@@ -403,8 +403,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Tegyr",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 1).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -412,8 +412,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Galahad",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 2).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -421,8 +421,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Gawain",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 2).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -430,8 +430,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Gareth",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 2).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -439,8 +439,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Bors de Ganis",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 2).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -448,8 +448,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Kay",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 3).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -457,8 +457,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Gaheris",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 3).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -466,8 +466,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Percivale",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 3).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -475,8 +475,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Lionel",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 3).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -484,8 +484,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Tristan",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 4).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -493,8 +493,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Bedivere",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 4).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -502,8 +502,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Dagonet",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 4).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -511,8 +511,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Geriant",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 4).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -520,8 +520,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Lamorak",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 4).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -529,8 +529,8 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Sir Lancelot",
-                Type = context.GroupTypes.First(),
-                Preference1 = context.Stations.First(),
+                Type = context.GroupTypes.Where(t => t.ID == 4).Single(),
+                Preference1 = null,
                 Preference2 = null,
                 Preference3 = null
             });
@@ -553,22 +553,22 @@ namespace Boy_Scouts_Scheduler.Models
                 MinVisits = 1,
                 MaxVisits = 1
             });
-            context.SchedulingConstraints.Add(new SchedulingConstraint
-            {
-                GroupType = context.GroupTypes.Where(t => t.ID == 3).Single(),
-                Group = context.Groups.Where(g => g.ID == 3).Single(),
-                Station = context.Stations.Where(s => s.ID == 3).Single(),
-                MinVisits = 1,
-                MaxVisits = 1
-            });
-            context.SchedulingConstraints.Add(new SchedulingConstraint
-            {
-                GroupType = context.GroupTypes.Where(t => t.ID == 4).Single(),
-                Group = context.Groups.Where(g => g.ID == 4).Single(),
-                Station = context.Stations.Where(s => s.ID == 4).Single(),
-                MinVisits = 1,
-                MaxVisits = 1
-            });
+            //context.SchedulingConstraints.Add(new SchedulingConstraint
+            //{
+            //    GroupType = context.GroupTypes.Where(t => t.ID == 3).Single(),
+            //    Group = context.Groups.Where(g => g.ID == 3).Single(),
+            //    Station = context.Stations.Where(s => s.ID == 3).Single(),
+            //    MinVisits = 1,
+            //    MaxVisits = 1
+            //});
+            //context.SchedulingConstraints.Add(new SchedulingConstraint
+            //{
+            //    GroupType = context.GroupTypes.Where(t => t.ID == 4).Single(),
+            //    Group = context.Groups.Where(g => g.ID == 4).Single(),
+            //    Station = context.Stations.Where(s => s.ID == 4).Single(),
+            //    MinVisits = 1,
+            //    MaxVisits = 1
+            //});
             context.SaveChanges();
 
             //// Seed Activities
@@ -603,7 +603,6 @@ namespace Boy_Scouts_Scheduler.Models
             //    TimeSlot = context.TimeSlots.Where(t => t.ID == 5).Single()
             //});
             //context.SaveChanges();
-
         }
     }
 }

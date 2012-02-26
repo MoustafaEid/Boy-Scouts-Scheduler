@@ -127,8 +127,11 @@ namespace Boy_Scouts_Scheduler.Controllers
         protected PartialViewResult PartialEditView(SchedulingConstraint schedulingconstraint = null)
         {
             ViewBag.GroupTypes = db.GroupTypes.ToList();
+            ViewBag.GroupTypes.Insert(0, new GroupType { ID = -1 }); // Allow null preferences
             ViewBag.Groups = db.Groups.ToList();
+            ViewBag.Groups.Insert(0, new Group { ID = -1 }); // Allow null preferences
             ViewBag.Stations = db.Stations.ToList();
+            ViewBag.Stations.Insert(0, new Station { ID = -1 }); // Allow null preferences
             return PartialView("Edit", schedulingconstraint);
         }
 
