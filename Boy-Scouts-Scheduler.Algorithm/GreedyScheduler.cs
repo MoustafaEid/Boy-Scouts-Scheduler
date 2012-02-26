@@ -321,6 +321,8 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 						int stationSelected = -1;
 						int maxScore = -1 << 30;
 						int minStationAssignment = 1 << 30;
+						int constraintIndex = -1;
+						int s;
 
 						for (i = 0; i < stations.Count; i++)
 						{
@@ -328,6 +330,26 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 							if (!isStationAvailableAtSlot(curStation, Day, Slot) || StationSlotAssignmentsCounts[i, Day, Slot] >= curStation.Capacity)
 								continue;
+
+							// do constraints first
+
+							for (j = 0; j < Constraints.Count; j++)
+							{
+								if (ConstraintMet[j] || Constraints[j].S != curStation)
+									continue;
+
+								groupSelected = getGroupIndex(Constraints[j].G);
+
+								if (isGroupBusy[groupSelected] || !canHappenGroupStationAssignment(groupSelected, i) || !canHappenGroupRankStationAssignment(Constraints[j].G.Rank, i))
+									continue;
+
+								stationSelected = i;
+								constraintIndex = j;
+								break;
+							}
+
+							if (constraintIndex != -1)
+								break;
 
 							for (j = 0; j < groups.Count; j++)
 							{
@@ -338,7 +360,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 								if (isGroupBusy[groupNum] || !canHappenGroupStationAssignment(groupNum, i) || !canHappenGroupRankStationAssignment(curGroup.Rank, i))
 									continue;
 
-								int s = score(masterSchedule, curStation, curGroup, Day, Slot);
+								s = score(masterSchedule, curStation, curGroup, Day, Slot);
 
 								if (s > maxScore || s == maxScore && StationAssignmentsCounts[i] < minStationAssignment)
 								{
@@ -364,6 +386,12 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 						StationSlotAssignmentsCounts[stationSelected, Day, Slot]++;
 						StationAssignmentsCounts[stationSelected]++;
+
+						if (constraintIndex != -1)
+						{
+							if (GroupStationAssignments[groupSelected, stationSelected] == Constraints[constraintIndex].maxVisits)
+								ConstraintMet[constraintIndex] = true;
+						}
 
 						masterSchedule[Day, Slot].Add(groupSelected, stationSelected);
 					}
@@ -415,13 +443,25 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			for (i = 0; i < AllStations.Count; i++)
 			{
-				if (AllStations[i].Name == s.Name)
+				if (AllStations[i].ID == s.ID)
 					return i;
 			}
 
 			return -1;
 		}
 
+		private static int getGroupIndex(Group g)
+		{
+			int i;
+
+			for (i = 0; i < AllGroups.Count; i++)
+			{
+				if (AllStations[i].ID == g.ID)
+					return i;
+			}
+
+			return -1;
+		}
 		private static int score(Dictionary<int, int>[,] masterSchedule, Station S, Group G, int Day, int Slot)
 		{
 			int ret = 0;
