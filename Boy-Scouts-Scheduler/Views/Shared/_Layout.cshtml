@@ -49,8 +49,10 @@
                 </div>
             </div>
         </footer>
+        <!--[if lte IE 8]>
         <script>
-            $('#AjaxGrid tbody tr:nth-child(odd)').css('background-color', '#D3D3D3').css('color', 'black');
+            setInterval(function () { $('#AjaxGrid tbody tr:nth-child(odd)').css('background-color', '#D3D3D3').css('color', 'black'); }, 10);
         </script>
+        <![endif]-->
     </body>
 </html>
