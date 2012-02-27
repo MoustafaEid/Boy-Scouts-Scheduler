@@ -2,6 +2,10 @@
     display: none;
 }
 
+#AjaxGrid tbody tr:nth-child(odd) {
+	background-color: #D3D3D3; color: black;
+}
+
 /********************
 * Generated Styles  *
 ********************/

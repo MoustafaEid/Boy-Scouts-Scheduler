@@ -19,9 +19,6 @@
                     <p class="site-title">@Html.ActionLink("Cub Scouts Scheduler", "Index", "Home")</p>
                 </div>
                 <div>
-                   <!-- <section id="login">
-                        @Html.Partial("_LogOnPartial")
-                    </section>-->
                     <nav>
                         <ul id="menu">
                             <li>@Html.ActionLink("Home", "Index", "Home")</li>
@@ -52,5 +49,8 @@
                 </div>
             </div>
         </footer>
+        <script>
+            $('#AjaxGrid tbody tr:nth-child(odd)').css('background-color', '#D3D3D3').css('color', 'black');
+        </script>
     </body>
 </html>

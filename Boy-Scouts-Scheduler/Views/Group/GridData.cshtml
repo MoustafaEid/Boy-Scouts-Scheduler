@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Boy_Scouts_Scheduler.Models.Group>
 
-@foreach (var item in Model) {
+@foreach (var item in Model)
+{    
     <tr data-pkey="@item.ID">
         <td>
             @Html.DisplayFor(modelItem => item.Name)
@@ -29,3 +30,4 @@
         </td>
     </tr>
 }
+        
