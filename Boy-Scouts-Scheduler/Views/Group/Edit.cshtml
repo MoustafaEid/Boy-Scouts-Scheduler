@@ -24,6 +24,14 @@
         @Html.ValidationMessageFor(model => model.Preference3.Name)
     </td>
     <td>
+        @Html.DropDownListFor(model => model.Preference4.ID, new SelectList(ViewBag.Stations, "ID", "Name")) 
+        @Html.ValidationMessageFor(model => model.Preference4.Name)
+    </td>
+     <td>
+        @Html.DropDownListFor(model => model.Preference5.ID, new SelectList(ViewBag.Stations, "ID", "Name")) 
+        @Html.ValidationMessageFor(model => model.Preference5.Name)
+    </td>
+    <td>
 @if (ViewContext.RouteData.Values["Action"].ToString() == "Edit")
 {
         <button class="editRow">Save</button><button class="cancelEditRow">Cancel</button>
