@@ -16,13 +16,12 @@
         <header>
             <div class="content-wrapper">
                 <div>
-                    <p class="site-title">@Html.ActionLink("Cub Scouts Scheduler", "Index", "Home")</p>
+                    <p class="site-title"><img src="@Url.Content("~/images/cubscout.gif")" alt="ASP.NET" />@Html.ActionLink("Cub Scouts Scheduler", "Index", "Home")</p>
                 </div>
                 <div>
                     <nav>
                         <ul id="menu">
                             <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                            <!--<li>@Html.ActionLink("Import", "Index", "Import")</li>-->
                             <li>@Html.ActionLink("Time Slots", "Index", "TimeSlot")</li>
                             <li>@Html.ActionLink("Stations", "Index", "Station")</li>
                             <li>@Html.ActionLink("Groups", "Index", "Group")</li>

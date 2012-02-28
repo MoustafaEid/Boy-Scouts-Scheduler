@@ -140,6 +140,11 @@
     <Content Include="Content\themes\base\jquery.ui.tabs.css" />
     <Content Include="Content\themes\base\jquery.ui.theme.css" />
     <Content Include="Global.asax" />
+    <Content Include="Images\Archer.jpg" />
+    <Content Include="Images\cubscout.gif" />
+    <Content Include="Images\cubs_org_back.png" />
+    <Content Include="Images\cub_at_bat_color.jpg" />
+    <Content Include="Images\cub_happy_color.jpg" />
     <Content Include="Scripts\date.js" />
     <Content Include="Scripts\jquery-1.6.2-vsdoc.js" />
     <Content Include="Scripts\jquery-1.6.2.js" />
