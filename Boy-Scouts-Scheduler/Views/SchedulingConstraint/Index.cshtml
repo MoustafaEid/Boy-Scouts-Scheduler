@@ -188,7 +188,7 @@
 
         function makeRowEditable(row) {
             $.get('@Html.Raw(Url.Action("Edit", new { id = "__ID__" }))'.replace(/__ID__/, row.data('pkey')), function(editableRow) {
-                row.replaceWith(editableRow);
+                disableGroupTypeSelectList(row.replaceWith(editableRow));
             });
             setUnloadWarning();
         }
@@ -257,6 +257,14 @@
                 unloadWarningSet = false;
                 $(window).unbind('beforeunload');
             }
+        }
+
+        function disableGroupTypeSelectList(row) {
+                if (row.find('#Group_ID').val() != '-1') {
+                    row.find('#GroupType_ID').val('').attr('disabled', 'disabled');
+                } else {
+                    row.find('#GroupType_ID').removeAttr('disabled');
+                }
         }
 
         $(function () {
@@ -354,10 +362,12 @@
                     clearUnloadWarning();
                 }); 
             });
-
             gridContext.delegate('.deleteRow', 'click', function(e) {
                 deleteRow($(this).parents('tr').eq(0));
                 e.preventDefault();
+            });
+            gridContext.delegate('#Group_ID', 'change', function() {
+                disableGroupTypeSelectList($(this).parents('tr'));
             });
         });
     })(jQuery);

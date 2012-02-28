@@ -74,9 +74,9 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             if (ModelState.IsValid)
             {
-                schedulingconstraint.Group = db.Groups.Find(schedulingconstraint.Group.ID);
-                schedulingconstraint.GroupType = db.GroupTypes.Find(schedulingconstraint.GroupType.ID);
-                schedulingconstraint.Station = db.Stations.Find(schedulingconstraint.Station.ID);
+                schedulingconstraint.Group = db.Groups.Find(schedulingconstraint.Group != null ? schedulingconstraint.Group.ID : -1);
+                schedulingconstraint.GroupType = db.GroupTypes.Find(schedulingconstraint.GroupType != null ? schedulingconstraint.GroupType.ID : -1);
+                schedulingconstraint.Station = db.Stations.Find(schedulingconstraint.Station != null ? schedulingconstraint.Station.ID : -1);
                 db.SchedulingConstraints.Add(schedulingconstraint);
                 db.SaveChanges();
                 return PartialView("GridData", new SchedulingConstraint[] { schedulingconstraint });
@@ -102,9 +102,9 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             if (ModelState.IsValid)
             {
-                schedulingconstraint.Group = db.Groups.Find(schedulingconstraint.Group.ID);
-                schedulingconstraint.GroupType = db.GroupTypes.Find(schedulingconstraint.GroupType.ID);
-                schedulingconstraint.Station = db.Stations.Find(schedulingconstraint.Station.ID);
+                schedulingconstraint.Group = db.Groups.Find(schedulingconstraint.Group != null ? schedulingconstraint.Group.ID : -1);
+                schedulingconstraint.GroupType = db.GroupTypes.Find(schedulingconstraint.GroupType != null ? schedulingconstraint.GroupType.ID : -1);
+                schedulingconstraint.Station = db.Stations.Find(schedulingconstraint.Station != null ? schedulingconstraint.Station.ID : -1);
                 db.Entry(schedulingconstraint).State = EntityState.Modified;
                 db.SaveChanges();
                 return PartialView("GridData", new SchedulingConstraint[] { schedulingconstraint });

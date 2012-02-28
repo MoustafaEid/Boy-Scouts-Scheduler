@@ -4,7 +4,7 @@
     @:data-pkey="@Model.ID"
 }>
     <td>
-        @Html.DropDownListFor(model => model.Group.ID, new SelectList(ViewBag.Groups, "ID", "Name"))
+        @Html.DropDownListFor(model => model.Group.ID, new SelectList(ViewBag.Groups, "ID", "Name"), "All")
         @Html.ValidationMessageFor(model => model.Group.Name)
     </td>
     <td>
