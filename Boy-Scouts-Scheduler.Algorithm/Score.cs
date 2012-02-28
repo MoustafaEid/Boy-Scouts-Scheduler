@@ -5,46 +5,39 @@ using System.Text;
 
 namespace Boy_Scouts_Scheduler.Algorithm
 {
-    //this is a utility class that scores the generated schedules based on certain criteria
     public static class Score
     {
         public static uint ScoreSchedule(
-            List<List<Dictionary<Group, Station>>> schedule, IList<Group> groups,
-			Dictionary<Group, Dictionary<Station, HillClimbingAlgorithm.StationAssignmentRange>> groupStationVisitRange)
+           IEnumerable<Models.Activity> schedule, IEnumerable<Models.Group> groups,
+           IEnumerable<Models.Station> stations, IEnumerable<Models.SchedulingConstraint> constraints,
+           IEnumerable<Models.TimeSlot> timeSlots)
         {
-            return ScoreTopPicks(schedule, groups) - (GetNumConstraintsViolated(groupStationVisitRange) * 10);
+            return ScoreTopPicks(schedule, groups) - (GetNumConstraintsViolated(schedule, constraints) * 20);
         }
 
-        private static uint ScoreTopPicks(List<List<Dictionary<Group, Station>>> schedule , IList<Group> groups)
+        public static uint ScoreTopPicks(IEnumerable<Models.Activity> schedule, IEnumerable<Models.Group> groups)
         {
-            uint[] scores = new uint[5] { 20, 7, 4, 2, 1 };
+            uint[] scores = new uint[3] { 20, 7, 4 };
             uint score = 0;
-            Station assignedStation;
 
-            //groups get a score based on which of their top picks get assigned to them
-            foreach (var day in schedule)
+            foreach (Models.Group group in groups)
             {
-                foreach (var stationNum in day)
+                for (int lcv = 0; lcv < 3; lcv++)
                 {
-                    foreach (var assignment in stationNum)
+                    Models.Station preference = new Models.Station();
+                    if (lcv == 0)
+                        preference = group.Preference1;
+                    else if (lcv == 1)
+                        preference = group.Preference2;
+                    else if (lcv == 2)
+                        preference = group.Preference3;
+
+                    foreach (Models.Activity activity in schedule)
                     {
-                        //for each assignment in the master schedule, see what group was assigned
-                        //and check if their assigned station was listed in their top picks
-                        for (int groupNum = 0; groupNum < groups.Count; groupNum++)
+                        if (activity.Group == group && activity.Station == preference)
                         {
-                            Group group = groups[groupNum];
-                            if (assignment.Key.Name == group.Name)
-                            {
-                                assignedStation = assignment.Value;
-                                for (int topPickNum = 0; topPickNum < group.TopStationPicks.Count; topPickNum++)
-                                {
-                                    if (group.TopStationPicks[topPickNum] == assignedStation)
-                                    {
-                                        group.TopStationPicks[topPickNum] = null;
-                                        score += scores[topPickNum];
-                                    }
-                                }
-                            }
+                            score += scores[lcv];
+                            break;
                         }
                     }
                 }
@@ -59,26 +52,54 @@ namespace Boy_Scouts_Scheduler.Algorithm
          * to a station twice, then the penalty is much greater than if they were
          * underassigned to that station only once
          */
-        private static uint GetNumConstraintsViolated(Dictionary<Group,
-			Dictionary<Station, HillClimbingAlgorithm.StationAssignmentRange>> groupStationVisitRange)
+        public static uint GetNumConstraintsViolated(IEnumerable<Models.Activity> schedule,
+            IEnumerable<Models.SchedulingConstraint> constraints)
         {
-            uint[] penalties = new uint[5] {0,1,3,6,10};
-            uint score = 0;
-            foreach (var pair in groupStationVisitRange)
-                foreach (var pair1 in pair.Value)
-                    if (pair1.Value.minVisits.HasValue)
-                        score += penalties[(int)pair1.Value.minVisits];
-            return score;
+            uint[] penalties = new uint[5] { 0, 1, 3, 6, 10 };
+            uint numViolatedConstraints = 0;
+
+            foreach (Models.SchedulingConstraint constraint in constraints)
+            {
+                int? minVisits = constraint.MinVisits;
+                int? maxVisits = constraint.MaxVisits;
+                foreach (Models.Activity activity in schedule)
+                {
+                    bool constraintAppliesToGroup =
+                        (constraint.Group == null && constraint.GroupType == null) ||
+                        (constraint.Group == null && constraint.GroupType == activity.Group.Type) ||
+                        (constraint.Group != null && constraint.Group == activity.Group);
+
+                    bool isCorrectStation = constraint.Station == activity.Station;
+
+                    if (constraintAppliesToGroup && isCorrectStation)
+                    {
+                        if (minVisits.HasValue)
+                            minVisits--;
+                        if (maxVisits.HasValue)
+                            maxVisits--;
+                    }
+                }
+                if (minVisits > 0 || maxVisits < 0)
+                    numViolatedConstraints++;
+
+            }
+            return numViolatedConstraints;
         }
 
-        private static uint GetDistanceScore(List<List<Dictionary<Group, Station>>> schedule, IList<Group> groups)
+        public static int getNumConstraintsViolated(
+            Dictionary<Models.Group, Dictionary<Models.Station,
+            HillClimbingAlgorithm.StationAssignmentRange>> groupStationVisitRange)
         {
-            return 0;
-        }
-
-        static uint ScoreDistances()
-        {
-            return 0;
+            int numConstraintsViolated = 0;
+            foreach (var group in groupStationVisitRange)
+            {
+                foreach (var station in group.Value)
+                {
+                    if (station.Value.minVisits > 0 || station.Value.maxVisits < 0)
+                        numConstraintsViolated++;
+                }
+            }
+            return numConstraintsViolated;
         }
     }
 }
