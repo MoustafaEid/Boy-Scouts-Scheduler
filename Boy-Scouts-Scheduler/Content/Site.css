@@ -292,6 +292,11 @@ aside {
     font-weight: 700;
 }
 
+.editor-custom label
+{
+    display: inline;
+}
+
 /* login page */ 
 #loginForm {
     border-right: solid 2px #c8c8c8;

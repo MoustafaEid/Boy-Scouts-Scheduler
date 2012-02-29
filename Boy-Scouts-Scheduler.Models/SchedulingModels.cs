@@ -61,6 +61,7 @@ namespace Boy_Scouts_Scheduler.Models
         public string Location { get; set; }
         public int Capacity { get; set; }
         public string Category { get; set; }
+        public bool ActivityPin { get; set; }
         public virtual Event Event { get; set; }
         public virtual ICollection<TimeSlot> AvailableTimeSlots { get; set; } // Should null mean all time slots or none?
     }

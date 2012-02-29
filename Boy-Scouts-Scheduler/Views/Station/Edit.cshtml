@@ -59,6 +59,17 @@
             @Html.ValidationMessageFor(model => model.Category)
         </div>
 
+        <div class="editor-label editor-field editor-custom">
+            @Html.Label("Activity Pin")    @Html.CheckBoxFor(model => model.ActivityPin)
+            @Html.ValidationMessageFor(model => model.ActivityPin)
+        </div>
+
+        <br />
+        <br />
+
+        <div class="editor-label">
+            @Html.Label("Available Time Slots") 
+        </div>
         <div>
             <table>
             @{

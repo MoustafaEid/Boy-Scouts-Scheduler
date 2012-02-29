@@ -17,6 +17,9 @@
         <td>
             @Html.DisplayFor(modelItem => item.Category)
         </td>
+       <td>
+            @Html.DisplayFor(modelItem => item.ActivityPin)
+        </td>
         <td class="rowControl hidden">
             @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
             <a href="#deleteRow" class="deleteRow">Delete</a>

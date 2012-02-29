@@ -91,6 +91,11 @@
                     <a href="@Url.RouteUrl(new { orderBy = "Category", desc = true })" class="uparrow">&uarr;</a>
                     <a href="@Url.RouteUrl(new { orderBy = "Category" })" class="downarrow">&darr;</a>
                 </th>
+                <th data-column-name="Activity Pin">
+                    <span class="reorder">@Html.DisplayNameFor(model => model.ActivityPin)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "ActivityPin", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "ActivityPin" })" class="downarrow">&darr;</a>
+                </th>
                 <th class="hidden"></th>
             </tr>
         </thead>
