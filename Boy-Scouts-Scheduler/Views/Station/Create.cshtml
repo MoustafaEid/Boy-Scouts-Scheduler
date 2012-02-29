@@ -48,6 +48,16 @@
             @Html.EditorFor(model => model.Capacity)
             @Html.ValidationMessageFor(model => model.Capacity)
         </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Category)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Category)
+            @Html.ValidationMessageFor(model => model.Category)
+        </div>
+        
+
         <div>
             <table>
             @{

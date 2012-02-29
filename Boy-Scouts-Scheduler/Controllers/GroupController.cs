@@ -56,7 +56,6 @@ namespace Boy_Scouts_Scheduler.Controllers
         public ActionResult Create()
         {
             return PartialEditView();
-
         }
 
         //

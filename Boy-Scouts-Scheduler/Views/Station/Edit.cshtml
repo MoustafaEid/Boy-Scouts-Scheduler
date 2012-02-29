@@ -26,6 +26,14 @@
             @Html.EditorFor(model => model.Name)
             @Html.ValidationMessageFor(model => model.Name)
         </div>
+        
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Capacity)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Capacity)
+            @Html.ValidationMessageFor(model => model.Capacity)
+        </div>
 
         <div class="editor-label">
             @Html.LabelFor(model => model.Description)
@@ -44,11 +52,11 @@
         </div>
 
         <div class="editor-label">
-            @Html.LabelFor(model => model.Capacity)
+            @Html.LabelFor(model => model.Category)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.Capacity)
-            @Html.ValidationMessageFor(model => model.Capacity)
+            @Html.EditorFor(model => model.Category)
+            @Html.ValidationMessageFor(model => model.Category)
         </div>
 
         <div>

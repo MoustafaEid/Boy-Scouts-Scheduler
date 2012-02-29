@@ -16,18 +16,17 @@
         <header>
             <div class="content-wrapper">
                 <div>
-                    <p class="site-title"><img src="@Url.Content("~/images/cubscout.gif")" alt="ASP.NET" />@Html.ActionLink("Cub Scouts Scheduler", "Index", "Home")</p>
+                    
                 </div>
                 <div>
+                <p class="site-title"><img src="@Url.Content("~/images/cubscout.gif")" alt="ASP.NET" />@Html.ActionLink("Cub Scouts Scheduler", "Index", "Home")</p>
                     <nav>
                         <ul id="menu">
-                            <li>@Html.ActionLink("Home", "Index", "Home")</li>
                             <li>@Html.ActionLink("Time Slots", "Index", "TimeSlot")</li>
                             <li>@Html.ActionLink("Stations", "Index", "Station")</li>
                             <li>@Html.ActionLink("Groups", "Index", "Group")</li>
                             <li>@Html.ActionLink("Constraints", "Index", "SchedulingConstraint")</li> 
-                            <li>@Html.ActionLink("Schedule", "Index", "Schedule")</li>
-                            <li>@Html.ActionLink("Help", "Index", "Help")</li>
+                            <li>@Html.ActionLink("Schedules", "Index", "Schedule")</li>
                         </ul>
                     </nav>
                 </div>
@@ -42,7 +41,7 @@
         <footer>
             <div class="content-wrapper">
                 <div class="float-left">
-                    <p>&copy; @DateTime.Now.Year - Cub Scouts Scheduler</p>
+                    <p>&copy; @DateTime.Now.Year - Cub Scouts Scheduler | @Html.ActionLink("Help & Contact Information", "Index", "Help")</p>
                 </div>
                 <div class="float-right">
                 </div>

@@ -86,6 +86,11 @@
                     <a href="@Url.RouteUrl(new { orderBy = "Location", desc = true })" class="uparrow">&uarr;</a>
                     <a href="@Url.RouteUrl(new { orderBy = "Location" })" class="downarrow">&darr;</a>
                 </th>
+                <th data-column-name="Category">
+                    <span class="reorder">@Html.DisplayNameFor(model => model.Category)</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "Category", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "Category" })" class="downarrow">&darr;</a>
+                </th>
                 <th class="hidden"></th>
             </tr>
         </thead>
