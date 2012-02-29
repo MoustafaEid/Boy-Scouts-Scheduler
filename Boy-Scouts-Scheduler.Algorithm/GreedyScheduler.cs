@@ -200,7 +200,8 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			return ret;
 		}
 
-		public static IEnumerable<Models.Activity> getSchedule(IEnumerable<Models.Group> groups, IEnumerable<Models.Station> stations, IEnumerable<Models.SchedulingConstraint> constraints, IEnumerable<Models.TimeSlot> slots)
+		public static IEnumerable<Models.Activity> getSchedule(IEnumerable<Models.Group> groups, IEnumerable<Models.Station> stations, IEnumerable<Models.SchedulingConstraint> constraints, 
+				IEnumerable<Models.TimeSlot> slots, bool generateNewScheduleFromScratch, IEnumerable<Models.Activity> oldSchedule, Models.TimeSlot startingTimeSlot)
 		{
 			List<Models.Activity> schedule = new List<Models.Activity>();
 
