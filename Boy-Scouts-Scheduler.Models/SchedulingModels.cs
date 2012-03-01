@@ -95,13 +95,5 @@ namespace Boy_Scouts_Scheduler.Models
         public DateTime? Start { get; set; }
         public DateTime? End { get; set; }
         public int VisitNum { get; set; }
-        public int? MinVisits { get; set; }
-        public int? MaxVisits { get; set; }
-
-        /* This indicates how important that the schedule meets or breaks
-         * constraints through the use of a positive or negative value
-         * respectively
-         */
-        public int Priority { get; set; }
     }
 }
