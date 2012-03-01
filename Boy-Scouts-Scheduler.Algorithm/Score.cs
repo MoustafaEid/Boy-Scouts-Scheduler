@@ -64,8 +64,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
 
             foreach (Models.SchedulingConstraint constraint in constraints)
             {
-                int? minVisits = constraint.MinVisits;
-                int? maxVisits = constraint.MaxVisits;
+                int numVisits = constraint.VisitNum;
                 foreach (Models.Activity activity in schedule)
                 {
                     bool constraintAppliesToGroup =
@@ -77,13 +76,10 @@ namespace Boy_Scouts_Scheduler.Algorithm
 
                     if (constraintAppliesToGroup && isCorrectStation)
                     {
-                        if (minVisits.HasValue)
-                            minVisits--;
-                        if (maxVisits.HasValue)
-                            maxVisits--;
+                        numVisits--;
                     }
                 }
-                if (minVisits > 0 || maxVisits < 0)
+                if (numVisits != 0)
                     numViolatedConstraints++;
 
             }
