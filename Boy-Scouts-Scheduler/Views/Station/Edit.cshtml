@@ -60,7 +60,7 @@
         </div>
 
         <div class="editor-label editor-field editor-custom">
-            @Html.Label("Activity Pin")    @Html.CheckBoxFor(model => model.ActivityPin)
+            <label for="ActivityPin">@Html.CheckBoxFor(model => model.ActivityPin)</label>
             @Html.ValidationMessageFor(model => model.ActivityPin)
         </div>
 

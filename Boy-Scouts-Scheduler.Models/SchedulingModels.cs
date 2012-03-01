@@ -93,6 +93,7 @@ namespace Boy_Scouts_Scheduler.Models
         public Station Station { get; set; }
         public DateTime? Start { get; set; }
         public DateTime? End { get; set; }
+        public int VisitNum { get; set; }
         public int? MinVisits { get; set; }
         public int? MaxVisits { get; set; }
 

@@ -15,7 +15,7 @@ namespace Boy_Scouts_Scheduler.Controllers
     {
         private SchedulingContext db = new SchedulingContext();
 
-        public ActionResult Generate()
+        public ActionResult Generate(TimeSlot startSlot)
         {
             db.Database.SqlQuery<object>("TRUNCATE TABLE [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities]").ToList();
 
@@ -39,8 +39,12 @@ namespace Boy_Scouts_Scheduler.Controllers
                 from item in db.SchedulingConstraints
                 select item;
 
+            IEnumerable<Activity> activityData =
+                from item in db.Activities
+                select item;
+
            // call algorithm to generate schedule
-           schedule = Boy_Scouts_Scheduler.Algorithm.Scheduler.Schedule(groupData, stationData, constraintData, timeslotData);
+           schedule = Boy_Scouts_Scheduler.Algorithm.Scheduler.Schedule(groupData, stationData, constraintData, timeslotData, activityData, startSlot);
 
            enumerator = schedule.GetEnumerator();
            while (enumerator.MoveNext())
@@ -72,6 +76,7 @@ namespace Boy_Scouts_Scheduler.Controllers
             ViewBag.StartDate = db.Events.First().Start; // TODO: Deal with multiple events
             ViewBag.Groups = db.Groups;
             ViewBag.Stations = db.Stations;
+            ViewBag.TimeSlots = db.TimeSlots;
 
             return View();
         }

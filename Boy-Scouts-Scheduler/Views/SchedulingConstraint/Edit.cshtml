@@ -16,12 +16,8 @@
         @Html.ValidationMessageFor(model => model.Station.Name)
     </td>
     <td>
-        @Html.EditorFor(model => model.MinVisits)
-        @Html.ValidationMessageFor(model => model.MinVisits)
-    </td>
-    <td>
-        @Html.EditorFor(model => model.MaxVisits)
-        @Html.ValidationMessageFor(model => model.MaxVisits)
+        @Html.EditorFor(model => model.VisitNum)
+        @Html.ValidationMessageFor(model => model.VisitNum)
     </td>
     <td>
 @if (ViewContext.RouteData.Values["Action"].ToString() == "Edit") {
