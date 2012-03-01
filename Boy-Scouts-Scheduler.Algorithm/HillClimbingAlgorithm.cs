@@ -7,40 +7,54 @@ namespace Boy_Scouts_Scheduler.Algorithm
 {
     public static class HillClimbingAlgorithm
     {
-        private class StationAssignmentRange
+        public class StationAssignmentRange
         {
-            public int? minVisits;
-            public int? maxVisits;
+            public int numVisits;
 
-            public StationAssignmentRange(int? minVisits, int? maxVisits)
+            public StationAssignmentRange(int numStationVisits)
             {
-                this.minVisits = minVisits;
-                this.maxVisits = maxVisits;
+                numVisits = numStationVisits;
             }
 
-            public void incrementMinVisits()
+            public void incrementNumVisits()
             {
-                if (minVisits.HasValue)
-                    minVisits++;
+                numVisits++;
             }
 
-            public void incrementMaxVisits()
+            public void decrementNumVisits()
             {
-                if (maxVisits.HasValue)
-                    maxVisits++;
+                numVisits--;
             }
+       
+            //public StationAssignmentRange(int? minVisits, int? maxVisits)
+            //{
+            //    this.minVisits = minVisits;
+            //    this.maxVisits = maxVisits;
+            //}
 
-            public void decrementMinVisits()
-            {
-                if (minVisits.HasValue)
-                    minVisits--;
-            }
+            //public void incrementMinVisits()
+            //{
+            //    if (minVisits.HasValue)
+            //        minVisits++;
+            //}
 
-            public void decrementMaxVisits()
-            {
-                if (maxVisits.HasValue)
-                    maxVisits--;
-            }
+            //public void incrementMaxVisits()
+            //{
+            //    if (maxVisits.HasValue)
+            //        maxVisits++;
+            //}
+
+            //public void decrementMinVisits()
+            //{
+            //    if (minVisits.HasValue)
+            //        minVisits--;
+            //}
+
+            //public void decrementMaxVisits()
+            //{
+            //    if (maxVisits.HasValue)
+            //        maxVisits--;
+            //}
         }
 
         private static IEnumerable<T> Shuffle<T>(this IEnumerable<T> enumerable)
@@ -54,8 +68,17 @@ namespace Boy_Scouts_Scheduler.Algorithm
            IEnumerable<Models.SchedulingConstraint> modelConstraints, IEnumerable<Models.TimeSlot> modelTimeSlots)
         {
             modelTimeSlots = Shuffle(modelTimeSlots);
+            modelStations = Shuffle(modelStations);
 
             Random random = new Random();
+
+            //Copy of groups, so their preferences don't get lost when scheduling
+            IList<Models.Group> groupCopy = new List<Models.Group>();
+            foreach (Models.Group group in modelGroups)
+            {
+                Models.Group newGroup = new Models.Group();
+                groupCopy.Add(newGroup);
+            }
 
             //groups that remain unassigned at a current time slot
             IList<Models.Group> unassignedGroups = new List<Models.Group>();
@@ -75,7 +98,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
 
             initializeGroupStationAssignments(modelGroups, modelStations, ref groupStationAssignments);
 
-            int? greatestMinVisits; int? leastGroupAssignmentNum; int activityNumber = 0;
+            int greatestNumVisits; int? leastGroupAssignmentNum; int activityNumber = 0;
 
             IList<Models.Activity> generatedSchedule = new List<Models.Activity>();
             foreach (Models.TimeSlot timeSlot in modelTimeSlots)
@@ -91,15 +114,14 @@ namespace Boy_Scouts_Scheduler.Algorithm
                 {
                     for (int capacityNum = 0; capacityNum < currentStation.Capacity; capacityNum++)
                     {
-                        greatestMinVisits = 0;
+                        greatestNumVisits = 0;
                         leastGroupAssignmentNum = 0;
                         eligibleGroups.Clear();
 
                         //remove all groups who are not allowed to visit the station anymore
                         foreach (Models.Group group in unassignedGroups)
                         {
-                            if (!groupStationVisitRange[group][currentStation].maxVisits.HasValue || 
-                                groupStationVisitRange[group][currentStation].maxVisits > 0)
+                            if (groupStationVisitRange[group][currentStation].numVisits > 0)
                                 eligibleGroups.Add(group);
                         }
 
@@ -113,10 +135,8 @@ namespace Boy_Scouts_Scheduler.Algorithm
                             Models.Group group = eligibleGroups[lcv];
                             foreach (Models.Station otherStation in timeSlot.OpenStations)
                             {
-                                if ( (groupStationVisitRange[group][otherStation].minVisits >
-                                    groupStationVisitRange[group][currentStation].minVisits) || 
-                                    (groupStationVisitRange[group][otherStation].minVisits > 0 &&
-                                    !groupStationVisitRange[group][currentStation].minVisits.HasValue) )
+                                if (groupStationVisitRange[group][otherStation].numVisits >
+                                    groupStationVisitRange[group][currentStation].numVisits) 
                                 {
                                     eligibleGroups.Remove(group);
                                     lcv--;
@@ -125,7 +145,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
                         }
 
                         IList<Models.Group> eligibleGroupsFilter1 = new List<Models.Group>();
-                        for (int topStationPick = 0; topStationPick < 3; topStationPick++)
+                        for (int topStationPick = 0; topStationPick < 5; topStationPick++)
                         {
                             foreach (Models.Group currentGroup in eligibleGroups)
                             {
@@ -134,8 +154,13 @@ namespace Boy_Scouts_Scheduler.Algorithm
                                     topStation = currentGroup.Preference1;
                                 else if (topStationPick == 1)
                                     topStation = currentGroup.Preference2;
-                                else
+                                else if (topStationPick == 2)
                                     topStation = currentGroup.Preference3;
+                                else if (topStationPick == 3)
+                                    topStation = currentGroup.Preference4;
+                                else
+                                    topStation = currentGroup.Preference5;
+
                                 if (topStation == currentStation)
                                     eligibleGroupsFilter1.Add(currentGroup);
                             }
@@ -157,15 +182,14 @@ namespace Boy_Scouts_Scheduler.Algorithm
 
                         foreach (Models.Group group in eligibleGroupsFilter1)
                         {
-                            int? groupMinVisits = groupStationVisitRange[group][currentStation].minVisits;
-                            if (groupMinVisits == greatestMinVisits ||
-                                (!groupMinVisits.HasValue && greatestMinVisits == 0))
+                            int groupNumVisits = groupStationVisitRange[group][currentStation].numVisits;
+                            if (groupNumVisits == greatestNumVisits)
                             {
                                 eligibleGroupsFilter2.Add(group);
                             }
-                            else if (groupMinVisits > greatestMinVisits)
+                            else if (groupNumVisits > greatestNumVisits)
                             {
-                                greatestMinVisits = groupMinVisits;
+                                greatestNumVisits = groupNumVisits;
                                 eligibleGroupsFilter2.Clear();
                                 eligibleGroupsFilter2.Add(group);
                             }
@@ -225,7 +249,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
                             activityNumber++;
                             Models.Activity activity = new Models.Activity();
                             activity.ID = activityNumber;
-                            activity.Group = assignedGroup;
+                            activity.Group = groupCopy.First(x => x.ID == assignedGroup.ID);// assignedGroup;
                             activity.Station = currentStation;
                             activity.TimeSlot = timeSlot;
 
@@ -237,9 +261,12 @@ namespace Boy_Scouts_Scheduler.Algorithm
                                 assignedGroup.Preference2 = null;
                             else if (assignedGroup.Preference3 == currentStation)
                                 assignedGroup.Preference3 = null;
+                            else if (assignedGroup.Preference4 == currentStation)
+                                assignedGroup.Preference4 = null;
+                            else if (assignedGroup.Preference5 == currentStation)
+                                assignedGroup.Preference5 = null;
 
-                            groupStationVisitRange[assignedGroup][currentStation].decrementMinVisits();
-                            groupStationVisitRange[assignedGroup][currentStation].decrementMaxVisits();
+                            groupStationVisitRange[assignedGroup][currentStation].decrementNumVisits();
 
                             groupStationAssignments[assignedGroup][currentStation]++;
                             unassignedGroups.Remove(assignedGroup);
@@ -259,17 +286,17 @@ namespace Boy_Scouts_Scheduler.Algorithm
             ref Dictionary<Models.Group, Dictionary<Models.Station, StationAssignmentRange>> groupStationVisitRange)
         {
             //first, initialize the groups so there are no constraints for all days of camp
-            foreach (Models.Group group in groups)
-            {
-                Dictionary<Models.Station, StationAssignmentRange> groupAssignment =
-                    new Dictionary<Models.Station, StationAssignmentRange>();
+            //foreach (Models.Group group in groups)
+            //{
+            //    Dictionary<Models.Station, StationAssignmentRange> groupAssignment =
+            //        new Dictionary<Models.Station, StationAssignmentRange>();
 
-                foreach (Models.Station station in stations)
-                {
-                    groupAssignment.Add(station, new StationAssignmentRange(null, null));
-                }
-                groupStationVisitRange.Add(group, groupAssignment);
-            }
+            //    foreach (Models.Station station in stations)
+            //    {
+            //        groupAssignment.Add(station, new StationAssignmentRange(null, null));
+            //    }
+            //    groupStationVisitRange.Add(group, groupAssignment);
+            //}
 
             //go through each constraint for all groups and update the groupStationVisitRange
             foreach (Models.SchedulingConstraint constraint in constraints)
@@ -283,7 +310,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
                         (constraint.Group != null && constraint.Group == group))
                     {
                         groupStationVisitRange[group][constraint.Station] =
-                            new StationAssignmentRange(constraint.MinVisits, constraint.MaxVisits);
+                            new StationAssignmentRange(constraint.VisitNum);
                     }
                 }
             }

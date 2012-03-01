@@ -99,7 +99,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
             {
                 foreach (var station in group.Value)
                 {
-                    if (station.Value.minVisits > 0 || station.Value.maxVisits < 0)
+                    if (station.Value.numVisits > 0 || station.Value.numVisits < 0)
                         numConstraintsViolated++;
                 }
             }
@@ -111,11 +111,17 @@ namespace Boy_Scouts_Scheduler.Algorithm
             IEnumerable<Models.Station> stations, IEnumerable<Models.TimeSlot> timeSlots)
         {
             int revisitedPenalty = 0;
-            //assignments for each day of camp
+
+            //assignments for station categories on each day of camp
             //example: on day 3, Group "Knights1" has been assigned to
-            //category "swimming" twice, category "shooting" once, and category "knots" twice
-            IDictionary<int, Dictionary<Models.Group, Dictionary<string, int>>> dailyAssignments = 
+            //category "arts and crafts" twice and category "shooting" once
+            IDictionary<int, Dictionary<Models.Group, Dictionary<string, int>>> dailyCategoryAssignments =
                 new Dictionary<int, Dictionary<Models.Group, Dictionary<string, int>>>();
+
+            //assignments for stations on each day of camp
+            //example: on day 2, Group "Knights2" has been assigned to station 
+            IDictionary<int, Dictionary<Models.Group, Dictionary<Models.Station, int>>> dailyStationAssignments =
+                new Dictionary<int, Dictionary<Models.Group, Dictionary<Models.Station, int>>>();
 
             foreach (Models.Activity activity in schedule)
             {
@@ -123,47 +129,49 @@ namespace Boy_Scouts_Scheduler.Algorithm
                 Models.Station station = activity.Station;
                 string stationCategory = activity.Station.Category;
 
+                if (stationCategory == null)
+                    continue;
+
                 int dayNum = activity.TimeSlot.Start.DayOfYear;
 
-                if (dailyAssignments.ContainsKey(dayNum))
+                if (dailyCategoryAssignments.ContainsKey(dayNum))
                 {
-                    if (dailyAssignments[dayNum].ContainsKey(group))
+                    if (dailyCategoryAssignments[dayNum].ContainsKey(group))
                     {
-                        if (dailyAssignments[dayNum][group].ContainsKey(stationCategory))
+                        if (dailyCategoryAssignments[dayNum][group].ContainsKey(stationCategory))
                         {
-                            int numVisits = dailyAssignments[dayNum][group][stationCategory];
+                            int numVisits = dailyCategoryAssignments[dayNum][group][stationCategory];
                             revisitedPenalty += numVisits;
-                            dailyAssignments[dayNum][group][stationCategory]++;
+                            dailyCategoryAssignments[dayNum][group][stationCategory]++;
                         }
                         else
                         {
-                            dailyAssignments[dayNum][group].Add(stationCategory, 1);
+                            dailyCategoryAssignments[dayNum][group].Add(stationCategory, 1);
                         }
                     }
 
                     else
                     {
-                        Dictionary<string, int> stationAssignmentValue = 
+                        Dictionary<string, int> stationAssignmentValue =
                            new Dictionary<string, int>();
                         stationAssignmentValue.Add(stationCategory, 1);
-                        dailyAssignments[dayNum].Add(group, stationAssignmentValue);
+                        dailyCategoryAssignments[dayNum].Add(group, stationAssignmentValue);
                     }
                 }
 
                 else
                 {
-                    Dictionary<Models.Group, Dictionary<string, int>> groupAssignments = 
-                        new Dictionary<Models.Group,Dictionary<string,int>>();
+                    Dictionary<Models.Group, Dictionary<string, int>> groupAssignments =
+                        new Dictionary<Models.Group, Dictionary<string, int>>();
                     Dictionary<string, int> stationAssignmentValue =
-                        new Dictionary<string,int>();
+                        new Dictionary<string, int>();
 
                     stationAssignmentValue.Add(stationCategory, 1);
                     groupAssignments.Add(group, stationAssignmentValue);
-                    dailyAssignments.Add(dayNum, groupAssignments);
+                    dailyCategoryAssignments.Add(dayNum, groupAssignments);
                 }
             }
             return (revisitedPenalty * -20);
         }
-
     }
 }
