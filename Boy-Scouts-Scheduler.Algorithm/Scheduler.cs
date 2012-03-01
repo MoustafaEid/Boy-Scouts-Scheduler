@@ -11,8 +11,9 @@ namespace Boy_Scouts_Scheduler.Algorithm
         public static IEnumerable<Models.Activity> Schedule(IEnumerable<Models.Group> groups, IEnumerable<Models.Station> stations, IEnumerable<Models.SchedulingConstraint> constraints, 
 				IEnumerable<Models.TimeSlot> slots, IEnumerable<Models.Activity> oldSchedule, Models.TimeSlot startingTimeSlot)
 		{
-            IEnumerable<Models.Activity> Greedy = GreedyAlgorithm.GreedyScheduler.getSchedule(groups, stations, constraints, slots, oldSchedule, startingTimeSlot);
+            //IEnumerable<Models.Activity> Greedy = GreedyAlgorithm.GreedyScheduler.getSchedule(groups, stations, constraints, slots, oldSchedule, startingTimeSlot);
 			//IEnumerable<Models.Activity> HillClimbing = HillClimbingAlgorithm.GenerateSchedule(groups, stations, constraints, slots, oldSchedule, startingTimeSlot);
+            IEnumerable<Models.Activity> HillClimbing = HillClimbingAlgorithm.GenerateSchedule(groups, stations, constraints, slots);
 
             // compare scores
 
@@ -22,8 +23,8 @@ namespace Boy_Scouts_Scheduler.Algorithm
             //if (GreedyScore > HillClimbingScore)
             //    return Greedy;
 
-            //return HillClimbing;
-			return Greedy;
+            return HillClimbing;
+			//return Greedy;
 		}
 	}
 }
