@@ -16,6 +16,10 @@
         @Html.ValidationMessageFor(model => model.Station.Name)
     </td>
     <td>
+        @Html.EditorFor(model => model.Category)
+        @Html.ValidationMessageFor(model => model.Category)
+    </td>
+    <td>
         @Html.EditorFor(model => model.VisitNum)
         @Html.ValidationMessageFor(model => model.VisitNum)
     </td>

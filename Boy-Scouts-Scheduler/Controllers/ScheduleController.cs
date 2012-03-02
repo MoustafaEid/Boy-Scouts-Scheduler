@@ -21,8 +21,6 @@ namespace Boy_Scouts_Scheduler.Controllers
 
 			IEnumerable<Activity> schedule;
             IEnumerator<Activity> scheduleEnumerator;
-            IEnumerator<TimeSlot> generalSlotEnumerator;
-            IEnumerator<Group> groupEnumerator;
 
             IEnumerable<Group> groupData = 
                 from item in db.Groups
@@ -69,23 +67,6 @@ namespace Boy_Scouts_Scheduler.Controllers
                 db.SaveChanges();
             }
 
-            //schedule general slots for all groups
-            generalSlotEnumerator = generalSlots.GetEnumerator();
-            while (generalSlotEnumerator.MoveNext())
-            {
-                groupEnumerator = groupData.GetEnumerator();
-                while (groupEnumerator.MoveNext()) 
-                {
-                    db.Activities.Add(new Activity
-                    {
-                        Group = groupEnumerator.Current,
-                        TimeSlot = generalSlotEnumerator.Current,
-                        Station = null
-                    }); 
-                }
-            }
-            db.SaveChanges();
-
             return RedirectToAction("Index");
         }
 
@@ -110,6 +91,20 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public JsonResult GroupActivities(int ID)
         {
+            List<Activity> activities = db.Activities.ToList();
+            foreach (var timeSlot in db.TimeSlots.Where(t => t.isGeneral))
+            {
+                foreach (var group in db.Groups)
+                {
+                    activities.Add(new Activity
+                    {
+                        Group = group,
+                        TimeSlot = timeSlot,
+                        Station = new Station { ID = -1, Name = timeSlot.Name }
+                    });
+                }
+            }
+
             return Json((from activity in db.Activities
                         where activity.Group.ID == ID
                         select new {
