@@ -3,6 +3,9 @@
 @foreach (var item in Model) {
     <tr data-pkey="@item.ID">
         <td>
+            @if (item.Group == null && item.GroupType == null) {
+                @: All
+            }
             @Html.DisplayFor(modelItem => item.Group.Name)
         </td>
         <td>
