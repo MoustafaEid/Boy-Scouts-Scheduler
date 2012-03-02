@@ -170,6 +170,9 @@
 
         function createRow(row) {
             var postParams = getPostParams(row);
+            if(postParams[0].value === '') {
+                postParams[0].value = '-1';
+            }
             $.post('@Html.Raw(Url.Action("Create"))', postParams)
                 .done(function(newRow) {
                     row.replaceWith(newRow);
@@ -183,13 +186,21 @@
 
         function makeRowEditable(row) {
             $.get('@Html.Raw(Url.Action("Edit", new { id = "__ID__" }))'.replace(/__ID__/, row.data('pkey')), function(editableRow) {
-                disableGroupTypeSelectList(row.replaceWith(editableRow));
+                row.replaceWith(editableRow);
+                var newRow = gridContext.find('[data-pkey=' + row.data('pkey') + ']');
+                if (newRow.find('#Group_ID').val() == '') {
+                    newRow.find('#Group_ID').val('-1')
+                }
+                disableSelectLists(newRow);
             });
             setUnloadWarning();
         }
 
         function editRow(row) {
             var postParams = getPostParams(row);
+            if(postParams[0].value === '') {
+                postParams[0].value = '-1';
+            }
             postParams.push({name: 'ID', value: row.data('pkey')});
             $.post('@Html.Raw(Url.Action("Edit", new { id = "__ID__" }))'.replace(/__ID__/, row.data('pkey')), postParams)
                 .done(function(newRow) {
@@ -254,12 +265,24 @@
             }
         }
 
-        function disableGroupTypeSelectList(row) {
-                if (row.find('#Group_ID').val() != '-1') {
-                    row.find('#GroupType_ID').val('').attr('disabled', 'disabled');
-                } else {
-                    row.find('#GroupType_ID').removeAttr('disabled');
-                }
+        function disableSelectLists(row) {
+            if (row.find('#Group_ID').val() != '-1') {
+                row.find('#GroupType_ID').val('-1');
+            }
+            if (row.find('#GroupType_ID').val() != '-1') {
+                row.find('#Group_ID').val('-1');
+            } else if (row.find('#Group_ID').val() == -1) {
+                row.find('#Group_ID').val('');
+            }
+        }
+
+        function disableSelectLists2(row) {
+            if (row.find('#GroupType_ID').val() != '-1') {
+                row.find('#Group_ID').val('-1');
+            }
+            if (row.find('#Group_ID').val() != '-1') {
+                row.find('#GroupType_ID').val('-1');
+            }
         }
 
         $(function () {
@@ -362,7 +385,10 @@
                 e.preventDefault();
             });
             gridContext.delegate('#Group_ID', 'change', function() {
-                disableGroupTypeSelectList($(this).parents('tr'));
+                disableSelectLists($(this).parents('tr'));
+            });
+            gridContext.delegate('#GroupType_ID', 'change', function() {
+                disableSelectLists2($(this).parents('tr'));
             });
         });
     })(jQuery);

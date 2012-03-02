@@ -102,12 +102,17 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             if (ModelState.IsValid)
             {
-                schedulingconstraint.Group = db.Groups.Find(schedulingconstraint.Group != null ? schedulingconstraint.Group.ID : -1);
-                schedulingconstraint.GroupType = db.GroupTypes.Find(schedulingconstraint.GroupType != null ? schedulingconstraint.GroupType.ID : -1);
-                schedulingconstraint.Station = db.Stations.Find(schedulingconstraint.Station != null ? schedulingconstraint.Station.ID : -1);
-                db.Entry(schedulingconstraint).State = EntityState.Modified;
+                SchedulingConstraint origConstraint = db.SchedulingConstraints
+                    .Include(c => c.Group)
+                    .Include(c => c.GroupType)
+                    .Include(c => c.Station)
+                    .Single(c => c.ID == schedulingconstraint.ID);
+                db.Entry(origConstraint).CurrentValues.SetValues(schedulingconstraint);
+                origConstraint.Group = db.Groups.Find(schedulingconstraint.Group != null ? schedulingconstraint.Group.ID : -1);
+                origConstraint.GroupType = db.GroupTypes.Find(schedulingconstraint.GroupType.ID);
+                origConstraint.Station = db.Stations.Find(schedulingconstraint.Station.ID);
                 db.SaveChanges();
-                return PartialView("GridData", new SchedulingConstraint[] { schedulingconstraint });
+                return PartialView("GridData", new SchedulingConstraint[] { origConstraint });
             }
 
             return PartialEditView(schedulingconstraint);
