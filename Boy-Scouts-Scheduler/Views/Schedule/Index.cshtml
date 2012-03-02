@@ -12,8 +12,8 @@
 <h2>Schedule</h2>
 
 @using(Html.BeginForm(new { Action = "Generate" })) {
-    <p>Generate Schedule From: @Html.DropDownList("timeSlotDropDown", new SelectList(ViewBag.TimeSlots, "ID", "Name")) </p>
-    <input type="submit" value="Click to Generate Schedule" />
+    <p>Generate Schedule From: @Html.DropDownList("timeSlotDropDown", new SelectList(ViewBag.TimeSlots, "ID", "Name")) </p> 
+    <input type="submit" value="Generate Schedule" />
 }
 
 <p>Select Schedule For:</p>
