@@ -76,7 +76,7 @@ namespace Boy_Scouts_Scheduler.Controllers
             {
                 schedulingconstraint.Group = db.Groups.Find(schedulingconstraint.Group != null ? schedulingconstraint.Group.ID : -1);
                 schedulingconstraint.GroupType = db.GroupTypes.Find(schedulingconstraint.GroupType != null ? schedulingconstraint.GroupType.ID : -1);
-                schedulingconstraint.Station = db.Stations.Find(schedulingconstraint.Station != null ? schedulingconstraint.Station.ID : -1);
+                schedulingconstraint.Station = db.Stations.Find(schedulingconstraint.Station != null ? schedulingconstraint.Station.ID : -1);                
                 db.SchedulingConstraints.Add(schedulingconstraint);
                 db.SaveChanges();
                 return PartialView("GridData", new SchedulingConstraint[] { schedulingconstraint });
@@ -137,6 +137,7 @@ namespace Boy_Scouts_Scheduler.Controllers
             ViewBag.Groups.Insert(0, new Group { ID = -1 }); // Allow null preferences
             ViewBag.Stations = db.Stations.ToList();
             ViewBag.Stations.Insert(0, new Station { ID = -1 }); // Allow null preferences
+            //ViewBag.Categories = db.Stations.Select(s => s.Category).Distinct().ToList();
             return PartialView("Edit", schedulingconstraint);
         }
 
