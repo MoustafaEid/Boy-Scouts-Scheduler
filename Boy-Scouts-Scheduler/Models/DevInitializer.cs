@@ -589,16 +589,12 @@ namespace Boy_Scouts_Scheduler.Models
                 GroupType = context.GroupTypes.Where(t => t.ID == 1).Single(),
                 Group = context.Groups.Where(g => g.ID == 1).Single(),
                 Station = context.Stations.Where(s => s.ID == 1).Single(),
-                MinVisits = 1,
-                MaxVisits = 1
             });
             context.SchedulingConstraints.Add(new SchedulingConstraint
             {
                 GroupType = context.GroupTypes.Where(t => t.ID == 2).Single(),
                 Group = context.Groups.Where(g => g.ID == 2).Single(),
                 Station = context.Stations.Where(s => s.ID == 2).Single(),
-                MinVisits = 1,
-                MaxVisits = 1
             });
             //context.SchedulingConstraints.Add(new SchedulingConstraint
             //{
