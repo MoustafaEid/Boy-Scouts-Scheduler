@@ -85,15 +85,13 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 	{
 		public Group G;
 		public Station S;
-		public int minVisits;
-		public int maxVisits;
+		public int nVisits;
 
-		public Constraint(Group g, Station s, int minV, int maxV)
+		public Constraint(Group g, Station s, int nV)
 		{
 			G = g;
 			S = s;
-			minVisits = minV;
-			maxVisits = maxV;
+			nVisits = nV;
 		}
 	}
 
@@ -257,7 +255,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 
 				// int? vs int
-				C.Add(new Constraint(g, s, (int)c.MinVisits, (int)c.MaxVisits));
+				C.Add(new Constraint(g, s, c.VisitNum));
 			}
 
 			KeyValuePair<int, int> startDaySlot = timeSlotToDaySlot(startingTimeSlot);
@@ -544,7 +542,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 						if (constraintIndex != -1)
 						{
-							if (GroupStationAssignments[groupSelected, stationSelected] == Constraints[constraintIndex].maxVisits)
+							if (GroupStationAssignments[groupSelected, stationSelected] == Constraints[constraintIndex].nVisits)
 								ConstraintMet[constraintIndex] = true;
 						}
 						else if (prefIndex != -1)
@@ -612,7 +610,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			for (i = 0; i < AllConstraints.Count; i++)
 			{
 				if (AllConstraints[i].G == AllGroups[groupID] && AllConstraints[i].S == AllStations[stationID])
-					return GroupStationAssignments[groupID, stationID] < AllConstraints[i].maxVisits;
+					return GroupStationAssignments[groupID, stationID] < AllConstraints[i].nVisits;
 			}
 
 			return GroupStationAssignments[groupID, stationID] <= 2;
