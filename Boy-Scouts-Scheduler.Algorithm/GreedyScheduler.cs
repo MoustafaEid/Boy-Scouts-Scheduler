@@ -21,15 +21,8 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			Name = N;
 			Rank = R;
 
-			StationPicks[0] = S1;
-			StationPicks[1] = S2;
-			StationPicks[2] = S3;
-			StationPicks[3] = S4;
-			StationPicks[4] = S5;
-
-			for (int i = 0; i < 5; i++)
-				StationPicked[i] = false;
-
+			StationPicks = new int[5] { S1, S2, S3, S4, S5 };
+			StationPicked = new bool[5] { false, false, false, false, false };
 			nStationsPicked = 0;
 		}
 	}
@@ -51,14 +44,16 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 		public int ID;
 		public string Name;
 		public int Capacity;
+		public string Category;
 		public List<Availability> Avail;
 		public int totalAvailabltSlots;
 
-		public Station(int id, string N, int C, List<Availability> A)
+		public Station(int id, string N, int C, string Cat, List<Availability> A)
 		{
 			ID = id;
 			Name = N;
 			Capacity = C;
+			Category = Cat == null ? "" : Cat.ToLower();
 			Avail = A;
 			totalAvailabltSlots = 0;
 
@@ -223,7 +218,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			List<Models.TimeSlot> tmpallSlots = new List<Models.TimeSlot>(slots.ToArray());
 
 			foreach (Models.Station s in stations)
-				S.Add(new Station(s.ID, s.Name, s.Capacity, timeSlotsToAvailability(s.AvailableTimeSlots)));
+				S.Add(new Station(s.ID, s.Name, s.Capacity, s.Category, timeSlotsToAvailability(s.AvailableTimeSlots)));
 
 			foreach (Models.Group x in groups)
 			{
@@ -258,6 +253,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 				C.Add(new Constraint(g, s, c.VisitNum));
 			}
 
+			startingTimeSlot = slots.First();
 			KeyValuePair<int, int> startDaySlot = timeSlotToDaySlot(startingTimeSlot);
 
 			Dictionary<int, int>[,] masterSchedule = Schedule(G, S, C, startDaySlot.Key, startDaySlot.Value);
@@ -358,14 +354,16 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 							for (j = 0; j < 5; j++)
 							{
-								if (!curGroup.StationPicked[j])
+								if (curGroup.StationPicks[j] != -1 && !curGroup.StationPicked[j])
 								{
 									tmpIndex = j;
 									break;
 								}
 							}
+							if (tmpIndex == -1)
+								continue;
 
-							s = score(masterSchedule, AllStations[curGroup.StationPicks[prefIndex]], curGroup, Day, Slot);
+							s = score(masterSchedule, AllStations[curGroup.StationPicks[tmpIndex]], curGroup, Day, Slot);
 
 							if (s > prefScore)
 							{

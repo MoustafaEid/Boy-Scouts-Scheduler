@@ -192,6 +192,11 @@ namespace Boy_Scouts_Scheduler.Models
                 Start = new DateTime(2012, 3, 9, 13, 0, 0),
                 End = new DateTime(2012, 3, 9, 14, 0, 0),
             });
+
+			context.SaveChanges();
+			//create ICollection for time slots for each station
+			ICollection<TimeSlot> timeslots = context.TimeSlots.ToList();
+
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
@@ -233,9 +238,6 @@ namespace Boy_Scouts_Scheduler.Models
                 isGeneral = true
             });
             context.SaveChanges();
-
-            //create ICollection for time slots for each station
-            ICollection<TimeSlot> timeslots = context.TimeSlots.ToList();
 
             //Seed testing stations to database
             context.Stations.Add(new Station
