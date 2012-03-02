@@ -1,3 +1,1 @@
-Boy Scouts
-
-This is a test!
+Boy Scouts Scheduling Application

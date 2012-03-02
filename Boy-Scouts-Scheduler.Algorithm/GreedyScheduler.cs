@@ -11,18 +11,26 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 		public int ID;
 		public string Name;
 		public int Rank;
-		public int StationPick1;
-		public int StationPick2;
-		public int StationPick3;
+		public int[] StationPicks;
 
-		public Group(int id, string N, int R, int S1 = -1, int S2 = -1, int S3 = -1)
+		public bool[] StationPicked;
+		public int nStationsPicked;
+		public Group(int id, string N, int R, int S1, int S2, int S3, int S4, int S5)
 		{
 			ID = id;
 			Name = N;
 			Rank = R;
-			StationPick1 = S1;
-			StationPick2 = S2;
-			StationPick3 = S3;
+
+			StationPicks[0] = S1;
+			StationPicks[1] = S2;
+			StationPicks[2] = S3;
+			StationPicks[3] = S4;
+			StationPicks[4] = S5;
+
+			for (int i = 0; i < 5; i++)
+				StationPicked[i] = false;
+
+			nStationsPicked = 0;
 		}
 	}
 
@@ -92,11 +100,10 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 	public static class GreedyScheduler
 	{
 		// is it okay to get any of the picks, or the first pick is more preferrable?
-		private const int MAXN = 150;
-		private const int CONSTRAINT_PENALTY = -10;
-		private const int GETTING_SECOND_PICK_PENALTY = -20;
-		private const int GETTING_THIRD_PICK_PENALTY = -25;
-		private const int NOT_GETTING_ANY_PICKS_PENALTY = -30;
+		private static int MAXN = 150;
+		private static int CONSTRAINT_PENALTY = -10;
+		private static int[] PREF_PENALTIES = new int[5] { -100, -90, -70, -40, -20 };
+		private static int NOT_GETTING_ANY_PICKS_PENALTY = -30;
 
 		private static int totalSlotsPerDay;
 		private static List<Group> AllGroups;
@@ -222,16 +229,18 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			foreach (Models.Group x in groups)
 			{
-				int p1 = -1, p2 = -1, p3 = -1;
+				int p1 = -1, p2 = -1, p3 = -1, p4 = -1, p5 = -1;
 
 				for (i = 0; i < S.Count; i++)
 				{
 					if (x.Preference1 != null && x.Preference1.ID == S[i].ID) p1 = i;
 					if (x.Preference2 != null && x.Preference2.ID == S[i].ID) p2 = i;
 					if (x.Preference3 != null && x.Preference3.ID == S[i].ID) p3 = i;
+					if (x.Preference4 != null && x.Preference4.ID == S[i].ID) p4 = i;
+					if (x.Preference5 != null && x.Preference5.ID == S[i].ID) p5 = i;
 				}
 
-				G.Add(new Group(x.ID, x.Name, x.Type.ID, p1, p2, p3));
+				G.Add(new Group(x.ID, x.Name, x.Type.ID, p1, p2, p3, p4, p5));
 			}
 
 			foreach (Models.SchedulingConstraint c in constraints)
@@ -251,7 +260,9 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 				C.Add(new Constraint(g, s, (int)c.MinVisits, (int)c.MaxVisits));
 			}
 
-			Dictionary<int, int>[,] masterSchedule = Schedule(G, S, C);
+			KeyValuePair<int, int> startDaySlot = timeSlotToDaySlot(startingTimeSlot);
+
+			Dictionary<int, int>[,] masterSchedule = Schedule(G, S, C, startDaySlot.Key, startDaySlot.Value);
 
 			for (i = 1; i <= 5; i++)
 			{
@@ -281,10 +292,10 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			return schedule;
 		}
 
-		private static Dictionary<int, int>[,] Schedule(List<Group> groups, List<Station> stations, List<Constraint> Constraints)
+		private static Dictionary<int, int>[,] Schedule(List<Group> groups, List<Station> stations, List<Constraint> Constraints, int startingDay, int startingSlot)
 		{
 			// start monday end Friday
-			int dayStart = 1, dayEnd = 5;
+			int dayStart = startingDay, dayEnd = 5;
 			int Day, Slot, i, j, k;
 
 			AllStations = stations;
@@ -308,12 +319,16 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			for (Day = dayStart; Day <= dayEnd; Day++)
 			{
-				for (Slot = 1; Slot <= totalSlotsPerDay; Slot++)
+				if (Day == dayStart)
+					Slot = startingSlot;
+				else
+					Slot = 1;
+				for (; Slot <= totalSlotsPerDay; Slot++)
 				{
 					masterSchedule[Day, Slot] = new Dictionary<int, int>();
 
 					// Group busy
-					bool[] isGroupBusy = new bool[100];
+					bool[] isGroupBusy = new bool[MAXN];
 
 					// keep looking for assignments for this slot
 					while (true)
@@ -322,17 +337,156 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 						int stationSelected = -1;
 						int maxScore = -1 << 30;
 						int minStationAssignment = 1 << 30;
-						int constraintIndex = -1;
 						int s;
 
+						// get best preference
+						int prefIndex = -1;
+						int prefScore = -1 << 30;
+						int prefGroup = -1;
+						int prefStation = -1;
+						int tmpIndex = -1;
+
+						List<Group> groupsSortedByLeastAssgined = sortGroupsByLeastAssigned();
+						Group curGroup;
+						Station curStation;
+						int groupIndex, stationIndex;
+
+						for (i = 0; i < groupsSortedByLeastAssgined.Count; i++)
+						{
+							curGroup = groupsSortedByLeastAssgined[i];
+
+							if (curGroup.nStationsPicked >= 3)
+								continue;
+
+							for (j = 0; j < 5; j++)
+							{
+								if (!curGroup.StationPicked[j])
+								{
+									tmpIndex = j;
+									break;
+								}
+							}
+
+							s = score(masterSchedule, AllStations[curGroup.StationPicks[prefIndex]], curGroup, Day, Slot);
+
+							if (s > prefScore)
+							{
+								prefScore = s;
+								prefGroup = i;
+								prefIndex = tmpIndex;
+								prefStation = curGroup.StationPicks[prefIndex];
+							}
+						}
+
+						// get best constraint to be fullfilled
+						int constraintIndex = -1;
+						int constraintStation = -1;
+						int constraintGroup = -1;
+						int constraintScore = -1 << 30;
+
+						for (i = 0; i < Constraints.Count; i++)
+						{
+							if (ConstraintMet[i])
+								continue;
+
+							groupIndex = getGroupIndex(AllConstraints[i].G);
+							stationIndex = getStationIndex(AllConstraints[i].S);
+
+							if (!isStationAvailableAtSlot(Constraints[i].S, Day, Slot) || StationSlotAssignmentsCounts[stationIndex, Day, Slot] >= Constraints[i].S.Capacity)
+								continue;
+
+							if (isGroupBusy[groupIndex] || !canHappenGroupStationAssignment(groupIndex, i) || !canHappenGroupRankStationAssignment(Constraints[i].G.Rank, stationIndex))
+								continue;
+
+							s = score(masterSchedule, Constraints[i].S, Constraints[i].G, Day, Slot);
+
+							if (s > constraintScore)
+							{
+								constraintScore = s;
+								constraintIndex = i;
+								constraintGroup = groupIndex;
+								constraintStation = stationIndex;
+							}
+						}
+
+						if (prefIndex == -1 && constraintIndex != -1)
+						{
+							groupSelected = prefGroup;
+							stationSelected = prefStation;
+						}
+						else if (prefIndex != -1 && constraintIndex == -1)
+						{
+							groupSelected = constraintGroup;
+							stationSelected = constraintStation;
+						}
+						else if (prefIndex != -1 && constraintIndex != -1)
+						{
+							if (prefIndex == 5)
+							{
+								groupSelected = constraintGroup;
+								stationSelected = constraintStation;
+								prefIndex = -1;
+							}
+							else
+							{
+								if (prefScore >= constraintScore)
+								{
+									groupSelected = prefGroup;
+									stationSelected = prefStation;
+									constraintIndex = -1;
+								}
+								else
+								{
+									groupSelected = constraintGroup;
+									stationSelected = constraintStation;
+									prefIndex = -1;
+								}
+							}
+						}
+
+						if (groupSelected == -1)
+						{
+							for (i = 0; i < groupsSortedByLeastAssgined.Count; i++)
+							{
+								curGroup = groupsSortedByLeastAssgined[i];
+								groupIndex = getGroupIndex(curGroup);
+
+								if (isGroupBusy[groupIndex])
+									continue;
+
+								for (j = 0; j < stations.Count; j++)
+								{
+									curStation = stations[j];
+									stationIndex = j;
+
+									if (!isStationAvailableAtSlot(curStation, Day, Slot) || StationSlotAssignmentsCounts[stationIndex, Day, Slot] >= curStation.Capacity)
+										continue;
+
+									if (!canHappenGroupStationAssignment(groupIndex, stationIndex) || !canHappenGroupRankStationAssignment(curGroup.Rank, stationIndex))
+										continue;
+
+									s = score(masterSchedule, curStation, curGroup, Day, Slot);
+
+									if (s > maxScore)
+									{
+										maxScore = s;
+										groupSelected = groupIndex;
+										stationSelected = stationIndex;
+									}
+								}
+							}
+						}
+						/*
 						for (i = 0; i < stations.Count; i++)
 						{
-							Station curStation = stations[i];
+							// a constraint or a preference has been already selected, don't go into the loop.
+							if (i == 0 && groupSelected != -1)
+								break;
+
+							curStation = stations[i];
 
 							if (!isStationAvailableAtSlot(curStation, Day, Slot) || StationSlotAssignmentsCounts[i, Day, Slot] >= curStation.Capacity)
 								continue;
-
-							// do constraints first
 
 							for (j = 0; j < Constraints.Count; j++)
 							{
@@ -356,7 +510,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 							{
 								int groupNum = getNextLeastAssignedGroup();
 								//int groupNum = j;
-								Group curGroup = groups[groupNum];
+								curGroup = groups[groupNum];
 
 								if (isGroupBusy[groupNum] || !canHappenGroupStationAssignment(groupNum, i) || !canHappenGroupRankStationAssignment(curGroup.Rank, i))
 									continue;
@@ -372,7 +526,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 								}
 							}
 						}
-
+						*/
 						if (groupSelected == -1)
 							break;
 
@@ -392,6 +546,11 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 						{
 							if (GroupStationAssignments[groupSelected, stationSelected] == Constraints[constraintIndex].maxVisits)
 								ConstraintMet[constraintIndex] = true;
+						}
+						else if (prefIndex != -1)
+						{
+							AllGroups[groupSelected].nStationsPicked++;
+							AllGroups[groupSelected].StationPicked[prefIndex] = true;
 						}
 
 						masterSchedule[Day, Slot].Add(groupSelected, stationSelected);
@@ -420,6 +579,32 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			return index;
 		}
 
+		private static List<Group> sortGroupsByLeastAssigned()
+		{
+			int i, j;
+			List<Group> ret = new List<Group>();
+			bool[] v = new bool[ AllGroups.Count ];
+
+			for (i = 0; i < AllGroups.Count; i++)
+			{
+				int minx = 1 << 30;
+				int indx = -1;
+
+				for (j = 0; j < AllGroups.Count; j++)
+				{
+					if( !v[j] && GroupAssignments[j] < minx )
+					{
+						minx = GroupAssignments[j];
+						indx = j;
+					}
+				}
+
+				v[indx] = true;
+				ret.Add(AllGroups[indx]);
+			}
+
+			return ret;
+		}
 		private static bool canHappenGroupStationAssignment(int groupID, int stationID)
 		{
 			int i;
@@ -494,9 +679,8 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 				ret += CONSTRAINT_PENALTY * (otherGroupsNeedThisStation - stationTotalAvailableSlotsLeft);
 			}
 
-			int nFirstPicks = 0;
-			int nSecondPicks = 0;
-			int nThirdPicks = 0;
+			// nNotGettingPicks[0] is the count of groups that aren't getting their first picks because of this group
+			int[] nNotGettingPicks = new int[5] { 0, 0, 0, 0, 0 };
 			int nNoPicks = 0;
 
 			// Check how many groups get their second pick instead of first, and how many groups aren't getting any picks
@@ -505,39 +689,35 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			int[] StationAssignmentsCountsTemp = (int[])StationAssignmentsCounts.Clone();
 			StationAssignmentsCountsTemp[stationIndex]++;
 
-			int stationPick1AvailableSlots, stationPick2AvailableSlots, stationPick3AvailableSlots;
+			int stationPickAvailableSlots;
+			int nPossible;
 
 			for (i = 0; i < AllGroups.Count; i++)
 			{
-				if (AllGroups[i].StationPick1 == -1)
+				if(AllGroups[i].nStationsPicked >= 3 )
 					continue;
 
-				stationPick1AvailableSlots = AllGroups[i].StationPick1 == -1 ? 0 : AllStations[AllGroups[i].StationPick1].totalAvailabltSlots - StationAssignmentsCountsTemp[AllGroups[i].StationPick1];
-				stationPick2AvailableSlots = AllGroups[i].StationPick2 == -1 ? 0 : AllStations[AllGroups[i].StationPick2].totalAvailabltSlots - StationAssignmentsCountsTemp[AllGroups[i].StationPick2];
-				stationPick3AvailableSlots = AllGroups[i].StationPick3 == -1 ? 0 : AllStations[AllGroups[i].StationPick3].totalAvailabltSlots - StationAssignmentsCountsTemp[AllGroups[i].StationPick3];
+				nPossible = 0;
+	
+				for (j = 0; j < 5; j++)
+				{
+					if (AllGroups[i].StationPicks[j] == -1 || AllGroups[i].StationPicked[j] || AllStations[AllGroups[i].StationPicks[j]] != S)
+						continue;
 
-				if (AllGroups[i].StationPick1 != -1 && stationPick1AvailableSlots > 0)
-				{
-					StationAssignmentsCountsTemp[AllGroups[i].StationPick1]++;
-					nFirstPicks++;
+					nPossible++;
+					stationPickAvailableSlots = AllStations[AllGroups[i].StationPicks[j]].totalAvailabltSlots - StationAssignmentsCountsTemp[AllGroups[i].StationPicks[j]];
+
+					if (stationPickAvailableSlots <= 0)
+						nNotGettingPicks[j]++;
+					else
+						StationAssignmentsCountsTemp[AllGroups[i].StationPicks[j]]++;
+
+					break;
 				}
-				else if (AllGroups[i].StationPick1 != -1 && stationPick2AvailableSlots > 0)
-				{
-					StationAssignmentsCountsTemp[AllGroups[i].StationPick2]++;
-					nSecondPicks++;
-				}
-				else if (AllGroups[i].StationPick1 != -1 && stationPick3AvailableSlots > 0)
-				{
-					StationAssignmentsCountsTemp[AllGroups[i].StationPick3]++;
-					nThirdPicks++;
-				}
-				else
-					nNoPicks++;
 			}
 
-			ret += GETTING_SECOND_PICK_PENALTY * nSecondPicks;
-			ret += GETTING_THIRD_PICK_PENALTY * nThirdPicks;
-			ret += NOT_GETTING_ANY_PICKS_PENALTY * nNoPicks;
+			for (i = 0; i < 5; i++)
+				ret += PREF_PENALTIES[i] * nNotGettingPicks[i];
 
 			return ret;
 		}
