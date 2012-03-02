@@ -61,7 +61,7 @@ namespace Boy_Scouts_Scheduler.Models
         public string Location { get; set; }
         public int Capacity { get; set; }
         public string Category { get; set; }
-        public bool ActivityPin { get; set; }
+        public bool isActivityPin { get; set; }
         public virtual Event Event { get; set; }
         public virtual ICollection<TimeSlot> AvailableTimeSlots { get; set; } // Should null mean all time slots or none?
     }
@@ -73,6 +73,7 @@ namespace Boy_Scouts_Scheduler.Models
         public virtual Event Event { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
+        public bool isGeneral { get; set; }
         public virtual ICollection<Station> OpenStations { get; set; }
     }
 
@@ -93,13 +94,6 @@ namespace Boy_Scouts_Scheduler.Models
         public Station Station { get; set; }
         public DateTime? Start { get; set; }
         public DateTime? End { get; set; }
-        public int? MinVisits { get; set; }
-        public int? MaxVisits { get; set; }
-
-        /* This indicates how important that the schedule meets or breaks
-         * constraints through the use of a positive or negative value
-         * respectively
-         */
-        public int Priority { get; set; }
+        public int VisitNum { get; set; }
     }
 }

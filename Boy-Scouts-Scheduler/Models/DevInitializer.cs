@@ -190,7 +190,47 @@ namespace Boy_Scouts_Scheduler.Models
                 Event = primaryEvent,
                 Name = "Friday: 1:00PM-2:00PM",
                 Start = new DateTime(2012, 3, 9, 13, 0, 0),
-                End = new DateTime(2012, 3, 9, 14, 0, 0)
+                End = new DateTime(2012, 3, 9, 14, 0, 0),
+            });
+            context.TimeSlots.Add(new TimeSlot
+            {
+                Event = primaryEvent,
+                Name = "Monday Lunch",
+                Start = new DateTime(2012, 3, 5, 12, 0, 0),
+                End = new DateTime(2012, 3, 5, 13, 0, 0),
+                isGeneral = true
+            });
+            context.TimeSlots.Add(new TimeSlot
+            {
+                Event = primaryEvent,
+                Name = "Tuesday Lunch",
+                Start = new DateTime(2012, 3, 6, 12, 0, 0),
+                End = new DateTime(2012, 3, 6, 13, 0, 0),
+                isGeneral = true
+            });
+            context.TimeSlots.Add(new TimeSlot
+            {
+                Event = primaryEvent,
+                Name = "Wednesday Lunch",
+                Start = new DateTime(2012, 3, 7, 12, 0, 0),
+                End = new DateTime(2012, 3, 7, 13, 0, 0),
+                isGeneral = true
+            });
+            context.TimeSlots.Add(new TimeSlot
+            {
+                Event = primaryEvent,
+                Name = "Thursday Lunch",
+                Start = new DateTime(2012, 3, 8, 12, 0, 0),
+                End = new DateTime(2012, 3, 8, 13, 0, 0),
+                isGeneral = true
+            });
+            context.TimeSlots.Add(new TimeSlot
+            {
+                Event = primaryEvent,
+                Name = "Friday Lunch",
+                Start = new DateTime(2012, 3, 9, 12, 0, 0),
+                End = new DateTime(2012, 3, 9, 13, 0, 0),
+                isGeneral = true
             });
             context.SaveChanges();
 
@@ -313,6 +353,7 @@ namespace Boy_Scouts_Scheduler.Models
                 Description = "",
                 Location = "",
                 Capacity = 1,
+                isActivityPin = true,
                 AvailableTimeSlots = timeslots
             });
             context.Stations.Add(new Station
@@ -322,6 +363,7 @@ namespace Boy_Scouts_Scheduler.Models
                 Description = "",
                 Location = "",
                 Capacity = 1,
+                isActivityPin = true,
                 AvailableTimeSlots = timeslots
             });
             context.Stations.Add(new Station
@@ -331,6 +373,7 @@ namespace Boy_Scouts_Scheduler.Models
                 Description = "",
                 Location = "",
                 Capacity = 1,
+                isActivityPin = true,
                 AvailableTimeSlots = timeslots
             });
             context.Stations.Add(new Station
@@ -340,6 +383,7 @@ namespace Boy_Scouts_Scheduler.Models
                 Description = "",
                 Location = "",
                 Capacity = 1,
+                isActivityPin = true,
                 AvailableTimeSlots = timeslots
             });
             context.Stations.Add(new Station
@@ -349,6 +393,7 @@ namespace Boy_Scouts_Scheduler.Models
                 Description = "",
                 Location = "",
                 Capacity = 1,
+                isActivityPin = true,
                 AvailableTimeSlots = timeslots
             });
             context.Stations.Add(new Station
@@ -358,6 +403,7 @@ namespace Boy_Scouts_Scheduler.Models
                 Description = "",
                 Location = "",
                 Capacity = 1,
+                Category = "Shooting",
                 AvailableTimeSlots = timeslots
             });
             context.Stations.Add(new Station
@@ -367,6 +413,7 @@ namespace Boy_Scouts_Scheduler.Models
                 Description = "",
                 Location = "",
                 Capacity = 1,
+                Category = "Shooting",
                 AvailableTimeSlots = timeslots
             });
             context.Stations.Add(new Station

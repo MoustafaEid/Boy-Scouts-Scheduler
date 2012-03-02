@@ -15,12 +15,14 @@ namespace Boy_Scouts_Scheduler.Controllers
     {
         private SchedulingContext db = new SchedulingContext();
 
-        public ActionResult Generate()
+        public ActionResult Generate(TimeSlot startSlot)
         {
             db.Database.SqlQuery<object>("TRUNCATE TABLE [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities]").ToList();
 
 			IEnumerable<Activity> schedule;
-            IEnumerator<Activity> enumerator;
+            IEnumerator<Activity> scheduleEnumerator;
+            IEnumerator<TimeSlot> generalSlotEnumerator;
+            IEnumerator<Group> groupEnumerator;
 
             IEnumerable<Group> groupData = 
                 from item in db.Groups
@@ -32,6 +34,13 @@ namespace Boy_Scouts_Scheduler.Controllers
 
             IEnumerable<TimeSlot> timeslotData =
                 from item in db.TimeSlots
+                where item.isGeneral == false
+                orderby item.Start ascending
+                select item;
+
+            IEnumerable<TimeSlot> generalSlots =
+                from item in db.TimeSlots
+                where item.isGeneral == true
                 orderby item.Start ascending
                 select item;
 
@@ -39,23 +48,45 @@ namespace Boy_Scouts_Scheduler.Controllers
                 from item in db.SchedulingConstraints
                 select item;
 
-           // call algorithm to generate schedule
-           schedule = Boy_Scouts_Scheduler.Algorithm.Scheduler.Schedule(groupData, stationData, constraintData, timeslotData, new List<Activity>(), timeslotData.First());
+            IEnumerable<Activity> activityData =
+                from item in db.Activities
+                where item.TimeSlot.isGeneral == false
+                select item;
 
-           enumerator = schedule.GetEnumerator();
-           while (enumerator.MoveNext())
-           {
-               db.Activities.Add(new Activity
-               {
-                   Group = enumerator.Current.Group,
-                   TimeSlot = enumerator.Current.TimeSlot,
-                   Station = enumerator.Current.Station
-               });
+            // call algorithm to generate schedule
+            schedule = Boy_Scouts_Scheduler.Algorithm.Scheduler.Schedule(groupData, stationData, constraintData, timeslotData, activityData, startSlot);
 
-               db.SaveChanges();
-           }
+            scheduleEnumerator = schedule.GetEnumerator();
+            while (scheduleEnumerator.MoveNext())
+            {
+                db.Activities.Add(new Activity
+                {
+                    Group = scheduleEnumerator.Current.Group,
+                    TimeSlot = scheduleEnumerator.Current.TimeSlot,
+                    Station = scheduleEnumerator.Current.Station
+                });
 
-           return RedirectToAction("Index");
+                db.SaveChanges();
+            }
+
+            //schedule general slots for all groups
+            generalSlotEnumerator = generalSlots.GetEnumerator();
+            while (generalSlotEnumerator.MoveNext())
+            {
+                groupEnumerator = groupData.GetEnumerator();
+                while (groupEnumerator.MoveNext()) 
+                {
+                    db.Activities.Add(new Activity
+                    {
+                        Group = groupEnumerator.Current,
+                        TimeSlot = generalSlotEnumerator.Current,
+                        Station = null
+                    }); 
+                }
+            }
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
 
         //
@@ -72,6 +103,7 @@ namespace Boy_Scouts_Scheduler.Controllers
             ViewBag.StartDate = db.Events.First().Start; // TODO: Deal with multiple events
             ViewBag.Groups = db.Groups;
             ViewBag.Stations = db.Stations;
+            ViewBag.TimeSlots = db.TimeSlots;
 
             return View();
         }

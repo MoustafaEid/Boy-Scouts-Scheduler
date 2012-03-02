@@ -10,16 +10,18 @@
 }
 
 <h2>Schedule</h2>
+
+<div id="AjaxGridContainer">
+    <p>Generate Schedule From: @Html.DropDownList("timeSlotDropDown", new SelectList(ViewBag.TimeSlots, "ID", "Name")) </p>
+     @Html.ActionLink("Click to Generate Schedule", "Generate", "Schedule", new { onclick = "javascript:$(this).addClass('hide')" })
+</div>
+
 <p>Select Schedule For:</p>
 <input type="radio" name="scheduleFor" value="group" id="scheduleForGroup" checked="checked" /><label for="scheduleForGroup">Group</label>
 <input type="radio" name="scheduleFor" value="station" id="scheduleForStation" /><label for="scheduleForStation">Station</label>
 @Html.DropDownList("groupDropDown", new SelectList(ViewBag.Groups, "ID", "Name"), "All")
 @Html.DropDownList("stationDropDown", new SelectList(ViewBag.Stations, "ID", "Name"), "All", new { @class = "hide" })
-<div id="AjaxGridContainer">
-    <p>
-            @Html.ActionLink("Click to Generate Schedule", "Generate", "Schedule", new { onclick = "javascript:$(this).addClass('hide')" })
-    </p>
-</div>
+
 <div id="calendars"></div>
 <script>
     function convertActivitiesToEvents(activities) {

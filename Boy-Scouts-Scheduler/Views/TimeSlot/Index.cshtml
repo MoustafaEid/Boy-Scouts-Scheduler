@@ -99,6 +99,11 @@
                     <a href="@Url.RouteUrl(new { orderBy = "End", desc = true })" class="uparrow">&uarr;</a>
                     <a href="@Url.RouteUrl(new { orderBy = "End" })" class="downarrow">&darr;</a>
                 </th>
+                <th data-column-name="isGeneral">
+                    <span class="reorder">General</span>
+                    <a href="@Url.RouteUrl(new { orderBy = "General", desc = true })" class="uparrow">&uarr;</a>
+                    <a href="@Url.RouteUrl(new { orderBy = "General" })" class="downarrow">&darr;</a>
+                </th>
                 <th class="hidden"></th>
             </tr>
         </thead>

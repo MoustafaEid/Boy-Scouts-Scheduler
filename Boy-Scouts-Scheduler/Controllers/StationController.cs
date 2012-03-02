@@ -136,6 +136,7 @@ namespace Boy_Scouts_Scheduler.Controllers
             // TODO: select timeslots only from current event
             ViewBag.TimeSlots =
                 (from slot in db.TimeSlots
+                 where slot.isGeneral == false
                 group slot by new
                 {
                     y = slot.Start.Year,
