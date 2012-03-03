@@ -96,16 +96,12 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 	public static class GreedyScheduler
 	{
-		// TODO: all groups in same rank schedule
-		// TODO: all grops schedule ( null, null )
-
 		private static int MAXN = 150;
 		private static int MAXD = 10;
 		private static int MAXS = 30;
 
 		private static int CONSTRAINT_PENALTY = -10;
 		private static int[] PREF_PENALTIES = new int[5] { -100, -90, -70, -40, -20 };
-		private static int NOT_GETTING_ANY_PICKS_PENALTY = -30;
 		
 		private static int[] nSlots = new int[6];
 		private static int[] lunchSlot = new int[6];
@@ -393,6 +389,8 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 							if (curGroup.nStationsPicked >= 3 || isGroupBusy[Day, Slot, groupIndex])
 								continue;
+
+							tmpIndex = -1;
 
 							for (j = 0; j < 5; j++)
 							{
