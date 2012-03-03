@@ -225,7 +225,7 @@
                         totalRowCount--;
                     })
                     .fail(function() {
-                        alert('Row deletion failed.');
+                        alert('Row deletion failed.\n\nThe constraint you are trying to delete is used in your current schedule. You must clear the schedule first.');
                     });
             }
         }

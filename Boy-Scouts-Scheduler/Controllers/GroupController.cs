@@ -121,16 +121,9 @@ namespace Boy_Scouts_Scheduler.Controllers
         [HttpPost]
         public void Delete(int id)
         {
-            try
-            {
-                Group group = db.Groups.Find(id);
-                db.Groups.Remove(group);
-                db.SaveChanges();
-            }
-            catch (DataException e)
-            {
-                //display message box to say "cannot delete. There are references to this item on other pages"
-            }
+            Group group = db.Groups.Find(id);
+            db.Groups.Remove(group);
+            db.SaveChanges();
         }
 
         protected PartialViewResult PartialEditView(Group group = null)

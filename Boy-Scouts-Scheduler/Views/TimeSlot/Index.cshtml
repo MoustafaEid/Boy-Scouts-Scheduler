@@ -227,7 +227,7 @@
                         totalRowCount--;
                     })
                     .fail(function() {
-                        alert('Row deletion failed.');
+                        alert('Row deletion failed.\n\nThe time slot you are trying to delete is referenced on another page. You must delete all references to this row first.');
                     });
             }
         }

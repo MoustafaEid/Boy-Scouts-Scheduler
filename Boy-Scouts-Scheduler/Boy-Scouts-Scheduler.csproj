@@ -232,15 +232,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Import\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Import\GridData.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Import\Edit.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\Station\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -308,7 +299,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>54109</DevelopmentServerPort>
+          <DevelopmentServerPort>11414</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
