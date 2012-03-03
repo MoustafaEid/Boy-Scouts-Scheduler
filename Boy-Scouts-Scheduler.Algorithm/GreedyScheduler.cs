@@ -47,16 +47,20 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 		public string Category;
 		public List<Availability> Avail;
 		public int totalAvailabltSlots;
+		public bool isActivityPin;
 
-		public Station(int id, string N, int C, string Cat, List<Availability> A)
+		public Station(int id, string N, int C, string Cat, bool Pin, List<Availability> A)
 		{
 			ID = id;
 			Name = N;
 			Capacity = C;
 			Category = Cat == null ? "" : Cat.ToLower();
+			isActivityPin = Pin;
+			
 			Avail = A;
+			
 			totalAvailabltSlots = 0;
-
+			
 			foreach (Availability x in A)
 				totalAvailabltSlots += x.Slots.Count;
 
@@ -92,17 +96,21 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 	public static class GreedyScheduler
 	{
-		// is it okay to get any of the picks, or the first pick is more preferrable?
+		// TODO: all groups in same rank schedule
+		// TODO: all grops schedule ( null, null )
+
 		private static int MAXN = 150;
 		private static int CONSTRAINT_PENALTY = -10;
 		private static int[] PREF_PENALTIES = new int[5] { -100, -90, -70, -40, -20 };
 		private static int NOT_GETTING_ANY_PICKS_PENALTY = -30;
-
-		private static int totalSlotsPerDay;
+		
+		private static int[] nSlots = new int[6];
+		private static int[] lunchSlot = new int[6];
 		private static List<Group> AllGroups;
 		private static List<Station> AllStations;
 		private static List<Constraint> AllConstraints;
 
+		private static bool[,,] isGroupBusy = new bool[MAXN, MAXN, MAXN];
 		private static int[] GroupAssignments = new int[MAXN];
 		// [GroupNumber, StationNumber] = Assignment Counter
 		private static int[,] GroupStationAssignments = new int[MAXN, MAXN];
@@ -118,12 +126,16 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 		private static Dictionary<int, KeyValuePair<int, int>> timeSlotsDaySlotsPairs = new Dictionary<int, KeyValuePair<int, int>>();
 		private static int[,] daySlotsTimeSlotsPairs = new int[MAXN, MAXN];
 
+		// Schedule
+		private static Dictionary<int, int>[,] masterSchedule = new Dictionary<int, int>[10, 20];
+
 		private static void convertTimeSlotsToDaySlots(IEnumerable<Models.TimeSlot> T)
 		{
 			List<Availability> A = new List<Availability>();
 			int i, j;
 
 			int minDay = 1 << 30;
+			Dictionary<int, bool> lunch = new Dictionary<int,bool>();
 
 			foreach (Models.TimeSlot t in T)
 			{
@@ -142,11 +154,14 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 				if (i == A.Count)
 					A.Add(new Availability(dayNumber, new List<int>(new int[] { t.ID })));
+
+				if (t.isGeneral)
+					lunch.Add(t.ID, true);
 			}
 
 			for (i = 0; i < A.Count; i++)
 			{
-				totalSlotsPerDay = Math.Max(totalSlotsPerDay, A[i].Slots.Count);
+				nSlots[ A[i].DayNumber ] = A[i].Slots.Count;
 
 				for (j = 0; j < A[i].Slots.Count; j++)
 				{
@@ -154,6 +169,9 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 					int S = j + 1;
 					timeSlotsDaySlotsPairs[A[i].Slots[j]] = new KeyValuePair<int, int>(D,S);
 					daySlotsTimeSlotsPairs[D, S] = A[i].Slots[j];
+
+					if (lunch.ContainsKey(A[i].Slots[j]))
+						lunchSlot[D] = S;
 				}
 			}
 		}
@@ -218,7 +236,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			List<Models.TimeSlot> tmpallSlots = new List<Models.TimeSlot>(slots.ToArray());
 
 			foreach (Models.Station s in stations)
-				S.Add(new Station(s.ID, s.Name, s.Capacity, s.Category, timeSlotsToAvailability(s.AvailableTimeSlots)));
+				S.Add(new Station(s.ID, s.Name, s.Capacity, s.Category, s.isActivityPin, timeSlotsToAvailability(s.AvailableTimeSlots)));
 
 			foreach (Models.Group x in groups)
 			{
@@ -238,29 +256,36 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			foreach (Models.SchedulingConstraint c in constraints)
 			{
-				// TODO: group ranks in constraints
-				if (c.Group == null)
-					continue;
-
 				Group g = G[0];
 				Station s = S[0];
 
-				for (i = 0; i < G.Count; i++) if (G[i].ID == c.Group.ID) g = G[i];
 				for (i = 0; i < S.Count; i++) if (S[i].ID == c.Station.ID) s = S[i];
 
+				if (c.Group != null)
+				{
+					for (i = 0; i < G.Count; i++) if (G[i].ID == c.Group.ID) g = G[i];
 
-				// int? vs int
-				C.Add(new Constraint(g, s, c.VisitNum));
+					C.Add(new Constraint(g, s, c.VisitNum));
+				}
+				else if (c.GroupType != null)
+				{
+					for(i=0;i<G.Count;i++)
+						if( c.GroupType.ID == G[i].Rank )
+							C.Add(new Constraint(g, s, c.VisitNum));
+				}
+				else if( c.Group == null && c.GroupType == null)
+					for(i=0;i<G.Count;i++)
+						C.Add(new Constraint(G[i], s, c.VisitNum));
 			}
 
 			startingTimeSlot = slots.First();
 			KeyValuePair<int, int> startDaySlot = timeSlotToDaySlot(startingTimeSlot);
 
-			Dictionary<int, int>[,] masterSchedule = Schedule(G, S, C, startDaySlot.Key, startDaySlot.Value);
+			Schedule(G, S, C, startDaySlot.Key, startDaySlot.Value);
 
 			for (i = 1; i <= 5; i++)
 			{
-				for (j = 1; j <= totalSlotsPerDay; j++)
+				for (j = 1; j <= nSlots[i]; j++)
 				{
 					int slotID = daySlotToTimeSlot(i, j);
 					Models.TimeSlot T = new Models.TimeSlot();
@@ -286,7 +311,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			return schedule;
 		}
 
-		private static Dictionary<int, int>[,] Schedule(List<Group> groups, List<Station> stations, List<Constraint> Constraints, int startingDay, int startingSlot)
+		private static void Schedule(List<Group> groups, List<Station> stations, List<Constraint> Constraints, int startingDay, int startingSlot)
 		{
 			// start monday end Friday
 			int dayStart = startingDay, dayEnd = 5;
@@ -295,9 +320,6 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			AllStations = stations;
 			AllGroups = groups;
 			AllConstraints = Constraints;
-			
-			// Schedule
-			Dictionary<int, int>[,] masterSchedule = new Dictionary<int, int>[10, 20];
 
 			for (i = 0; i < MAXN; i++)
 				for (j = 0; j < MAXN; j++)
@@ -305,7 +327,10 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 					GroupStationAssignments[i, j] = GroupRankStationAssignments[i, j] = GroupAssignments[i] = StationAssignmentsCounts[i] = 0;
 
 					for (k = 0; k < MAXN; k++)
+					{
 						StationSlotAssignmentsCounts[i, j, k] = 0;
+						isGroupBusy[i, j, k] = false;
+					}
 
 					ConstraintMet[i] = false;
 				}
@@ -317,12 +342,9 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 					Slot = startingSlot;
 				else
 					Slot = 1;
-				for (; Slot <= totalSlotsPerDay; Slot++)
+				for (; Slot <= nSlots[Day]; Slot++)
 				{
 					masterSchedule[Day, Slot] = new Dictionary<int, int>();
-
-					// Group busy
-					bool[] isGroupBusy = new bool[MAXN];
 
 					// keep looking for assignments for this slot
 					while (true)
@@ -348,27 +370,34 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 						for (i = 0; i < groupsSortedByLeastAssgined.Count; i++)
 						{
 							curGroup = groupsSortedByLeastAssgined[i];
+							groupIndex = getGroupIndex(curGroup);
 
-							if (curGroup.nStationsPicked >= 3)
+							if (curGroup.nStationsPicked >= 3 || isGroupBusy[Day, Slot, groupIndex])
 								continue;
 
 							for (j = 0; j < 5; j++)
 							{
-								if (curGroup.StationPicks[j] != -1 && !curGroup.StationPicked[j])
-								{
-									tmpIndex = j;
-									break;
-								}
+								stationIndex = curGroup.StationPicks[j];
+
+								if (stationIndex == -1 || curGroup.StationPicked[j])
+									continue;
+
+								if (!canScheduleStationAtDaySlot(stationIndex, Day, Slot) || !canScheduleGroupToStationAtDaySlot(groupIndex, stationIndex, Day, Slot) )
+									continue;
+
+								tmpIndex = j;
+								break;
 							}
+
 							if (tmpIndex == -1)
 								continue;
 
-							s = score(masterSchedule, AllStations[curGroup.StationPicks[tmpIndex]], curGroup, Day, Slot);
+							s = score(AllStations[curGroup.StationPicks[tmpIndex]], curGroup, Day, Slot);
 
 							if (s > prefScore)
 							{
 								prefScore = s;
-								prefGroup = i;
+								prefGroup = groupIndex;
 								prefIndex = tmpIndex;
 								prefStation = curGroup.StationPicks[prefIndex];
 							}
@@ -388,13 +417,10 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 							groupIndex = getGroupIndex(AllConstraints[i].G);
 							stationIndex = getStationIndex(AllConstraints[i].S);
 
-							if (!isStationAvailableAtSlot(Constraints[i].S, Day, Slot) || StationSlotAssignmentsCounts[stationIndex, Day, Slot] >= Constraints[i].S.Capacity)
+							if (!canScheduleStationAtDaySlot(stationIndex, Day, Slot) || !canScheduleGroupToStationAtDaySlot(groupIndex, stationIndex, Day, Slot) )
 								continue;
 
-							if (isGroupBusy[groupIndex] || !canHappenGroupStationAssignment(groupIndex, i) || !canHappenGroupRankStationAssignment(Constraints[i].G.Rank, stationIndex))
-								continue;
-
-							s = score(masterSchedule, Constraints[i].S, Constraints[i].G, Day, Slot);
+							s = score(Constraints[i].S, Constraints[i].G, Day, Slot);
 
 							if (s > constraintScore)
 							{
@@ -446,10 +472,10 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 							{
 								curGroup = groupsSortedByLeastAssgined[i];
 								groupIndex = getGroupIndex(curGroup);
-
+								/*
 								if (isGroupBusy[groupIndex])
 									continue;
-
+								*/
 								for (j = 0; j < stations.Count; j++)
 								{
 									curStation = stations[j];
@@ -458,10 +484,10 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 									if (!isStationAvailableAtSlot(curStation, Day, Slot) || StationSlotAssignmentsCounts[stationIndex, Day, Slot] >= curStation.Capacity)
 										continue;
 
-									if (!canHappenGroupStationAssignment(groupIndex, stationIndex) || !canHappenGroupRankStationAssignment(curGroup.Rank, stationIndex))
+									if (!canHappenGroupStationAssignment(groupIndex, stationIndex))
 										continue;
 
-									s = score(masterSchedule, curStation, curGroup, Day, Slot);
+									s = score(curStation, curGroup, Day, Slot);
 
 									if (s > maxScore)
 									{
@@ -526,35 +552,66 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 						if (groupSelected == -1)
 							break;
 
-						// Group is busy in this slot
-						isGroupBusy[groupSelected] = true;
-						// Increment group activites
-						GroupAssignments[groupSelected]++;
-						// Assign the Group to the station
-						GroupStationAssignments[groupSelected, stationSelected]++;
-						// Assign the Group's rank to the station
-						GroupRankStationAssignments[AllGroups[groupSelected].Rank, stationSelected]++;
-
-						StationSlotAssignmentsCounts[stationSelected, Day, Slot]++;
-						StationAssignmentsCounts[stationSelected]++;
-
-						if (constraintIndex != -1)
-						{
-							if (GroupStationAssignments[groupSelected, stationSelected] == Constraints[constraintIndex].nVisits)
-								ConstraintMet[constraintIndex] = true;
-						}
-						else if (prefIndex != -1)
-						{
-							AllGroups[groupSelected].nStationsPicked++;
-							AllGroups[groupSelected].StationPicked[prefIndex] = true;
-						}
-
-						masterSchedule[Day, Slot].Add(groupSelected, stationSelected);
+						scheduleGroupToStationAtDaySlot(groupSelected, stationSelected, Day, Slot, constraintIndex, prefIndex);
 					}
 				}
 			}
+		}
 
-			return masterSchedule;
+		private static void scheduleGroupToStationAtDaySlot(int groupSelected, int stationSelected, int Day, int Slot, int constraintIndex, int prefIndex)
+		{
+			ConstraintMet[Day] = false;
+			
+			// Group is busy in this slot
+			isGroupBusy[Day, Slot, groupSelected] = true;
+			// Increment group activites
+			GroupAssignments[groupSelected]++;
+			// Assign the Group to the station
+			GroupStationAssignments[groupSelected, stationSelected]++;
+			// Assign the Group's rank to the station
+			GroupRankStationAssignments[AllGroups[groupSelected].Rank, stationSelected]++;
+
+			StationSlotAssignmentsCounts[stationSelected, Day, Slot]++;
+			StationAssignmentsCounts[stationSelected]++;
+
+			if (constraintIndex != -1)
+			{
+				if (GroupStationAssignments[groupSelected, stationSelected] == AllConstraints[constraintIndex].nVisits)
+					ConstraintMet[constraintIndex] = true;
+			}
+			else if (prefIndex != -1)
+			{
+				AllGroups[groupSelected].nStationsPicked++;
+				AllGroups[groupSelected].StationPicked[prefIndex] = true;
+			}
+
+			masterSchedule[Day, Slot].Add(groupSelected, stationSelected);
+		}
+
+		private static bool canScheduleGroupToStationAtDaySlot(int groupIndex, int stationIndex, int Day, int Slot)
+		{
+			if (isGroupBusy[Day, Slot, groupIndex] || !canHappenGroupStationAssignment(groupIndex, stationIndex) )
+				return false;
+
+			return true;
+		}
+
+		private static bool canScheduleStationAtDaySlot(int stationIndex, int Day, int Slot)
+		{
+			if (!isStationAvailableAtSlot(AllStations[stationIndex], Day, Slot) || StationSlotAssignmentsCounts[stationIndex, Day, Slot] >= AllStations[stationIndex].Capacity ||
+					AllStations[stationIndex].isActivityPin && !canSchedulePinnedStation(Day, Slot))
+				return false;
+
+			return true;
+		}
+
+		private static bool canSchedulePinnedStation(int Day, int Slot)
+		{
+			// is this is the last slot for the day or is the slot right before lunch, then I can't schedule an activity pin here
+			if (Slot == nSlots[Day] || Slot == lunchSlot[Day] - 1)
+				return false;
+
+			return true;
 		}
 
 		private static int getNextLeastAssignedGroup()
@@ -614,11 +671,6 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			return GroupStationAssignments[groupID, stationID] <= 2;
 		}
 
-		private static bool canHappenGroupRankStationAssignment(int groupRank, int stationID)
-		{
-			return GroupRankStationAssignments[groupRank, stationID] <= 2000;
-		}
-
 		private static int getStationIndex(Station s)
 		{
 			int i;
@@ -644,7 +696,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			return -1;
 		}
-		private static int score(Dictionary<int, int>[,] masterSchedule, Station S, Group G, int Day, int Slot)
+		private static int score(Station S, Group G, int Day, int Slot)
 		{
 			int ret = 0;
 
