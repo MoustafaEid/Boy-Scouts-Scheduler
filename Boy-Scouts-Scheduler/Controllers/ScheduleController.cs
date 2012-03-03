@@ -15,9 +15,11 @@ namespace Boy_Scouts_Scheduler.Controllers
     {
         private SchedulingContext db = new SchedulingContext();
 
-        public ActionResult Generate(TimeSlot startSlot)
+        public ActionResult Generate(int startSlotID)
         {
             db.Database.SqlQuery<object>("TRUNCATE TABLE [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities]").ToList();
+
+            TimeSlot startSlot = db.TimeSlots.Find(startSlotID);
 
 			IEnumerable<Activity> schedule;
             IEnumerator<Activity> scheduleEnumerator;
@@ -32,7 +34,7 @@ namespace Boy_Scouts_Scheduler.Controllers
 
             IEnumerable<TimeSlot> timeslotData =
                 from item in db.TimeSlots
-                where item.isGeneral == false
+                //where item.isGeneral == false
                 orderby item.Start ascending
                 select item;
 
@@ -43,8 +45,8 @@ namespace Boy_Scouts_Scheduler.Controllers
                 select item;
 
             IEnumerable<SchedulingConstraint> constraintData =
-                from item in db.SchedulingConstraints
-                select item;
+                (from item in db.SchedulingConstraints.Include(c => c.Group).Include(c => c.GroupType).Include(c => c.Station)
+                select item).Include(c => c.GroupType);
 
             IEnumerable<Activity> activityData =
                 from item in db.Activities
@@ -66,6 +68,13 @@ namespace Boy_Scouts_Scheduler.Controllers
 
                 db.SaveChanges();
             }
+
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult ClearSchedule()
+        {
+            db.Database.SqlQuery<object>("TRUNCATE TABLE [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities]").ToList();
 
             return RedirectToAction("Index");
         }
@@ -104,20 +113,6 @@ namespace Boy_Scouts_Scheduler.Controllers
                     });
                 }
             }
-
-            //return Json((from activity in db.Activities
-            //            where activity.Group.ID == ID
-            //            select new {
-            //                ID = activity.ID,
-            //                StationName = activity.Station.Name,
-            //                Start = activity.TimeSlot.Start,
-            //                End = activity.TimeSlot.End
-            //            }).AsEnumerable().Select(a => new {
-            //                ID = a.ID,
-            //                Name = a.StationName,
-            //                Start = a.Start.ToString(),
-            //                End = a.End.ToString()
-            //            }));
 
             return Json((from activity in activities
                          where activity.Group.ID == ID

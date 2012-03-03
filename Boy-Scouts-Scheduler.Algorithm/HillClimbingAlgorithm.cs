@@ -7,6 +7,35 @@ namespace Boy_Scouts_Scheduler.Algorithm
 {
     public static class HillClimbingAlgorithm
     {
+        private static Random random = new Random();
+        private static int activityNumber = 0;
+
+        //used to keep track of which preferences the groups have received
+        private static Dictionary<Models.Group, List<bool>> groupPreferenceGiven =
+            new Dictionary<Models.Group, List<bool>>();
+
+        //how many times a group has already been assigned to a station
+        private static Dictionary<Models.Group, Dictionary<Models.Station, int>> groupStationAssignments =
+            new Dictionary<Models.Group, Dictionary<Models.Station, int>>();
+
+        //how many times a group is allowed to visit a station
+        private static Dictionary<Models.Group, Dictionary<Models.Station, StationAssignmentRange>>
+            groupStationVisitRange = new Dictionary<Models.Group,
+            Dictionary<Models.Station, StationAssignmentRange>>();
+
+        //groups that remain unassigned at a current time slot
+        private static IList<Models.Group> unassignedGroups = new List<Models.Group>();
+
+        //list of remaining unassigned stations at a given time slot
+        private static IList<Models.Station> unassignedStations = new List<Models.Station>();
+
+        //list of stations that a given group is eligible for at a given time slot
+        private static IList<Models.Station> eligibleStations = new List<Models.Station>();
+
+        //remaining groups that are allowed to visit the current station
+        private static IList<Models.Group> eligibleGroups = new List<Models.Group>();
+
+
         public class StationAssignmentRange
         {
             public int? numVisits;
@@ -27,39 +56,9 @@ namespace Boy_Scouts_Scheduler.Algorithm
                 if (numVisits.HasValue)
                     numVisits--;
             }
-       
-            //public StationAssignmentRange(int? minVisits, int? maxVisits)
-            //{
-            //    this.minVisits = minVisits;
-            //    this.maxVisits = maxVisits;
-            //}
-
-            //public void incrementMinVisits()
-            //{
-            //    if (minVisits.HasValue)
-            //        minVisits++;
-            //}
-
-            //public void incrementMaxVisits()
-            //{
-            //    if (maxVisits.HasValue)
-            //        maxVisits++;
-            //}
-
-            //public void decrementMinVisits()
-            //{
-            //    if (minVisits.HasValue)
-            //        minVisits--;
-            //}
-
-            //public void decrementMaxVisits()
-            //{
-            //    if (maxVisits.HasValue)
-            //        maxVisits--;
-            //}
         }
 
-        private static IEnumerable<T> Shuffle<T>(this IEnumerable<T> enumerable)
+        private static IList<T> Shuffle<T>(this IEnumerable<T> enumerable)
         {
             var r = new Random();
             return enumerable.OrderBy(x => r.Next()).ToList();
@@ -69,221 +68,203 @@ namespace Boy_Scouts_Scheduler.Algorithm
            (IEnumerable<Models.Group> modelGroups, IEnumerable<Models.Station> modelStations,
            IEnumerable<Models.SchedulingConstraint> modelConstraints, IEnumerable<Models.TimeSlot> modelTimeSlots)
         {
+            InitializeData();
             modelTimeSlots = Shuffle(modelTimeSlots);
             modelStations = Shuffle(modelStations);
 
-            Random random = new Random();
-
-            //Copy of groups, so their preferences don't get lost when scheduling
-            IList<Models.Group> groupCopy = new List<Models.Group>();
-            foreach (Models.Group group in modelGroups)
-            {
-                Models.Group newGroup = new Models.Group();
-                groupCopy.Add(newGroup);
-            }
-
-            //groups that remain unassigned at a current time slot
-            IList<Models.Group> unassignedGroups = new List<Models.Group>();
-
-            //remaining groups that are allowed to visit the current station
-            IList<Models.Group> eligibleGroups = new List<Models.Group>();
-
-            //how many times a group is allowed to visit a station
-            Dictionary<Models.Group, Dictionary<Models.Station, StationAssignmentRange>> groupStationVisitRange =
-                new Dictionary<Models.Group, Dictionary<Models.Station, StationAssignmentRange>>();
-
             initializeGroupStationVisitRange(modelConstraints, modelGroups, modelStations, ref groupStationVisitRange);
-
-            //how many times a group has already been assigned to a station
-            Dictionary<Models.Group, Dictionary<Models.Station, int>> groupStationAssignments =
-                new Dictionary<Models.Group, Dictionary<Models.Station, int>>();
-
+            initializeGroupPreferenceGiven(modelGroups, ref groupPreferenceGiven);
             initializeGroupStationAssignments(modelGroups, modelStations, ref groupStationAssignments);
 
-            int? greatestNumVisits; int? leastGroupAssignmentNum; int activityNumber = 0;
-
             IList<Models.Activity> generatedSchedule = new List<Models.Activity>();
+
             foreach (Models.TimeSlot timeSlot in modelTimeSlots)
             {
-                //at the beginning of each time slot, all groups are unassigned
+                //at the beginning of each time slot, all groups and stations are unassigned
                 unassignedGroups.Clear();
                 foreach (Models.Group group in modelGroups)
                 {
                     unassignedGroups.Add(group);
                 }
 
-                foreach (Models.Station currentStation in timeSlot.OpenStations)
+                unassignedStations.Clear();
+                foreach (Models.Station station in modelStations)
                 {
-                    for (int capacityNum = 0; capacityNum < currentStation.Capacity; capacityNum++)
-                    {
-                        greatestNumVisits = 0;
-                        leastGroupAssignmentNum = 0;
-                        eligibleGroups.Clear();
+                    unassignedStations.Add(station);
+                }
 
-                        //remove all groups who are not allowed to visit the station anymore
-                        foreach (Models.Group group in unassignedGroups)
+                unassignedGroups = Shuffle(unassignedGroups);
+                for (int groupNum = 0; groupNum < unassignedGroups.Count; groupNum++)
+                {
+                    Models.Group group = unassignedGroups[groupNum];
+                    int? greatestNumVisits = 0;
+                    foreach (Models.Station station in unassignedStations)
+                    {
+                        int? currentNumVisits = groupStationVisitRange[group][station].numVisits;
+
+                        if (currentNumVisits > greatestNumVisits)
                         {
-                            if (!groupStationVisitRange[group][currentStation].numVisits.HasValue ||
-                                groupStationVisitRange[group][currentStation].numVisits > 0)
-                            {
-                                eligibleGroups.Add(group);
-                            }
+                            greatestNumVisits = currentNumVisits;
+                            eligibleStations.Clear();
+                            eligibleStations.Add(station);
                         }
 
-                        if (eligibleGroups.Count == 0)
+                        else if (currentNumVisits == greatestNumVisits && currentNumVisits > 0)
+                        {
+                            eligibleStations.Add(station);
+                        }
+                        
+                    }
+
+                    //if the current group is still required to visit a station, then
+                    //assign them to one of those stations
+                    if (greatestNumVisits > 0 && eligibleStations.Count > 0)
+                    {
+                        generateAssignment(group, timeSlot, eligibleStations, generatedSchedule);
+                        groupNum--;
+                    }
+                }
+
+                //for each group that was not required to visit one of the
+                //remaining stations, assign them to their top station pick
+                for (int groupNum = 0; groupNum < unassignedGroups.Count; groupNum++)
+                {
+                    Models.Group group = unassignedGroups[groupNum];
+                    bool foundTopPick = false;
+                    for (int topStationPick = 0; topStationPick < 5; topStationPick++)
+                    {
+                        Models.Station topStation;
+                        if (topStationPick == 0)
+                            topStation = group.Preference1;
+                        else if (topStationPick == 1)
+                            topStation = group.Preference2;
+                        else if (topStationPick == 2)
+                            topStation = group.Preference3;
+                        else if (topStationPick == 3)
+                            topStation = group.Preference4;
+                        else
+                            topStation = group.Preference5;
+
+                        if (topStation == null)
                             continue;
 
-                        //if a group is required to visit another station more times than the current
-                        //station, don't assign them to the current station if possible
-                        for (int lcv = 0; lcv < eligibleGroups.Count; lcv++)
+                        foreach (Models.Station station in unassignedStations)
                         {
-                            Models.Group group = eligibleGroups[lcv];
-                            foreach (Models.Station otherStation in timeSlot.OpenStations)
+                            //if the group has not already been given their preference and they
+                            //are allowed to visit the station, then assign them to that station
+                            if (topStation == station && !groupPreferenceGiven[group][topStationPick] &&
+                                groupCanVisitStationAgain(group, station))
                             {
-                                if (groupStationVisitRange[group][otherStation].numVisits >
-                                    groupStationVisitRange[group][currentStation].numVisits) 
-                                {
-                                    eligibleGroups.Remove(group);
-                                    lcv--;
-                                }
-                            }
-                        }
-
-                        IList<Models.Group> eligibleGroupsFilter1 = new List<Models.Group>();
-                        for (int topStationPick = 0; topStationPick < 5; topStationPick++)
-                        {
-                            foreach (Models.Group currentGroup in eligibleGroups)
-                            {
-                                Models.Station topStation;
-                                if (topStationPick == 0)
-                                    topStation = currentGroup.Preference1;
-                                else if (topStationPick == 1)
-                                    topStation = currentGroup.Preference2;
-                                else if (topStationPick == 2)
-                                    topStation = currentGroup.Preference3;
-                                else if (topStationPick == 3)
-                                    topStation = currentGroup.Preference4;
-                                else
-                                    topStation = currentGroup.Preference5;
-
-                                if (topStation == currentStation)
-                                    eligibleGroupsFilter1.Add(currentGroup);
-                            }
-                            if (eligibleGroupsFilter1.Count > 0)
+                                IList<Models.Station> eligibleStations =
+                                    new List<Models.Station> { topStation };
+                                generateAssignment(group, timeSlot, eligibleStations, generatedSchedule);
+                                groupNum--;
+                                foundTopPick = true;
                                 break;
-                        }
-
-                        //if none of the groups picked the current station as one of their
-                        //preferences, they are all eligible to be assigned to that station
-                        if (eligibleGroupsFilter1.Count == 0)
-                        {
-                            foreach (Models.Group group in eligibleGroups)
-                            {
-                                eligibleGroupsFilter1.Add(group);
                             }
                         }
+                        if (foundTopPick)
+                            break;
+                    }
+                }
 
-                        IList<Models.Group> eligibleGroupsFilter2 = new List<Models.Group>();
+                //for each group that does not have a top station pick
+                //remaining, assign them to their least assigned station
+                for (int groupNum = 0; groupNum < unassignedGroups.Count; groupNum++)
+                {
+                    eligibleStations.Clear();
+                    Models.Group group = unassignedGroups[groupNum];
+                    int leastGroupAssignmentNum = 0;
 
-                        foreach (Models.Group group in eligibleGroupsFilter1)
+                    if (unassignedStations.Count > 0)
+                        leastGroupAssignmentNum = groupStationAssignments[group][unassignedStations[0]];
+
+                    foreach (Models.Station station in unassignedStations)
+                    {
+                        int groupAssignmentNum = groupStationAssignments[group][station];
+
+                        if (groupAssignmentNum == leastGroupAssignmentNum &&
+                            groupCanVisitStationAgain(group, station))
                         {
-                            int? groupNumVisits = groupStationVisitRange[group][currentStation].numVisits;
-                            if (groupNumVisits == greatestNumVisits || 
-                                (!groupNumVisits.HasValue && groupNumVisits == 0))
-                            {
-                                eligibleGroupsFilter2.Add(group);
-                            }
-                            else if (groupNumVisits > greatestNumVisits)
-                            {
-                                greatestNumVisits = groupNumVisits;
-                                eligibleGroupsFilter2.Clear();
-                                eligibleGroupsFilter2.Add(group);
-                            }
+                            eligibleStations.Add(station);
                         }
 
-                        if (eligibleGroupsFilter2.Count > 0)
+                        else if (groupAssignmentNum < leastGroupAssignmentNum &&
+                            groupCanVisitStationAgain(group, station))
                         {
-                            leastGroupAssignmentNum =
-                                groupStationAssignments[eligibleGroupsFilter2[0]][currentStation];
-                        }
-
-                        IList<Models.Group> eligibleGroupsFilter3 = new List<Models.Group>();
-
-                        //if there is a tie based on minimum visits, look at how
-                        //many times each group has already been assigned to a station
-                        foreach (Models.Group group in eligibleGroupsFilter2)
-                        {
-                            int groupAssignmentNum = groupStationAssignments[group][currentStation];
-                            if (groupAssignmentNum == leastGroupAssignmentNum)
-                                eligibleGroupsFilter3.Add(group);
-                            else if (groupAssignmentNum < leastGroupAssignmentNum)
-                            {
-                                leastGroupAssignmentNum = groupAssignmentNum;
-                                eligibleGroupsFilter3.Clear();
-                                eligibleGroupsFilter3.Add(group);
-                            }
-                        }
-
-                        //from the remaining candidates, pick a random group and assign it to the station
-                        Models.Group assignedGroup = null;
-
-                        if (eligibleGroupsFilter3.Count > 0)
-                        {
-                            int groupNumber = random.Next(eligibleGroupsFilter3.Count);
-                            assignedGroup = eligibleGroupsFilter2[groupNumber];
-                        }
-                        else if (eligibleGroupsFilter2.Count > 0)
-                        {
-                            int groupNumber = random.Next(eligibleGroupsFilter2.Count);
-                            assignedGroup = eligibleGroupsFilter2[groupNumber];
-                        }
-                        else if (eligibleGroupsFilter1.Count > 0)
-                        {
-                            int groupNumber = random.Next(eligibleGroupsFilter1.Count);
-                            assignedGroup = eligibleGroupsFilter1[groupNumber];
-                        }
-                        else if (eligibleGroups.Count > 0)
-                        {
-                            int groupNumber = random.Next(eligibleGroups.Count);
-                            assignedGroup = eligibleGroups[groupNumber];
-                        }
-
-                        //update the topStationPicks, stationVisitRange, and groupStationAssignments
-                        //for the assigned group, and remove them from the list of unassigned groups
-                        if (assignedGroup != null)
-                        {
-                            activityNumber++;
-                            Models.Activity activity = new Models.Activity();
-                            activity.ID = activityNumber;
-                            activity.Group = assignedGroup; // groupCopy.First(x => x.ID == assignedGroup.ID);
-                            activity.Station = currentStation;
-                            activity.TimeSlot = timeSlot;
-
-                            generatedSchedule.Add(activity);
-
-                            if (assignedGroup.Preference1 == currentStation)
-                                assignedGroup.Preference1 = null;
-                            else if (assignedGroup.Preference2 == currentStation)
-                                assignedGroup.Preference2 = null;
-                            else if (assignedGroup.Preference3 == currentStation)
-                                assignedGroup.Preference3 = null;
-                            else if (assignedGroup.Preference4 == currentStation)
-                                assignedGroup.Preference4 = null;
-                            else if (assignedGroup.Preference5 == currentStation)
-                                assignedGroup.Preference5 = null;
-
-                            groupStationVisitRange[assignedGroup][currentStation].decrementNumVisits();
-
-                            groupStationAssignments[assignedGroup][currentStation]++;
-                            unassignedGroups.Remove(assignedGroup);
-
-                            if (unassignedGroups.Count == 0)
-                                break;
+                            leastGroupAssignmentNum = groupAssignmentNum;
+                            eligibleStations.Clear();
+                            eligibleStations.Add(station);
                         }
                     }
+                    generateAssignment(group, timeSlot, eligibleStations, generatedSchedule);
+                }
+
+                //at this point, there is no criteria left to assign a group to one
+                //station over another, so assign them to a station that they can visit again
+                for (int groupNum = 0; groupNum < unassignedGroups.Count; groupNum++)
+                {
+                    Models.Group group = unassignedGroups[groupNum];
+                    eligibleStations.Clear();
+                    foreach (Models.Station station in unassignedStations)
+                    {
+                        if (groupCanVisitStationAgain(group, station))
+                            eligibleStations.Add(station);
+                    }
+                    generateAssignment(group, timeSlot, eligibleStations, generatedSchedule);
+                    groupNum--;
                 }
             }
             return generatedSchedule;
+        }
+
+        public static void generateAssignment(
+            Models.Group assignedGroup, Models.TimeSlot timeSlot, IList<Models.Station> eligibleStations,
+            //IList<Models.Station> unassignedStations, IList<Models.Group> unassignedGroups,
+            IList<Models.Activity> generatedSchedule)
+        {
+            if (eligibleStations.Count > 0)
+            {
+                int stationNumber = random.Next(eligibleStations.Count);
+                Models.Station assignedStation = eligibleStations[stationNumber];
+
+                activityNumber++;
+                Models.Activity activity = new Models.Activity();
+                activity.ID = activityNumber;
+                activity.Group = assignedGroup;
+                activity.Station = assignedStation;
+                activity.TimeSlot = timeSlot;
+
+                generatedSchedule.Add(activity);
+
+                if (assignedGroup.Preference1 == assignedStation)
+                    groupPreferenceGiven[assignedGroup][0] = true;
+                else if (assignedGroup.Preference2 == assignedStation)
+                    groupPreferenceGiven[assignedGroup][1] = true;
+                else if (assignedGroup.Preference3 == assignedStation)
+                    groupPreferenceGiven[assignedGroup][2] = true;
+                else if (assignedGroup.Preference4 == assignedStation)
+                    groupPreferenceGiven[assignedGroup][3] = true;
+                else if (assignedGroup.Preference5 == assignedStation)
+                    groupPreferenceGiven[assignedGroup][4] = true;
+
+                groupStationVisitRange[assignedGroup][assignedStation].decrementNumVisits();
+                groupStationAssignments[assignedGroup][assignedStation]++;
+                unassignedStations.Remove(assignedStation);
+                unassignedGroups.Remove(assignedGroup);
+            }
+        }
+
+        public static void InitializeData()
+        {
+            activityNumber = 0;
+            groupPreferenceGiven.Clear();
+            groupStationAssignments.Clear();
+            groupStationVisitRange.Clear();
+            unassignedGroups.Clear();
+            unassignedStations.Clear();
+            eligibleStations.Clear();
+            eligibleGroups.Clear();
         }
 
         private static void initializeGroupStationVisitRange(
@@ -312,7 +293,8 @@ namespace Boy_Scouts_Scheduler.Algorithm
                     //group names match or there's no group name specified in the constraints
                     //but the ranks match, or there's no group name or rank specified
                     if ((constraint.Group == null && constraint.GroupType == null) ||
-                        (constraint.Group == null && constraint.GroupType == group.Type) ||
+                        (constraint.Group == null && constraint.GroupType != null &&
+                        constraint.GroupType.ID == group.Type.ID) ||
                         (constraint.Group != null && constraint.Group == group))
                     {
                         groupStationVisitRange[group][constraint.Station] =
@@ -338,5 +320,20 @@ namespace Boy_Scouts_Scheduler.Algorithm
             }
         }
 
+        private static void initializeGroupPreferenceGiven(IEnumerable<Models.Group> groups,
+            ref Dictionary<Models.Group, List<bool>> groupPreferenceGiven)
+        {
+            foreach (Models.Group group in groups)
+            {
+                List<bool> preferencesGiven = new List<bool> {false, false, false, false, false};
+                groupPreferenceGiven.Add(group, preferencesGiven);
+            }
+        }
+
+        private static bool groupCanVisitStationAgain(Models.Group group, Models.Station station)
+        {
+            return groupStationVisitRange[group][station].numVisits > 0 ||
+                !groupStationVisitRange[group][station].numVisits.HasValue;
+        }
     }
 }
