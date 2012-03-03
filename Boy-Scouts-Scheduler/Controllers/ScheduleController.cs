@@ -43,8 +43,8 @@ namespace Boy_Scouts_Scheduler.Controllers
                 select item;
 
             IEnumerable<SchedulingConstraint> constraintData =
-                from item in db.SchedulingConstraints
-                select item;
+                (from item in db.SchedulingConstraints.Include(c => c.Group).Include(c => c.GroupType).Include(c => c.Station)
+                select item).Include(c => c.GroupType);
 
             IEnumerable<Activity> activityData =
                 from item in db.Activities

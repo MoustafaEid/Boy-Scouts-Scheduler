@@ -92,8 +92,6 @@ namespace Boy_Scouts_Scheduler.Models
         public GroupType GroupType { get; set; }
         public Group Group { get; set; }
         public Station Station { get; set; }
-        public DateTime? Start { get; set; }
-        public DateTime? End { get; set; }
         public int VisitNum { get; set; }
         public string Category { get; set; }
     }
