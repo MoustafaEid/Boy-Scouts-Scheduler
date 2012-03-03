@@ -15,9 +15,11 @@ namespace Boy_Scouts_Scheduler.Controllers
     {
         private SchedulingContext db = new SchedulingContext();
 
-        public ActionResult Generate(TimeSlot startSlot)
+        public ActionResult Generate(int startSlotID)
         {
             db.Database.SqlQuery<object>("TRUNCATE TABLE [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities]").ToList();
+
+            TimeSlot startSlot = db.TimeSlots.Find(startSlotID);
 
 			IEnumerable<Activity> schedule;
             IEnumerator<Activity> scheduleEnumerator;
@@ -32,7 +34,7 @@ namespace Boy_Scouts_Scheduler.Controllers
 
             IEnumerable<TimeSlot> timeslotData =
                 from item in db.TimeSlots
-                where item.isGeneral == false
+                //where item.isGeneral == false
                 orderby item.Start ascending
                 select item;
 

@@ -11,11 +11,10 @@
 
 <h2>Schedule</h2>
 
-
 <table>
     <tr>
         @using(Html.BeginForm(new { Action = "Generate" })) {
-            @Html.Label("Generate Schedule From: ")  @Html.DropDownList("timeSlotDropDown", new SelectList(ViewBag.TimeSlots, "ID", "Name")) <br />
+            @Html.Label("Generate Schedule From: ")  @Html.DropDownList("startSlotID", new SelectList(ViewBag.TimeSlots, "ID", "Name")) <br />
             <input type="submit" value="Generate Schedule" />
         }
     </tr>
