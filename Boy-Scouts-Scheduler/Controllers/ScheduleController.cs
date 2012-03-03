@@ -91,8 +91,8 @@ namespace Boy_Scouts_Scheduler.Controllers
             ViewBag.Desc = desc;
 
             ViewBag.StartDate = db.Events.First().Start; // TODO: Deal with multiple events
-            ViewBag.Groups = db.Groups;
-            ViewBag.Stations = db.Stations;
+            ViewBag.Groups = db.Groups.OrderBy(g => g.Name);
+            ViewBag.Stations = db.Stations.OrderBy(s => s.Name);
             ViewBag.TimeSlots = db.TimeSlots;
 
             return View();
@@ -122,7 +122,7 @@ namespace Boy_Scouts_Scheduler.Controllers
                              StationName = activity.Station.Name,
                              Start = activity.TimeSlot.Start,
                              End = activity.TimeSlot.End
-                         }).AsEnumerable().Select(a => new
+                         }).AsEnumerable().OrderBy(a => a.StationName).Select(a => new
                          {
                              ID = a.ID,
                              Name = a.StationName,
@@ -141,7 +141,7 @@ namespace Boy_Scouts_Scheduler.Controllers
                             GroupName = activity.Group.Name,
                             Start = activity.TimeSlot.Start,
                             End = activity.TimeSlot.End
-                        }).AsEnumerable().Select(a => new {
+                        }).AsEnumerable().OrderBy(a => a.GroupName).Select(a => new {
                             ID = a.ID,
                             Name = a.GroupName,
                             Start = a.Start.ToString(),
