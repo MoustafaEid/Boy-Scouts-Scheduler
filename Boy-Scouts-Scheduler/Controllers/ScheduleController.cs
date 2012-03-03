@@ -70,6 +70,13 @@ namespace Boy_Scouts_Scheduler.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult ClearSchedule()
+        {
+            db.Database.SqlQuery<object>("TRUNCATE TABLE [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities]").ToList();
+
+            return RedirectToAction("Index");
+        }
+
         //
         // GET: /Schedule/
 
@@ -104,20 +111,6 @@ namespace Boy_Scouts_Scheduler.Controllers
                     });
                 }
             }
-
-            //return Json((from activity in db.Activities
-            //            where activity.Group.ID == ID
-            //            select new {
-            //                ID = activity.ID,
-            //                StationName = activity.Station.Name,
-            //                Start = activity.TimeSlot.Start,
-            //                End = activity.TimeSlot.End
-            //            }).AsEnumerable().Select(a => new {
-            //                ID = a.ID,
-            //                Name = a.StationName,
-            //                Start = a.Start.ToString(),
-            //                End = a.End.ToString()
-            //            }));
 
             return Json((from activity in activities
                          where activity.Group.ID == ID

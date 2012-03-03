@@ -11,10 +11,21 @@
 
 <h2>Schedule</h2>
 
-@using(Html.BeginForm(new { Action = "Generate" })) {
-    <p>Generate Schedule From: @Html.DropDownList("timeSlotDropDown", new SelectList(ViewBag.TimeSlots, "ID", "Name")) </p> 
-    <input type="submit" value="Generate Schedule" />
-}
+
+<table>
+    <tr>
+        @using(Html.BeginForm(new { Action = "Generate" })) {
+            @Html.Label("Generate Schedule From: ")  @Html.DropDownList("timeSlotDropDown", new SelectList(ViewBag.TimeSlots, "ID", "Name")) <br />
+            <input type="submit" value="Generate Schedule" />
+        }
+    </tr>
+    <tr>
+        @using(Html.BeginForm(new { Action = "ClearSchedule" })) {
+            <input type="submit"  value="Clear Schedule" style="background:#FF3030"/>
+        }
+    </tr>
+</table>
+
 
 <p>Select Schedule For:</p>
 <input type="radio" name="scheduleFor" value="group" id="scheduleForGroup" checked="checked" /><label for="scheduleForGroup">Group</label>
