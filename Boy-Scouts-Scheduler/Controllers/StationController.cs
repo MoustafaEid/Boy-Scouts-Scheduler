@@ -14,13 +14,17 @@ namespace Boy_Scouts_Scheduler.Controllers
     public class StationController : Controller
     {
         private SchedulingContext db = new SchedulingContext();
+        private int eventID
+        {
+            get { return Convert.ToInt32(Request.Cookies["event"].Value); }
+        }
 
         //
         // GET: /NewStation/
 
         public ViewResult Index(int start = 0, int itemsPerPage = 20, string orderBy = "ID", bool desc = false)
         {
-            ViewBag.Count = db.Stations.Count();
+            ViewBag.Count = db.Stations.Count(s => s.Event.ID == eventID);
             ViewBag.Start = start;
             ViewBag.ItemsPerPage = itemsPerPage;
             ViewBag.OrderBy = orderBy;
@@ -34,11 +38,11 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult GridData(int start = 0, int itemsPerPage = 20, string orderBy = "ID", bool desc = false)
         {
-            Response.AppendHeader("X-Total-Row-Count", db.Stations.Count().ToString());
+            Response.AppendHeader("X-Total-Row-Count", db.Stations.Count(s => s.Event.ID == eventID).ToString());
             ObjectQuery<Station> stations = (db as IObjectContextAdapter).ObjectContext.CreateObjectSet<Station>();
             stations = stations.OrderBy("it." + orderBy + (desc ? " desc" : ""));
 
-            return PartialView(stations.Skip(start).Take(itemsPerPage));
+            return PartialView(stations.Where(s => s.Event.ID == eventID).Skip(start).Take(itemsPerPage));
         }
 
         //
@@ -58,6 +62,7 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             if (ModelState.IsValid)
             {
+                station.Event = db.Events.Find(eventID);
                 station.AvailableTimeSlots = new List<TimeSlot>();
                 foreach (var timeSlotID in TimeSlotIDs) {
                     station.AvailableTimeSlots.Add(db.TimeSlots.Find(timeSlotID));
@@ -136,7 +141,7 @@ namespace Boy_Scouts_Scheduler.Controllers
             // TODO: select timeslots only from current event
             ViewBag.TimeSlots =
                 (from slot in db.TimeSlots
-                 where slot.isGeneral == false
+                 where slot.Event.ID == eventID && slot.isGeneral == false
                 group slot by new
                 {
                     y = slot.Start.Year,

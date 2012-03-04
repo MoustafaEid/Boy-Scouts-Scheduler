@@ -14,19 +14,21 @@ namespace Boy_Scouts_Scheduler.Controllers
     public class TimeSlotController : Controller
     {
         private SchedulingContext db = new SchedulingContext();
+        private int eventID 
+        {
+            get { return Convert.ToInt32(Request.Cookies["event"].Value); }
+        }
 
         //
         // GET: /TimeSlot/
 
-        public ViewResult Index(int start = 0, int itemsPerPage = 100, string orderBy = "ID", bool desc = false)
+        public ViewResult Index(string orderBy = "ID", bool desc = false)
         {
-            ViewBag.Count = db.TimeSlots.Count();
-            ViewBag.Start = start;
-            ViewBag.ItemsPerPage = itemsPerPage;
+            ViewBag.Count = db.TimeSlots.Count(t => t.Event.ID == eventID);
             ViewBag.OrderBy = orderBy;
             ViewBag.Desc = desc;
 
-            ViewBag.StartDate = db.Events.First().Start; // TODO: Deal with multiple events
+            ViewBag.StartDate = db.Events.Find(eventID).Start;
 
             return View();
         }
@@ -34,13 +36,13 @@ namespace Boy_Scouts_Scheduler.Controllers
         //
         // GET: /TimeSlot/GridData/?start=0&itemsPerPage=20&orderBy=ID&desc=true
 
-        public ActionResult GridData(int start = 0, int itemsPerPage = 100, string orderBy = "ID", bool desc = false)
+        public ActionResult GridData(string orderBy = "ID", bool desc = false)
         {
-            Response.AppendHeader("X-Total-Row-Count", db.TimeSlots.Count().ToString());
+            Response.AppendHeader("X-Total-Row-Count", db.TimeSlots.Count(t => t.Event.ID == eventID).ToString());
             ObjectQuery<TimeSlot> timeslots = (db as IObjectContextAdapter).ObjectContext.CreateObjectSet<TimeSlot>();
             timeslots = timeslots.OrderBy("it." + orderBy + (desc ? " desc" : ""));
 
-            return PartialView(timeslots.Skip(start).Take(itemsPerPage));
+            return PartialView(timeslots.Where(t => t.Event.ID == eventID));
         }
 
         //
@@ -68,6 +70,7 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             if (ModelState.IsValid)
             {
+                timeslot.Event = db.Events.Find(eventID);
                 db.TimeSlots.Add(timeslot);
                 db.SaveChanges();
                 return PartialView("GridData", new TimeSlot[] { timeslot });

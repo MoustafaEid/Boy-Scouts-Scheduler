@@ -14,9 +14,14 @@ namespace Boy_Scouts_Scheduler.Controllers
     public class ScheduleController : Controller
     {
         private SchedulingContext db = new SchedulingContext();
+        private int eventID
+        {
+            get { return Convert.ToInt32(Request.Cookies["event"].Value); }
+        }
 
         public ActionResult Generate(int startSlotID)
         {
+            var currentEvent = db.Events.Find(eventID);
             TimeSlot startSlot = db.TimeSlots.Find(startSlotID);
 
 			IEnumerable<Activity> schedule;
@@ -24,40 +29,47 @@ namespace Boy_Scouts_Scheduler.Controllers
 
             IEnumerable<Group> groupData = 
                 from item in db.Groups
+                where item.Event.ID == eventID
                 select item;
 
             IEnumerable<Station> stationData =
                 from item in db.Stations
+                where item.Event.ID == eventID
                 select item;
 
             IEnumerable<TimeSlot> timeslotData =
                 from item in db.TimeSlots
-                //where item.isGeneral == false
+                where item.Event.ID == eventID
                 orderby item.Start ascending
                 select item;
 
             IEnumerable<TimeSlot> generalSlots =
                 from item in db.TimeSlots
-                where item.isGeneral == true
+                where item.Event.ID == eventID && item.isGeneral
                 orderby item.Start ascending
                 select item;
 
             IEnumerable<SchedulingConstraint> constraintData =
-                (from item in db.SchedulingConstraints.Include(c => c.Group).Include(c => c.GroupType).Include(c => c.Station)
-                select item).Include(c => c.GroupType);
+                from item in db.SchedulingConstraints.Include(c => c.Group).Include(c => c.GroupType).Include(c => c.Station)
+                where item.Event.ID == eventID
+                select item;
 
-			List<Activity> activityData = db.Activities.ToList();
+            IEnumerable<Activity> activityData =
+                from item in db.Activities
+                where item.Event.ID == eventID
+                select item;
 
             // call algorithm to generate schedule
             schedule = Boy_Scouts_Scheduler.Algorithm.Scheduler.Schedule(groupData, stationData, constraintData, timeslotData, activityData, startSlot);
 
-			ClearSchedule();
+	        ClearSchedule();
 
             scheduleEnumerator = schedule.GetEnumerator();
             while (scheduleEnumerator.MoveNext())
             {
                 db.Activities.Add(new Activity
                 {
+                    Event = currentEvent,
                     Group = scheduleEnumerator.Current.Group,
                     TimeSlot = scheduleEnumerator.Current.TimeSlot,
                     Station = scheduleEnumerator.Current.Station
@@ -71,12 +83,7 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult ClearSchedule()
         {
-			//db.Database.SqlQuery<object>("TRUNCATE TABLE [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities]").ToList();
-
-			foreach (Activity A in db.Activities.ToList())
-				db.Activities.Remove(A);
-
-			db.SaveChanges();
+            db.Database.SqlQuery<object>("DELETE FROM [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities] WHERE Event_ID={0}", eventID).ToList();
 
             return RedirectToAction("Index");
         }
@@ -86,34 +93,32 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ViewResult Index(int start = 0, int itemsPerPage = 20, string orderBy = "ID", bool desc = false)
         {
-            ViewBag.Count = db.Activities.Count();
+            ViewBag.Count = db.Activities.Count(a => a.Event.ID == eventID);
             ViewBag.Start = start;
             ViewBag.ItemsPerPage = itemsPerPage;
             ViewBag.OrderBy = orderBy;
             ViewBag.Desc = desc;
 
-            ViewBag.StartDate = db.Events.First().Start; // TODO: Deal with multiple events
-            ViewBag.Groups = db.Groups.OrderBy(g => g.Name);
-            ViewBag.Stations = db.Stations.OrderBy(s => s.Name);
-            ViewBag.TimeSlots = db.TimeSlots;
+            ViewBag.StartDate = db.Events.Find(eventID).Start;
+            ViewBag.Groups = db.Groups.Where(g => g.Event.ID == eventID).OrderBy(g => g.Name);
+            ViewBag.Stations = db.Stations.Where(s => s.Event.ID == eventID).OrderBy(s => s.Name);
+            ViewBag.TimeSlots = db.TimeSlots.Where(t => t.Event.ID == eventID);
 
             return View();
         }
 
         public JsonResult GroupActivities(int ID)
         {
-            List<Activity> activities = db.Activities.ToList();
-            foreach (var timeSlot in db.TimeSlots.Where(t => t.isGeneral))
+            var group = db.Groups.Find(ID);
+            List<Activity> activities = db.Activities.Where(a => a.Event.ID == eventID).ToList();
+            foreach (var timeSlot in db.TimeSlots.Where(t => t.Event.ID == eventID && t.isGeneral))
             {
-                foreach (var group in db.Groups)
-                {
                     activities.Add(new Activity
                     {
                         Group = group,
                         TimeSlot = timeSlot,
                         Station = new Station { ID = -1, Name = timeSlot.Name }
                     });
-                }
             }
 
             return Json((from activity in activities
@@ -156,11 +161,11 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult GridData(int start = 0, int itemsPerPage = 20, string orderBy = "ID", bool desc = false)
         {
-            Response.AppendHeader("X-Total-Row-Count", db.Activities.Count().ToString());
+            Response.AppendHeader("X-Total-Row-Count", db.Activities.Count(a => a.Event.ID == eventID).ToString());
             ObjectQuery<Activity> activities = (db as IObjectContextAdapter).ObjectContext.CreateObjectSet<Activity>();
             activities = activities.OrderBy("it." + orderBy + (desc ? " desc" : ""));
 
-            return PartialView(activities.Skip(start).Take(itemsPerPage));
+            return PartialView(activities.Where(a => a.Event.ID == eventID).Skip(start).Take(itemsPerPage));
         }
 
         //
@@ -188,6 +193,7 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             if (ModelState.IsValid)
             {
+                activity.Event = db.Events.Find(eventID);
                 db.Activities.Add(activity);
                 db.SaveChanges();
                 return PartialView("GridData", new Activity[] { activity });

@@ -11,65 +11,16 @@
 
 @{
 
-    ViewBag.ItemsPerPage = ViewBag.ItemsPerPage ?? 100;
-    ViewBag.ItemsPerPageOptions = ViewBag.ItemsPerPageOptions ?? new List<int> { 10, 20, 50, 100, 500 };
-
-    int currentPage = ViewBag.Start / ViewBag.ItemsPerPage + 1;
-    int pageCount = (ViewBag.Count - 1) / ViewBag.ItemsPerPage + 1;
-    ViewBag.Start = (currentPage - 1) * ViewBag.ItemsPerPage;
-
     RouteValueDictionary currentRouteValues = new RouteValueDictionary(new
     {
-        start = ViewBag.Start,
-        itemsPerPage = ViewBag.ItemsPerPage,
         orderBy = ViewBag.OrderBy,
         desc = ViewBag.Desc
     });
 }
 
-@helper AjaxGridNavigation(int currentPage, int pageCount, RouteValueDictionary currentRouteValues) {
+@helper AjaxGridNavigation(RouteValueDictionary currentRouteValues) {
     <div class="AjaxGridNavigation">
-        @{
-            int currentStart = (int)currentRouteValues["start"];
-            int itemsPerPage = (int)currentRouteValues["itemsPerPage"];
-        }
-        @if (currentPage != 1)
-        {
-            currentRouteValues["start"] = 0;
-            <a href="@Url.RouteUrl(currentRouteValues)" class="begin">|&lt;</a>
-            currentRouteValues["start"] = currentStart - itemsPerPage;
-            <a href="@Url.RouteUrl(currentRouteValues)" class="prev">&lt;&lt;</a>
-        }
-        else
-        {
-            <span class="begin">|&lt;</span> <span class="prev">&lt;&lt;</span>
-        }
-        <span>Page</span> <input type="text" value="@currentPage" class="pageNum hidden" />
-        <span class="pageNum">@currentPage</span> <span>of</span> <span class="pageCount">@pageCount</span>
-        @if (currentPage != pageCount)
-        {
-            currentRouteValues["start"] = currentStart + itemsPerPage;
-            <a href="@Url.RouteUrl(currentRouteValues)" class="next">&gt;&gt;</a>
-            currentRouteValues["start"] = (pageCount - 1) * itemsPerPage;
-            <a href="@Url.RouteUrl(currentRouteValues)" class="end">&gt;|</a>
-        }
-        else
-        {
-            <span class="next">&gt;&gt;</span> <span class="end">&gt;|</span>
-        }
-        @{currentRouteValues["start"] = currentStart;}
         <a href="@Url.RouteUrl(currentRouteValues)" class="refresh">[Refresh Grid]</a>
-        <span class="itemsPerPage hidden">Items Per Page:
-            <select>
-                @foreach (var option in ViewBag.ItemsPerPageOptions)
-                {
-                    <option value="@option" @if (option == ViewBag.ItemsPerPage)
-                                            {
-                            @: selected="selected"
-                    }>@option</option>
-                }
-            </select>
-        </span>
     </div>
 }
 
@@ -77,10 +28,8 @@
 <div id='calendar'></div>
 
 <div id="AjaxGridContainer">
-    <p>
-        <a href="#insertEmptyRow" class="insertEmptyRow hidden">Create New</a>
-    </p>
-    @AjaxGridNavigation(currentPage, pageCount, currentRouteValues)
+    <a href="#insertEmptyRow" class="insertEmptyRow hidden" style="float: left;">Create New</a>
+    @AjaxGridNavigation(currentRouteValues)
     <table id="AjaxGrid">
         <thead>
             <tr>
@@ -108,13 +57,14 @@
             </tr>
         </thead>
         <tbody>
-@{Html.RenderAction("GridData", new { start = ViewBag.Start });}
+@{Html.RenderAction("GridData");}
         </tbody>
     </table>
-    @AjaxGridNavigation(currentPage, pageCount, currentRouteValues)
+    @AjaxGridNavigation(currentRouteValues)
 </div>
 
 <style>
+    #calendar { margin-bottom: 2em; }
     #AjaxGrid, #AjaxGrid input, #AjaxGrid button { clear: both; width: 100%; }
     #AjaxGrid thead { white-space: nowrap; }
     #AjaxGrid thead a, #AjaxGridContainer .AjaxGridNavigation a { text-decoration: none; }
@@ -128,10 +78,10 @@
     (function($, undefined) {
         var totalRowCount = @ViewBag.Count,
             currentPage = 1,
-            pageCount = @pageCount,
+            pageCount = 1,
             savedParams = {
                 start: 0,
-                itemsPerPage: @ViewBag.ItemsPerPage
+                itemsPerPage: 1000
             },
             unloadWarningSet = false,
             containerContext, gridContext, navigationContext;
