@@ -379,6 +379,11 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 						int prefStation = -1;
 						int tmpIndex = -1;
 
+						// get other
+						int otherGroupSelected = -1;
+						int otherStationSelected = -1;
+						int otherScore = -1 << 30;
+
 						List<Group> groupsSortedByLeastAssgined = sortGroupsByLeastAssigned();
 						Group curGroup;
 						Station curStation;
@@ -450,15 +455,17 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 							}
 						}
 
-						if (prefIndex == -1 && constraintIndex != -1)
+						if (prefIndex != -1 && constraintIndex == -1)
 						{
 							groupSelected = prefGroup;
 							stationSelected = prefStation;
+							maxScore = prefScore;
 						}
-						else if (prefIndex != -1 && constraintIndex == -1)
+						else if (prefIndex == -1 && constraintIndex != -1)
 						{
 							groupSelected = constraintGroup;
 							stationSelected = constraintStation;
+							maxScore = constraintScore;
 						}
 						else if (prefIndex != -1 && constraintIndex != -1)
 						{
@@ -466,6 +473,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 							{
 								groupSelected = constraintGroup;
 								stationSelected = constraintStation;
+								maxScore = constraintScore;
 								prefIndex = -1;
 							}
 							else
@@ -475,48 +483,54 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 									groupSelected = prefGroup;
 									stationSelected = prefStation;
 									constraintIndex = -1;
+									maxScore = prefScore;
 								}
 								else
 								{
 									groupSelected = constraintGroup;
 									stationSelected = constraintStation;
 									prefIndex = -1;
+									maxScore = constraintScore;
 								}
 							}
 						}
 
-						if (groupSelected == -1)
+						for (i = 0; i < groupsSortedByLeastAssgined.Count; i++)
 						{
-							for (i = 0; i < groupsSortedByLeastAssgined.Count; i++)
+							curGroup = groupsSortedByLeastAssgined[i];
+							groupIndex = getGroupIndex(curGroup);
+								
+							if (isGroupBusy[Day, Slot, groupIndex])
+								continue;
+								
+							for (j = 0; j < stations.Count; j++)
 							{
-								curGroup = groupsSortedByLeastAssgined[i];
-								groupIndex = getGroupIndex(curGroup);
-								
-								if (isGroupBusy[Day, Slot, groupIndex])
+								curStation = stations[j];
+								stationIndex = j;
+
+								if (!canScheduleStationAtDaySlot(stationIndex, Day, Slot) || !canScheduleGroupToStationAtDaySlot(groupIndex, stationIndex, Day, Slot))
 									continue;
-								
-								for (j = 0; j < stations.Count; j++)
+
+								s = score(curStation, curGroup, Day, Slot);
+
+								if (s > otherScore || s == otherScore && GroupStationAssignments[groupIndex, stationIndex] < minStationAssignment)
 								{
-									curStation = stations[j];
-									stationIndex = j;
-
-									if (!canScheduleStationAtDaySlot(stationIndex, Day, Slot) || !canScheduleGroupToStationAtDaySlot(groupIndex, stationIndex, Day, Slot))
-										continue;
-
-									s = score(curStation, curGroup, Day, Slot);
-
-									if (s > maxScore || s == maxScore && GroupStationAssignments[groupIndex, stationIndex] < minStationAssignment )
-									{
-										maxScore = s;
-										groupSelected = groupIndex;
-										stationSelected = stationIndex;
-										minStationAssignment = GroupStationAssignments[groupIndex, stationIndex];
-									}
+									otherScore = s;
+									otherGroupSelected = groupIndex;
+									otherStationSelected = stationIndex;
+									minStationAssignment = GroupStationAssignments[groupIndex, stationIndex];
 								}
 							}
 						}
 
-						if (groupSelected == -1)
+						if (otherScore > maxScore || constraintIndex == -1 && prefIndex == -1)
+						{
+							groupSelected = otherGroupSelected;
+							stationSelected = otherStationSelected;
+							constraintIndex = prefIndex = -1;
+						}
+
+						if (groupSelected == -1 || stationSelected == -1)
 							break;
 
 						scheduleGroupToStationAtDaySlot(groupSelected, stationSelected, Day, Slot, constraintIndex, prefIndex);
