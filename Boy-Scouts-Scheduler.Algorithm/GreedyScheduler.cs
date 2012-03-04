@@ -336,7 +336,6 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			Schedule(startDaySlot.Key, startDaySlot.Value);
 
-
 			/*
 			Dictionary<string, string>[,] Q = new Dictionary<string, string>[10, 20];
 
