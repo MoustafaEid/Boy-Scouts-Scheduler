@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
+using System.Linq;
 
 namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 {
@@ -221,10 +222,40 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 		private static void addOldScheduleToNewScheduleTillTimeSlot(IEnumerable<Models.Activity> oldSchedule, int Day, int Slot)
 		{
-			int i, j, groupIndex = 0, stationIndex = 0, prefIndex = -1, constraintIndex = -1;
+			int i, j, z, groupIndex = 0, stationIndex = 0, prefIndex = -1, constraintIndex = -1;
 
-			foreach (Models.Activity A in oldSchedule)
+			// take out the second scheduled activity pin
+			bool[] vis = new bool[ oldSchedule.Count() ];
+			oldSchedule = oldSchedule.OrderBy(a => a.TimeSlot.Start);
+
+			List<Models.Activity> oldSched = oldSchedule.ToList();
+
+			for (i = 0; i < oldSched.Count(); i++)
 			{
+				if (vis[i])
+					continue;
+
+				if (oldSched[i].Station.isActivityPin)
+				{
+					for (j = i + 1; j < oldSched.Count; j++)
+					{
+						if (oldSched[j].Station.ID == oldSched[i].Station.ID && oldSched[j].Group.ID == oldSched[i].Group.ID &&
+							oldSched[j].TimeSlot.Start.DayOfWeek == oldSched[i].TimeSlot.Start.DayOfWeek)
+						{
+							vis[j] = true;
+							break;
+						}
+					}
+				}
+			}
+
+			for(z=0;z<oldSched.Count;z++)
+			{
+				if (vis[z])
+					continue;
+
+				Models.Activity A = oldSched[z];
+
 				KeyValuePair<int, int> DS = timeSlotToDaySlot(A.TimeSlot);
 
 				if (DS.Key > Day || DS.Key == Day && DS.Value >= Slot)
@@ -249,7 +280,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 							break;
 						}
 				
-				scheduleGroupToStationAtDaySlot(groupIndex, stationIndex, Day, Slot, constraintIndex, prefIndex);
+				scheduleGroupToStationAtDaySlot(groupIndex, stationIndex, DS.Key, DS.Value, constraintIndex, prefIndex);
 			}
 		}
 		public static IEnumerable<Models.Activity> getSchedule(IEnumerable<Models.Group> groups, IEnumerable<Models.Station> stations, IEnumerable<Models.SchedulingConstraint> constraints, 
