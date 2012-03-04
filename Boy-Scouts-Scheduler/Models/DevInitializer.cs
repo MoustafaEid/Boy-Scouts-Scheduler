@@ -37,32 +37,31 @@ namespace Boy_Scouts_Scheduler.Models
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Monday: 10:30AM-12:00PM",
-                Start = new DateTime(2012, 3, 5, 10, 30, 0),
-                End = new DateTime(2012, 3, 5, 12, 0, 0)
+                Name = "Monday: 10:15AM-11:15PM",
+                Start = new DateTime(2012, 3, 5, 10, 15, 0),
+                End = new DateTime(2012, 3, 5, 11, 15, 0)
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Monday: 1:00PM-2:00PM",
-                Start = new DateTime(2012, 3, 5, 13, 0, 0),
-                End = new DateTime(2012, 3, 5, 14, 0, 0)
+                Name = "Monday: 11:30PM-12:30PM",
+                Start = new DateTime(2012, 3, 5, 11, 30, 0),
+                End = new DateTime(2012, 3, 5, 12, 30, 0)
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Monday: 2:30PM-3:30PM",
-                Start = new DateTime(2012, 3, 5, 14, 30, 0),
-                End = new DateTime(2012, 3, 5, 15, 30, 0)
+                Name = "Monday: 1:30PM-2:30PM",
+                Start = new DateTime(2012, 3, 5, 13, 30, 0),
+                End = new DateTime(2012, 3, 5, 14, 30, 0)
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Monday: 4:00PM-5:00PM",
-                Start = new DateTime(2012, 3, 5, 16, 0, 0),
-                End = new DateTime(2012, 3, 5, 17, 0, 0)
+                Name = "Monday: 2:45PM-3:45PM",
+                Start = new DateTime(2012, 3, 5, 14, 45, 0),
+                End = new DateTime(2012, 3, 5, 15, 45, 0)
             });
-
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
@@ -73,32 +72,31 @@ namespace Boy_Scouts_Scheduler.Models
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Tuesday: 10:30AM-12:00PM",
-                Start = new DateTime(2012, 3, 6, 10, 30, 0),
-                End = new DateTime(2012, 3, 6, 12, 0, 0)
+                Name = "Tuesday: 10:15AM-11:15PM",
+                Start = new DateTime(2012, 3, 6, 10, 15, 0),
+                End = new DateTime(2012, 3, 6, 11, 15, 0)
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Tuesday: 1:00PM-2:00PM",
-                Start = new DateTime(2012, 3, 6, 13, 0, 0),
-                End = new DateTime(2012, 3, 6, 14, 0, 0)
+                Name = "Tuesday: 11:30PM-12:30PM",
+                Start = new DateTime(2012, 3, 6, 11, 30, 0),
+                End = new DateTime(2012, 3, 6, 12, 30, 0)
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Tuesday: 2:30PM-3:30PM",
-                Start = new DateTime(2012, 3, 6, 14, 30, 0),
-                End = new DateTime(2012, 3, 6, 15, 30, 0)
+                Name = "Tuesday: 1:30PM-2:30PM",
+                Start = new DateTime(2012, 3, 6, 13, 30, 0),
+                End = new DateTime(2012, 3, 6, 14, 30, 0)
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Tuesday: 4:00PM-5:00PM",
-                Start = new DateTime(2012, 3, 6, 16, 0, 0),
-                End = new DateTime(2012, 3, 6, 17, 0, 0)
+                Name = "Tuesday: 2:45PM-3:45PM",
+                Start = new DateTime(2012, 3, 6, 14, 45, 0),
+                End = new DateTime(2012, 3, 6, 15, 45, 0)
             });
-
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
@@ -109,32 +107,31 @@ namespace Boy_Scouts_Scheduler.Models
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Wednesday: 10:30AM-12:00PM",
-                Start = new DateTime(2012, 3, 7, 10, 30, 0),
-                End = new DateTime(2012, 3, 7, 12, 0, 0)
+                Name = "Wednesday: 10:15AM-11:15PM",
+                Start = new DateTime(2012, 3, 7, 10, 15, 0),
+                End = new DateTime(2012, 3, 7, 11, 15, 0)
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Wednesday: 1:00PM-2:00PM",
-                Start = new DateTime(2012, 3, 7, 13, 0, 0),
-                End = new DateTime(2012, 3, 7, 14, 0, 0)
+                Name = "Wednesday: 11:30PM-12:30PM",
+                Start = new DateTime(2012, 3, 7, 11, 30, 0),
+                End = new DateTime(2012, 3, 7, 12, 30, 0)
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Wednesday: 2:30PM-3:30PM",
-                Start = new DateTime(2012, 3, 7, 14, 30, 0),
-                End = new DateTime(2012, 3, 7, 15, 30, 0)
+                Name = "Wednesday: 1:30PM-2:30PM",
+                Start = new DateTime(2012, 3, 7, 13, 30, 0),
+                End = new DateTime(2012, 3, 7, 14, 30, 0)
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Wednesday: 4:00PM-5:00PM",
-                Start = new DateTime(2012, 3, 7, 16, 0, 0),
-                End = new DateTime(2012, 3, 7, 17, 0, 0)
+                Name = "Wednesday: 2:45PM-3:45PM",
+                Start = new DateTime(2012, 3, 7, 14, 45, 0),
+                End = new DateTime(2012, 3, 7, 15, 45, 0)
             });
-
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
@@ -145,32 +142,31 @@ namespace Boy_Scouts_Scheduler.Models
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Thursday: 10:30AM-12:00PM",
-                Start = new DateTime(2012, 3, 8, 10, 30, 0),
-                End = new DateTime(2012, 3, 8, 12, 0, 0)
+                Name = "Thursday: 10:15AM-11:15PM",
+                Start = new DateTime(2012, 3, 8, 10, 15, 0),
+                End = new DateTime(2012, 3, 8, 11, 15, 0)
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Thursday: 1:00PM-2:00PM",
-                Start = new DateTime(2012, 3, 8, 13, 0, 0),
-                End = new DateTime(2012, 3, 8, 14, 0, 0)
+                Name = "Thursday: 11:30PM-12:30PM",
+                Start = new DateTime(2012, 3, 8, 11, 30, 0),
+                End = new DateTime(2012, 3, 8, 12, 30, 0)
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Thursday: 2:30PM-3:30PM",
-                Start = new DateTime(2012, 3, 8, 14, 30, 0),
-                End = new DateTime(2012, 3, 8, 15, 30, 0)
+                Name = "Thursday: 1:30PM-2:30PM",
+                Start = new DateTime(2012, 3, 8, 13, 30, 0),
+                End = new DateTime(2012, 3, 8, 14, 30, 0)
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Thursday: 4:00PM-5:00PM",
-                Start = new DateTime(2012, 3, 8, 16, 0, 0),
-                End = new DateTime(2012, 3, 8, 17, 0, 0)
+                Name = "Thursday: 2:45PM-3:45PM",
+                Start = new DateTime(2012, 3, 8, 14, 45, 0),
+                End = new DateTime(2012, 3, 8, 15, 45, 0)
             });
-
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
@@ -181,16 +177,30 @@ namespace Boy_Scouts_Scheduler.Models
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Friday: 10:30AM-12:00PM",
-                Start = new DateTime(2012, 3, 9, 10, 30, 0),
-                End = new DateTime(2012, 3, 9, 12, 0, 0)
+                Name = "Friday: 10:15AM-11:15PM",
+                Start = new DateTime(2012, 3, 9, 10, 15, 0),
+                End = new DateTime(2012, 3, 9, 11, 15, 0)
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Friday: 1:00PM-2:00PM",
-                Start = new DateTime(2012, 3, 9, 13, 0, 0),
-                End = new DateTime(2012, 3, 9, 14, 0, 0),
+                Name = "Friday: 11:30PM-12:30PM",
+                Start = new DateTime(2012, 3, 9, 11, 30, 0),
+                End = new DateTime(2012, 3, 9, 12, 30, 0)
+            });
+            context.TimeSlots.Add(new TimeSlot
+            {
+                Event = primaryEvent,
+                Name = "Friday: 1:30PM-2:30PM",
+                Start = new DateTime(2012, 3, 9, 13, 30, 0),
+                End = new DateTime(2012, 3, 9, 14, 30, 0)
+            });
+            context.TimeSlots.Add(new TimeSlot
+            {
+                Event = primaryEvent,
+                Name = "Friday: 2:45PM-3:45PM",
+                Start = new DateTime(2012, 3, 9, 14, 45, 0),
+                End = new DateTime(2012, 3, 9, 15, 45, 0)
             });
 
 			context.SaveChanges();
@@ -201,40 +211,40 @@ namespace Boy_Scouts_Scheduler.Models
             {
                 Event = primaryEvent,
                 Name = "Monday Lunch",
-                Start = new DateTime(2012, 3, 5, 12, 0, 0),
-                End = new DateTime(2012, 3, 5, 13, 0, 0),
+                Start = new DateTime(2012, 3, 5, 12, 30, 0),
+                End = new DateTime(2012, 3, 5, 13, 30, 0),
                 isGeneral = true
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
                 Name = "Tuesday Lunch",
-                Start = new DateTime(2012, 3, 6, 12, 0, 0),
-                End = new DateTime(2012, 3, 6, 13, 0, 0),
+                Start = new DateTime(2012, 3, 6, 12, 30, 0),
+                End = new DateTime(2012, 3, 6, 13, 30, 0),
                 isGeneral = true
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
                 Name = "Wednesday Lunch",
-                Start = new DateTime(2012, 3, 7, 12, 0, 0),
-                End = new DateTime(2012, 3, 7, 13, 0, 0),
+                Start = new DateTime(2012, 3, 7, 12, 30, 0),
+                End = new DateTime(2012, 3, 7, 13, 30, 0),
                 isGeneral = true
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
                 Name = "Thursday Lunch",
-                Start = new DateTime(2012, 3, 8, 12, 0, 0),
-                End = new DateTime(2012, 3, 8, 13, 0, 0),
+                Start = new DateTime(2012, 3, 8, 12, 30, 0),
+                End = new DateTime(2012, 3, 8, 13, 30, 0),
                 isGeneral = true
             });
             context.TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
                 Name = "Friday Lunch",
-                Start = new DateTime(2012, 3, 9, 12, 0, 0),
-                End = new DateTime(2012, 3, 9, 13, 0, 0),
+                Start = new DateTime(2012, 3, 9, 12, 30, 0),
+                End = new DateTime(2012, 3, 9, 13, 30, 0),
                 isGeneral = true
             });
             context.SaveChanges();
@@ -598,56 +608,7 @@ namespace Boy_Scouts_Scheduler.Models
                 Group = context.Groups.Where(g => g.ID == 2).Single(),
                 Station = context.Stations.Where(s => s.ID == 2).Single(),
             });
-            //context.SchedulingConstraints.Add(new SchedulingConstraint
-            //{
-            //    GroupType = context.GroupTypes.Where(t => t.ID == 3).Single(),
-            //    Group = context.Groups.Where(g => g.ID == 3).Single(),
-            //    Station = context.Stations.Where(s => s.ID == 3).Single(),
-            //    MinVisits = 1,
-            //    MaxVisits = 1
-            //});
-            //context.SchedulingConstraints.Add(new SchedulingConstraint
-            //{
-            //    GroupType = context.GroupTypes.Where(t => t.ID == 4).Single(),
-            //    Group = context.Groups.Where(g => g.ID == 4).Single(),
-            //    Station = context.Stations.Where(s => s.ID == 4).Single(),
-            //    MinVisits = 1,
-            //    MaxVisits = 1
-            //});
             context.SaveChanges();
-
-            //// Seed Activities
-            //context.Activities.Add(new Activity
-            //{
-            //    Station = context.Stations.Where(s => s.ID == 1).Single(),
-            //    Group = context.Groups.Where(g => g.ID == 1).Single(),
-            //    TimeSlot = context.TimeSlots.Where(t => t.ID == 1).Single()
-            //});
-            //context.Activities.Add(new Activity
-            //{
-            //    Station = context.Stations.Where(s => s.ID == 2).Single(),
-            //    Group = context.Groups.Where(g => g.ID == 2).Single(),
-            //    TimeSlot = context.TimeSlots.Where(t => t.ID == 2).Single()
-            //});
-            //context.Activities.Add(new Activity
-            //{
-            //    Station = context.Stations.Where(s => s.ID == 3).Single(),
-            //    Group = context.Groups.Where(g => g.ID == 3).Single(),
-            //    TimeSlot = context.TimeSlots.Where(t => t.ID == 3).Single()
-            //});
-            //context.Activities.Add(new Activity
-            //{
-            //    Station = context.Stations.Where(s => s.ID == 4).Single(),
-            //    Group = context.Groups.Where(g => g.ID == 4).Single(),
-            //    TimeSlot = context.TimeSlots.Where(t => t.ID == 4).Single()
-            //});
-            //context.Activities.Add(new Activity
-            //{
-            //    Station = context.Stations.Where(s => s.ID == 5).Single(),
-            //    Group = context.Groups.Where(g => g.ID == 5).Single(),
-            //    TimeSlot = context.TimeSlots.Where(t => t.ID == 5).Single()
-            //});
-            //context.SaveChanges();
         }
     }
 }

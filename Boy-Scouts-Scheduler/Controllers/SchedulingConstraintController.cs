@@ -137,7 +137,6 @@ namespace Boy_Scouts_Scheduler.Controllers
             ViewBag.Groups.Insert(0, new Group { ID = -1 }); // Allow null preferences
             ViewBag.Stations = db.Stations.ToList();
             ViewBag.Stations.Insert(0, new Station { ID = -1 }); // Allow null preferences
-            //ViewBag.Categories = db.Stations.Select(s => s.Category).Distinct().ToList();
             return PartialView("Edit", schedulingconstraint);
         }
 
