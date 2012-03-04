@@ -46,15 +46,10 @@ namespace Boy_Scouts_Scheduler.Controllers
                 (from item in db.SchedulingConstraints.Include(c => c.Group).Include(c => c.GroupType).Include(c => c.Station)
                 select item).Include(c => c.GroupType);
 
-            IEnumerable<Activity> activityData =
-                from item in db.Activities
-                where item.TimeSlot.isGeneral == false
-                select item;
+			List<Activity> activityData = db.Activities.ToList();
 
             // call algorithm to generate schedule
             schedule = Boy_Scouts_Scheduler.Algorithm.Scheduler.Schedule(groupData, stationData, constraintData, timeslotData, activityData, startSlot);
-
-            db.Database.SqlQuery<object>("TRUNCATE TABLE [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities]").ToList();
 
             scheduleEnumerator = schedule.GetEnumerator();
             while (scheduleEnumerator.MoveNext())
@@ -74,7 +69,12 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult ClearSchedule()
         {
-            db.Database.SqlQuery<object>("TRUNCATE TABLE [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities]").ToList();
+			//db.Database.SqlQuery<object>("TRUNCATE TABLE [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities]").ToList();
+
+			foreach (Activity A in db.Activities.ToList())
+				db.Activities.Remove(A);
+
+			db.SaveChanges();
 
             return RedirectToAction("Index");
         }
