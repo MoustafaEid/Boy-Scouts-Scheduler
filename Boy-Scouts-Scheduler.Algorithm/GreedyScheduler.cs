@@ -102,6 +102,8 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 		private static int CONSTRAINT_PENALTY = -10;
 		private static int[] PREF_PENALTIES = new int[5] { -100, -90, -70, -40, -20 };
+		private static int SAME_CATEGORY_PENALTY = -100;
+		private static int SAME_STATION_PENALTY = -200;
 		
 		private static int[] nSlots = new int[6];
 		private static int[] lunchSlot = new int[6];
@@ -671,8 +673,9 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			int i, j;
 
-			// check if other constraints will be violated if this assignment happens.
+			int groupIndex = getGroupIndex(G);
 
+			// check if other constraints will be violated if this assignment happens.
 			// station cap - 1 for the current assigmment
 			int stationIndex = getStationIndex(S);
 			int stationTotalAvailableSlotsLeft = S.totalAvailabltSlots - StationAssignmentsCounts[stationIndex] - 1;
@@ -698,7 +701,6 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			// nNotGettingPicks[0] is the count of groups that aren't getting their first picks because of this group
 			int[] nNotGettingPicks = new int[5] { 0, 0, 0, 0, 0 };
-			int nNoPicks = 0;
 
 			// Check how many groups get their second pick instead of first, and how many groups aren't getting any picks
 
@@ -735,6 +737,27 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			for (i = 0; i < 5; i++)
 				ret += PREF_PENALTIES[i] * nNotGettingPicks[i];
+
+			// check if the same group was assigned to another station with the same group
+			int nSameCat = 0;
+			int nSameStation = 0;
+
+			for (i = 1; i <= Slot; i++)
+			{
+				foreach (KeyValuePair<int, int> P in masterSchedule[Day, i])
+				{
+					if( groupIndex == P.Key )
+					{
+						if(P.Value != stationIndex && S.Category != "" && AllStations[P.Value].Category == S.Category)
+							nSameCat++;
+						else if(P.Value == stationIndex)
+							nSameStation++;
+					}
+				}
+			}
+
+			ret += SAME_CATEGORY_PENALTY * nSameCat;
+			ret += SAME_STATION_PENALTY * nSameStation;
 
 			return ret;
 		}
