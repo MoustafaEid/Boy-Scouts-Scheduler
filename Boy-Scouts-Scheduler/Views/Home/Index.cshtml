@@ -1,8 +1,82 @@
-﻿@{
+﻿@model Boy_Scouts_Scheduler.Models.Event
+@{
     ViewBag.Title = "Cub Scouts Scheduling Home";
 }
+@section html_head {
+	<script src="@Url.Content("~/Scripts/date.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
 
-<center>
+    <style type="text/css">
+        #eventSelector {
+            float: left;
+            width: 175px;
+        }
+        #eventSelector #eventDropDown {
+            float: left;
+            margin-right: 5px;
+        }
+        #eventSelector fieldset input {
+            width: 165px;
+            padding: 3px;
+        }
+        #appIntro {
+            text-align: center;
+        }
+        #appIntroImageWrapper {
+            margin: 0 auto;
+        }
+        .highlight h3 {
+            color: red;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+    </style>
+}
+
+<div id="eventSelector">
+    <h3>Select Event</h3>
+    @Html.DropDownList("eventDropDown", new SelectList(ViewBag.Events, "ID", "Name", Request.Cookies["event"] != null ? Request.Cookies["event"].Value : null))
+    <input type="submit" value="Select" id="selectEventButton" />
+    <h3>Or Create Event</h3>
+    @using (Html.BeginForm("Create", "Event", FormMethod.Post, new { id = "createEventForm" }))
+    {
+        @Html.ValidationSummary(true)
+        <fieldset>
+            <legend>Event</legend>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Name, "Event Name")
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Name)
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Start, "Start Date")
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Start)
+                @Html.ValidationMessageFor(model => model.Start)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.End, "End Date")
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.End)
+                @Html.ValidationMessageFor(model => model.End)
+            </div>
+
+            <p>
+                <input type="submit" value="Create" id="createEventButton" />
+            </p>
+        </fieldset>
+    }
+</div>
+
+<div id="appIntro">
     <h2>Welcome to the Cub Scouts Scheduling Application</h2>
     
     <p>
@@ -11,8 +85,48 @@
         schedule under the "Constraints" tab. When you are satisfied with your entries, continue to <br />
         the "Schedule" tab to generate your camp schedule.
     </p>
+    <span id="appIntroImageWrapper">
+        <img src="@Url.Content("~/images/cub_happy_color.jpg")" alt="ASP.NET" />
+        <img src="@Url.Content("~/images/cub_at_bat_color.jpg")" alt="ASP.NET" />
+        <img src="@Url.Content("~/images/Archer.jpg")" alt="ASP.NET" />
+    </span>
+</div>
 
-    <img src="@Url.Content("~/images/cub_happy_color.jpg")" alt="ASP.NET" />
-    <img src="@Url.Content("~/images/cub_at_bat_color.jpg")" alt="ASP.NET" />
-    <img src="@Url.Content("~/images/Archer.jpg")" alt="ASP.NET" />
-</center>
+<script type="text/javascript">
+    $(function() {
+        var cookie = document.cookie.match(/^(.*;)?event=([^\s;]*)/);
+        if (!cookie || !$('#eventDropDown option[value="' + cookie[2] + '"]').length) {
+            $('#eventSelector').addClass('highlight');
+        }
+
+        $('#selectEventButton').click(function() {
+            $.post('@Url.Action("Select", "Event")', { id: $('#eventDropDown').val() })
+                .done(function() {
+                    $('#eventSelector').removeClass('highlight');
+                })
+                .fail(function() {
+                    alert('Internal Server Error. Event Selection Failed.');
+                });
+        });
+
+        $('#createEventForm').submit(function(e) {
+            var createEventForm = $(this);
+            $.post('@Url.Action("Create", "Event")', createEventForm.serialize())
+                .done(function(event) {
+                    $('#eventDropDown option[selected]').removeAttr('selected');
+                    $('#eventDropDown').append('<option value="' + event.ID + '" selected="selected">' + event.Name + '</option>');
+                    createEventForm.find('input[type="text"]').val('');
+                })
+                .fail(function() {
+                    alert('Internal Server Error. Event Creation Failed.');
+                });
+            e.preventDefault();
+        });
+
+        $('#eventSelector input[data-val-date]').datepicker();
+
+        $('#eventSelector #Start').change(function () {
+            $('#eventSelector #End').datepicker('setDate', $(this).datepicker('getDate').addDays(4));
+        });
+    });
+</script>
