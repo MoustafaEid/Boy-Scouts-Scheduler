@@ -41,5 +41,17 @@ namespace Boy_Scouts_Scheduler
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
         }
+
+        protected void Application_BeginRequest(object sender, EventArgs args)
+		{
+            HttpCookie cookie = HttpContext.Current.Request.Cookies["Event"];
+            if ((cookie == null || string.IsNullOrEmpty(cookie.Value)) &&
+                (Request.Path.StartsWith("/Group") || Request.Path.StartsWith("/Schedule")
+                || Request.Path.StartsWith("/SchedulingContraint") || Request.Path.StartsWith("/Station")
+                || Request.Path.StartsWith("/TimeSlot")))
+			{
+				HttpContext.Current.Response.Redirect("/");
+			}
+		}
     }
 }

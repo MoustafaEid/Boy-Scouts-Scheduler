@@ -598,12 +598,14 @@ namespace Boy_Scouts_Scheduler.Models
             // Seed Constraints
             context.SchedulingConstraints.Add(new SchedulingConstraint
             {
+                Event = primaryEvent,
                 GroupType = context.GroupTypes.Where(t => t.ID == 1).Single(),
                 Group = context.Groups.Where(g => g.ID == 1).Single(),
                 Station = context.Stations.Where(s => s.ID == 1).Single(),
             });
             context.SchedulingConstraints.Add(new SchedulingConstraint
             {
+                Event = primaryEvent,
                 GroupType = context.GroupTypes.Where(t => t.ID == 2).Single(),
                 Group = context.Groups.Where(g => g.ID == 2).Single(),
                 Station = context.Stations.Where(s => s.ID == 2).Single(),
