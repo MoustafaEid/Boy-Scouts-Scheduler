@@ -115,7 +115,7 @@
                     var name = $(this).text();
                     $.post(lookup[dropDownType].actionUrl, { ID: $(this).val() })
                         .done(function (data) {
-                            $('#calendars').append('<h2>' + name + '</h2>');
+                            $('#calendars').append('<h2 class="page-break">' + name + '</h2>');
                             addCalendar(convertActivitiesToEvents(data));
                         });
                 });
