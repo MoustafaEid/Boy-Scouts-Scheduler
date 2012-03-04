@@ -80,6 +80,7 @@ namespace Boy_Scouts_Scheduler.Models
     public class Activity
     {
         public int ID { get; set; }
+        public virtual Event Event { get; set; }
         public virtual Station Station { get; set; }
         public virtual Group Group { get; set; }
         public virtual TimeSlot TimeSlot { get; set; }
@@ -89,7 +90,7 @@ namespace Boy_Scouts_Scheduler.Models
     {
         /* Null values will be assumed to be unconstrained */
         public int ID { get; set; }
-        public Event Event { get; set; }
+        public virtual Event Event { get; set; }
         public GroupType GroupType { get; set; }
         public Group Group { get; set; }
         public Station Station { get; set; }

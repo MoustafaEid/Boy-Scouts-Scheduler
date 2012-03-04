@@ -14,13 +14,17 @@ namespace Boy_Scouts_Scheduler.Controllers
     public class SchedulingConstraintController : Controller
     {
         private SchedulingContext db = new SchedulingContext();
+        private int eventID
+        {
+            get { return Convert.ToInt32(Request.Cookies["event"].Value); }
+        }
 
         //
         // GET: /SchedulingConstraint/
 
         public ViewResult Index(int start = 0, int itemsPerPage = 20, string orderBy = "ID", bool desc = false)
         {
-            ViewBag.Count = db.SchedulingConstraints.Count();
+            ViewBag.Count = db.SchedulingConstraints.Count(c => c.Event.ID == eventID);
             ViewBag.Start = start;
             ViewBag.ItemsPerPage = itemsPerPage;
             ViewBag.OrderBy = orderBy;
@@ -34,11 +38,12 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult GridData(int start = 0, int itemsPerPage = 20, string orderBy = "ID", bool desc = false)
         {
-            Response.AppendHeader("X-Total-Row-Count", db.SchedulingConstraints.Count().ToString());
+            Response.AppendHeader("X-Total-Row-Count", db.SchedulingConstraints.Count(c => c.Event.ID == eventID).ToString());
             ObjectQuery<SchedulingConstraint> schedulingconstraints = (db as IObjectContextAdapter).ObjectContext.CreateObjectSet<SchedulingConstraint>();
             schedulingconstraints = schedulingconstraints.OrderBy("it." + orderBy + (desc ? " desc" : ""));
 
-            return PartialView(schedulingconstraints.Include(c => c.Group)
+            return PartialView(schedulingconstraints.Where(c => c.Event.ID == eventID)
+                                                    .Include(c => c.Group)
                                                     .Include(c => c.GroupType)
                                                     .Include(c => c.Station)
                                                     .Skip(start).Take(itemsPerPage));
@@ -74,6 +79,7 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             if (ModelState.IsValid)
             {
+                schedulingconstraint.Event = db.Events.Find(eventID);
                 schedulingconstraint.Group = db.Groups.Find(schedulingconstraint.Group != null ? schedulingconstraint.Group.ID : -1);
                 schedulingconstraint.GroupType = db.GroupTypes.Find(schedulingconstraint.GroupType != null ? schedulingconstraint.GroupType.ID : -1);
                 schedulingconstraint.Station = db.Stations.Find(schedulingconstraint.Station != null ? schedulingconstraint.Station.ID : -1);                
@@ -133,9 +139,9 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             ViewBag.GroupTypes = db.GroupTypes.ToList();
             ViewBag.GroupTypes.Insert(0, new GroupType { ID = -1 }); // Allow null preferences
-            ViewBag.Groups = db.Groups.ToList();
+            ViewBag.Groups = db.Groups.Where(g => g.Event.ID == eventID).ToList();
             ViewBag.Groups.Insert(0, new Group { ID = -1 }); // Allow null preferences
-            ViewBag.Stations = db.Stations.ToList();
+            ViewBag.Stations = db.Stations.Where(s => s.Event.ID == eventID).ToList();
             ViewBag.Stations.Insert(0, new Station { ID = -1 }); // Allow null preferences
             return PartialView("Edit", schedulingconstraint);
         }

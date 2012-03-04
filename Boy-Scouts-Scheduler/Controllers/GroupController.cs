@@ -14,13 +14,17 @@ namespace Boy_Scouts_Scheduler.Controllers
     public class GroupController : Controller
     {
         private SchedulingContext db = new SchedulingContext();
+        private int eventID
+        {
+            get { return Convert.ToInt32(Request.Cookies["event"].Value); }
+        }
 
         //
         // GET: /Group/
 
         public ViewResult Index(int start = 0, int itemsPerPage = 20, string orderBy = "ID", bool desc = false)
         {
-            ViewBag.Count = db.Groups.Count();
+            ViewBag.Count = db.Groups.Count(g => g.Event.ID == eventID);
             ViewBag.Start = start;
             ViewBag.ItemsPerPage = itemsPerPage;
             ViewBag.OrderBy = orderBy;
@@ -34,11 +38,11 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult GridData(int start = 0, int itemsPerPage = 20, string orderBy = "ID", bool desc = false)
         {
-            Response.AppendHeader("X-Total-Row-Count", db.Groups.Count().ToString());
+            Response.AppendHeader("X-Total-Row-Count", db.Groups.Count(g => g.Event.ID == eventID).ToString());
             ObjectQuery<Group> groups = (db as IObjectContextAdapter).ObjectContext.CreateObjectSet<Group>();
             groups = groups.OrderBy("it." + orderBy + (desc ? " desc" : ""));
 
-            return PartialView(groups.Skip(start).Take(itemsPerPage));
+            return PartialView(groups.Where(g => g.Event.ID == eventID).Skip(start).Take(itemsPerPage));
         }
 
         //
@@ -66,6 +70,7 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             if (ModelState.IsValid)
             {
+                group.Event = db.Events.Find(eventID);
                 group.Type = db.GroupTypes.Find(group.TypeID);
                 group.Preference1 = db.Stations.Find(group.Preference1.ID);
                 group.Preference2 = db.Stations.Find(group.Preference2.ID);
@@ -129,7 +134,7 @@ namespace Boy_Scouts_Scheduler.Controllers
         protected PartialViewResult PartialEditView(Group group = null)
         {
             ViewBag.GroupTypes = db.GroupTypes.ToList();
-            ViewBag.Stations = db.Stations.ToList();
+            ViewBag.Stations = db.Stations.Where(s => s.Event.ID == eventID).ToList();
             ViewBag.Stations.Insert(0, new Station { ID = -1 }); // Allow null preferences
             return PartialView("Edit", group);
         }
