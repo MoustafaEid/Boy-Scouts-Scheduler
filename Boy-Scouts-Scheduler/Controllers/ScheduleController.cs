@@ -17,8 +17,6 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult Generate(int startSlotID)
         {
-            db.Database.SqlQuery<object>("TRUNCATE TABLE [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities]").ToList();
-
             TimeSlot startSlot = db.TimeSlots.Find(startSlotID);
 
 			IEnumerable<Activity> schedule;
@@ -55,6 +53,8 @@ namespace Boy_Scouts_Scheduler.Controllers
 
             // call algorithm to generate schedule
             schedule = Boy_Scouts_Scheduler.Algorithm.Scheduler.Schedule(groupData, stationData, constraintData, timeslotData, activityData, startSlot);
+
+            db.Database.SqlQuery<object>("TRUNCATE TABLE [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities]").ToList();
 
             scheduleEnumerator = schedule.GetEnumerator();
             while (scheduleEnumerator.MoveNext())
