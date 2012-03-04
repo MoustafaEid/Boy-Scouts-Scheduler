@@ -93,6 +93,5 @@ namespace Boy_Scouts_Scheduler.Models
         public Group Group { get; set; }
         public Station Station { get; set; }
         public int VisitNum { get; set; }
-        public string Category { get; set; }
     }
 }

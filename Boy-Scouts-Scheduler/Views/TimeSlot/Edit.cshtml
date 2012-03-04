@@ -1,6 +1,7 @@
 ﻿@model Boy_Scouts_Scheduler.Models.TimeSlot
 
-<tr @if (Model != null) {
+<tr @if (Model != null)
+    {
     @:data-pkey="@Model.ID"
 }>
     <td>
@@ -20,9 +21,12 @@
         @Html.ValidationMessageFor(model => model.isGeneral)
     </td>
     <td>
-@if (ViewContext.RouteData.Values["Action"].ToString() == "Edit") {
+@if (ViewContext.RouteData.Values["Action"].ToString() == "Edit")
+{
         <button class="editRow">Save</button><button class="cancelEditRow">Cancel</button>
-} else {
+}
+else
+{
         <button class="createRow">Create</button><button class="cancelCreateRow">Cancel</button>
 }
     </td>
