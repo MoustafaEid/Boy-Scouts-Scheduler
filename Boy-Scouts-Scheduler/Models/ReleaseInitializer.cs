@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using Devtalk.EF.CodeFirst;
 
 namespace Boy_Scouts_Scheduler.Models
 {
