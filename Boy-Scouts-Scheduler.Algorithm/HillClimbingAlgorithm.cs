@@ -7,6 +7,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
 {
     public static class HillClimbingAlgorithm
     {
+        //used to pick a random station assignment from a list of top candidates
         private static Random random = new Random();
         private static int activityNumber = 0;
 
@@ -29,13 +30,20 @@ namespace Boy_Scouts_Scheduler.Algorithm
         //list of remaining unassigned stations at a given time slot
         private static IList<Models.Station> unassignedStations = new List<Models.Station>();
 
+        //list of unassigned groups for next time slot -- used for Webelos activity pins
+        private static IList<Models.Group> nextTimeSlotUnassignedGroups = new List<Models.Group>();
+
+        //list of unassigned stations for next time slot -- used for activity pins
+        private static IList<Models.Station> nextTimeSlotUnassignedStations = new List<Models.Station>();
+
         //list of stations that a given group is eligible for at a given time slot
         private static IList<Models.Station> eligibleStations = new List<Models.Station>();
 
         //remaining groups that are allowed to visit the current station
         private static IList<Models.Group> eligibleGroups = new List<Models.Group>();
 
-
+        //used to contain minVisits and maxVisits -- now there is a single field that
+        //keeps track of how many times, if any, that a group must visit a station
         public class StationAssignmentRange
         {
             public int? numVisits;
@@ -69,35 +77,59 @@ namespace Boy_Scouts_Scheduler.Algorithm
            IEnumerable<Models.SchedulingConstraint> modelConstraints, IEnumerable<Models.TimeSlot> modelTimeSlots)
         {
             InitializeData();
-            modelTimeSlots = Shuffle(modelTimeSlots);
-            modelStations = Shuffle(modelStations);
 
+            //The time slots passed in are supposed to be sorted, but it's better not to assume that
+            IList<Models.TimeSlot> sortedTimeSlots = new List<Models.TimeSlot>();
+
+            foreach (Models.TimeSlot timeSlot in modelTimeSlots)
+                sortedTimeSlots.Add(timeSlot);
+            
+            sortedTimeSlots.OrderBy(k => k.Start);
+
+            modelStations = Shuffle(modelStations);
             initializeGroupStationVisitRange(modelConstraints, modelGroups, modelStations, ref groupStationVisitRange);
             initializeGroupPreferenceGiven(modelGroups, ref groupPreferenceGiven);
             initializeGroupStationAssignments(modelGroups, modelStations, ref groupStationAssignments);
 
             IList<Models.Activity> generatedSchedule = new List<Models.Activity>();
 
-            foreach (Models.TimeSlot timeSlot in modelTimeSlots)
-            {
-                //at the beginning of each time slot, all groups and stations are unassigned
-                unassignedGroups.Clear();
-                foreach (Models.Group group in modelGroups)
-                {
-                    unassignedGroups.Add(group);
-                }
+            //initialize all groups and stations to be eligible for the next time slot
+            foreach (Models.Group group in modelGroups)
+                nextTimeSlotUnassignedGroups.Add(group);
+            foreach (Models.Station station in modelStations)
+                nextTimeSlotUnassignedStations.Add(station);
 
+            foreach (Models.TimeSlot timeSlot in sortedTimeSlots)
+            {
+                if (timeSlot.isGeneral)
+                    continue;
+
+                //all groups that did not take an activity pin last time slot are unassigned
+                //and all groups are eligible to be assigned to the next time slot
+                //all stations that are available at this time slot minus those that
+                //are currently having an activity pin 
+                unassignedGroups.Clear();
                 unassignedStations.Clear();
-                foreach (Models.Station station in modelStations)
-                {
+
+                foreach (Models.Group group in nextTimeSlotUnassignedGroups)
+                    unassignedGroups.Add(group);
+                foreach (Models.Station station in nextTimeSlotUnassignedStations)
                     unassignedStations.Add(station);
-                }
+
+                unassignedStations.Intersect(nextTimeSlotUnassignedStations);
+                nextTimeSlotUnassignedGroups.Clear();
+                nextTimeSlotUnassignedStations.Clear();
+                foreach (Models.Group group in modelGroups)
+                    nextTimeSlotUnassignedGroups.Add(group);
+                foreach (Models.Station station in modelStations)
+                    nextTimeSlotUnassignedStations.Add(station);
 
                 unassignedGroups = Shuffle(unassignedGroups);
                 for (int groupNum = 0; groupNum < unassignedGroups.Count; groupNum++)
                 {
                     Models.Group group = unassignedGroups[groupNum];
                     int? greatestNumVisits = 0;
+
                     foreach (Models.Station station in unassignedStations)
                     {
                         int? currentNumVisits = groupStationVisitRange[group][station].numVisits;
@@ -112,16 +144,21 @@ namespace Boy_Scouts_Scheduler.Algorithm
                         else if (currentNumVisits == greatestNumVisits && currentNumVisits > 0)
                         {
                             eligibleStations.Add(station);
-                        }
-                        
+                        } 
                     }
+
+                    //don't assign activity pins to non-webelos
+                    filterEligibleStations(group, ref eligibleStations);
 
                     //if the current group is still required to visit a station, then
                     //assign them to one of those stations
                     if (greatestNumVisits > 0 && eligibleStations.Count > 0)
                     {
-                        generateAssignment(group, timeSlot, eligibleStations, generatedSchedule);
-                        groupNum--;
+                        if (assignStation(eligibleStations, group, timeSlot, sortedTimeSlots,
+                            generatedSchedule))
+                        {
+                            groupNum--;
+                        }
                     }
                 }
 
@@ -130,6 +167,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
                 for (int groupNum = 0; groupNum < unassignedGroups.Count; groupNum++)
                 {
                     Models.Group group = unassignedGroups[groupNum];
+                    
                     bool foundTopPick = false;
                     for (int topStationPick = 0; topStationPick < 5; topStationPick++)
                     {
@@ -156,11 +194,28 @@ namespace Boy_Scouts_Scheduler.Algorithm
                                 groupCanVisitStationAgain(group, station))
                             {
                                 IList<Models.Station> eligibleStations =
-                                    new List<Models.Station> { topStation };
-                                generateAssignment(group, timeSlot, eligibleStations, generatedSchedule);
-                                groupNum--;
-                                foundTopPick = true;
-                                break;
+                                    new List<Models.Station> { station };
+
+                                //if the station is an activity pin and the group is not
+                                //a webelos rank, remove the station
+                                filterEligibleStations(group, ref eligibleStations);
+
+                                if (station.isActivityPin && generateAssignment(
+                                    group, timeSlot, sortedTimeSlots, eligibleStations, generatedSchedule))
+                                {
+                                    groupNum--;
+                                    foundTopPick = true;
+                                    break;
+                                }
+
+                                else if (generateAssignment(group, timeSlot,
+                                    sortedTimeSlots, eligibleStations, generatedSchedule))
+                                {
+                                    groupNum--;
+                                    foundTopPick = true;
+                                    break;
+                                }
+                                
                             }
                         }
                         if (foundTopPick)
@@ -197,7 +252,15 @@ namespace Boy_Scouts_Scheduler.Algorithm
                             eligibleStations.Add(station);
                         }
                     }
-                    generateAssignment(group, timeSlot, eligibleStations, generatedSchedule);
+
+                    //only assign activity pin stations to webelos
+                    filterEligibleStations(group, ref eligibleStations);
+
+                    if (assignStation(eligibleStations, group, timeSlot, sortedTimeSlots, generatedSchedule))
+                    {
+                        groupNum--;
+                    }
+
                 }
 
                 //at this point, there is no criteria left to assign a group to one
@@ -205,37 +268,137 @@ namespace Boy_Scouts_Scheduler.Algorithm
                 for (int groupNum = 0; groupNum < unassignedGroups.Count; groupNum++)
                 {
                     Models.Group group = unassignedGroups[groupNum];
+
                     eligibleStations.Clear();
                     foreach (Models.Station station in unassignedStations)
                     {
                         if (groupCanVisitStationAgain(group, station))
                             eligibleStations.Add(station);
                     }
-                    generateAssignment(group, timeSlot, eligibleStations, generatedSchedule);
-                    groupNum--;
+
+                    //only assign activity pins to webelos groups
+                    filterEligibleStations(group, ref eligibleStations);
+                    if (assignStation(eligibleStations, group, timeSlot, sortedTimeSlots, generatedSchedule))
+                        groupNum--;
                 }
             }
             return generatedSchedule;
         }
 
-        public static void generateAssignment(
-            Models.Group assignedGroup, Models.TimeSlot timeSlot, IList<Models.Station> eligibleStations,
-            //IList<Models.Station> unassignedStations, IList<Models.Group> unassignedGroups,
+        //public IList<Models.Activity> generateMidWeekSchedule(IList<Models.Group> groups,
+        //    IList<Models.Station> stations, IList<Models.SchedulingConstraint> constraints,
+        //    IList<Models.TimeSlot> timeSlots, IList<Models.Activity> oldSchedule,
+        //    Models.TimeSlot startingTimeSlot)
+        //{
+        //    return null;
+        //}
+
+        //prevent activity pins from being assigned to non-webelos ranks
+        private static void filterEligibleStations(Models.Group currentGroup,
+            ref IList<Models.Station> eligibleStations)
+        {
+            if (currentGroup.Type.ID != 4)
+            {
+                for (int stationNum = 0; stationNum < eligibleStations.Count; stationNum++)
+                {
+                    Models.Station station = eligibleStations[stationNum];
+                    if (station.isActivityPin)
+                    {
+                        eligibleStations.Remove(station);
+                        stationNum--;
+                    }
+                }
+            }
+        }
+
+        private static IList<Models.Station> filterActivityPinStations
+            (IList<Models.Station> eligibleStations, out IList<Models.Station> nonActivityPinStations)
+        {
+            nonActivityPinStations = new List<Models.Station>();
+            List<Models.Station> activityPinStations = new List<Models.Station>();
+
+            foreach (Models.Station station in eligibleStations)
+                if (station.isActivityPin)
+                    activityPinStations.Add(station);
+                else
+                    nonActivityPinStations.Add(station);
+
+            return activityPinStations;
+        }
+
+        public static bool assignStation(IList<Models.Station> eligibleStations, Models.Group group,
+            Models.TimeSlot timeSlot, IList<Models.TimeSlot> sortedTimeSlots,
             IList<Models.Activity> generatedSchedule)
+        {
+            IList<Models.Station> nonActivityPinStations = new List<Models.Station>();
+            IList<Models.Station> activityPinStations =
+                filterActivityPinStations(eligibleStations, out nonActivityPinStations);
+
+            if (activityPinStations.Count > 0 && generateAssignment(
+                group, timeSlot, sortedTimeSlots, activityPinStations, generatedSchedule))
+            {
+                return true;
+            }
+
+            else
+            {
+                return generateAssignment(group, timeSlot, sortedTimeSlots, nonActivityPinStations, generatedSchedule);
+            }
+        }
+
+        public static bool generateAssignment(
+            Models.Group assignedGroup, Models.TimeSlot timeSlot, IList<Models.TimeSlot> sortedTimeSlots, 
+            IList<Models.Station> eligibleStations, IList<Models.Activity> generatedSchedule)
         {
             if (eligibleStations.Count > 0)
             {
                 int stationNumber = random.Next(eligibleStations.Count);
                 Models.Station assignedStation = eligibleStations[stationNumber];
 
-                activityNumber++;
-                Models.Activity activity = new Models.Activity();
-                activity.ID = activityNumber;
-                activity.Group = assignedGroup;
-                activity.Station = assignedStation;
-                activity.TimeSlot = timeSlot;
+                //we could be scheduling either an activity pin station or a regular station
+                if (assignedStation.isActivityPin)
+                {
+                    int timeSlotIndex = sortedTimeSlots.IndexOf(timeSlot);
+                    if (timeSlotIndex < 0 || sortedTimeSlots.Count <= (timeSlotIndex + 1))
+                        return false;
 
-                generatedSchedule.Add(activity);
+                    int currentTimeSlotDayNum = sortedTimeSlots[timeSlotIndex].Start.DayOfYear;
+                    int nextTimeSlotDayNum = sortedTimeSlots[timeSlotIndex + 1].Start.DayOfYear;
+                    if (currentTimeSlotDayNum != nextTimeSlotDayNum ||
+                        sortedTimeSlots[timeSlotIndex].isGeneral || sortedTimeSlots[timeSlotIndex + 1].isGeneral)
+                    {
+                        return false;
+                    }
+
+                    activityNumber++;
+                    Models.Activity activity = new Models.Activity();
+                    activity.ID = activityNumber;
+                    activity.Group = assignedGroup;
+                    activity.Station = assignedStation;
+                    activity.TimeSlot = sortedTimeSlots[timeSlotIndex];
+                    generatedSchedule.Add(activity);
+
+                    Models.Activity activity1 = new Models.Activity();
+                    activity1.ID = activityNumber;
+                    activity1.Group = assignedGroup;
+                    activity1.Station = assignedStation;
+                    activity1.TimeSlot = sortedTimeSlots[timeSlotIndex + 1];
+                    generatedSchedule.Add(activity1);
+
+                    nextTimeSlotUnassignedStations.Remove(assignedStation);
+                    nextTimeSlotUnassignedGroups.Remove(assignedGroup);
+                }
+
+                else
+                {
+                    activityNumber++;
+                    Models.Activity activity = new Models.Activity();
+                    activity.ID = activityNumber;
+                    activity.Group = assignedGroup;
+                    activity.Station = assignedStation;
+                    activity.TimeSlot = timeSlot;
+                    generatedSchedule.Add(activity);
+                }
 
                 if (assignedGroup.Preference1 == assignedStation)
                     groupPreferenceGiven[assignedGroup][0] = true;
@@ -252,7 +415,11 @@ namespace Boy_Scouts_Scheduler.Algorithm
                 groupStationAssignments[assignedGroup][assignedStation]++;
                 unassignedStations.Remove(assignedStation);
                 unassignedGroups.Remove(assignedGroup);
+
+                return true;
             }
+
+            return false;
         }
 
         public static void InitializeData()
@@ -263,6 +430,8 @@ namespace Boy_Scouts_Scheduler.Algorithm
             groupStationVisitRange.Clear();
             unassignedGroups.Clear();
             unassignedStations.Clear();
+            nextTimeSlotUnassignedGroups.Clear();
+            nextTimeSlotUnassignedStations.Clear();
             eligibleStations.Clear();
             eligibleGroups.Clear();
         }
