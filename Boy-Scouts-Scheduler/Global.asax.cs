@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Data.Entity;
+using Devtalk.EF.CodeFirst;
 using Boy_Scouts_Scheduler.Models;
 
 namespace Boy_Scouts_Scheduler
@@ -35,6 +36,8 @@ namespace Boy_Scouts_Scheduler
         {
 #if DEBUG
             Database.SetInitializer(new DevInitializer());
+#else
+            Database.SetInitializer(new DontDropDbJustCreateTablesIfModelChanged<SchedulingContext>());
 #endif
             AreaRegistration.RegisterAllAreas();
 
