@@ -365,13 +365,13 @@
 
         $('#calendar').weekCalendar({
             date: new Date("@ViewBag.StartDate"),
-            timeslotsPerHour: 2,
+            timeslotsPerHour: 4,
             firstDayOfWeek: 1,
             daysToShow: 5,
             businessHours: { start: 8, end: 18, limitDisplay: true },
             height: function (calendar) {
                 //return $(window).height() - $('h1').outerHeight(true);
-                return 500;
+                return 900;
             },
             eventRender: function (calEvent, event) {
                 if (calEvent.end.getTime() < new Date().getTime()) {
