@@ -91,9 +91,9 @@ namespace Boy_Scouts_Scheduler.Models
         /* Null values will be assumed to be unconstrained */
         public int ID { get; set; }
         public virtual Event Event { get; set; }
-        public GroupType GroupType { get; set; }
-        public Group Group { get; set; }
-        public Station Station { get; set; }
+        public virtual GroupType GroupType { get; set; }
+        public virtual Group Group { get; set; }
+        public virtual Station Station { get; set; }
         public int VisitNum { get; set; }
     }
 }
