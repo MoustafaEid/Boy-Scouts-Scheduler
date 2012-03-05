@@ -7,6 +7,29 @@
     <link href="@Url.Content("~/Content/jquery.weekcalendar.css")" ~/Content/rel="stylesheet" type="text/css" />
 	<script src="@Url.Content("~/Scripts/date.js")" type="text/javascript"></script>
 	<script src="@Url.Content("~/Scripts/jquery.weekcalendar.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.tinysort.min.js")" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".sort_results").click(function (e) {
+                e.preventDefault();
+
+                if ($(".calendar_item").length == 0) {
+                    $("#calendars .page-break").each(function () {
+                        $(this).add($(this).next()).wrapAll('<div class="calendar_item"></div>');
+                    });
+                }
+
+                $(".calendar_item").tsort('', { sortFunction: function (a, b) {
+                    var x = $(a.e).find(".page-break").text();
+                    var y = $(b.e).find(".page-break").text();
+                    return x == y ? 0 : (x > y ? 1 : -1);
+                }
+                });
+            });
+        });
+    </script>
+
 }
 
 <h2>Schedule</h2>
@@ -34,7 +57,7 @@
 <input type="radio" name="scheduleFor" value="station" id="scheduleForStation" /><label for="scheduleForStation">Station</label>
 @Html.DropDownList("groupDropDown", new SelectList(ViewBag.Groups, "ID", "Name"), "All")
 @Html.DropDownList("stationDropDown", new SelectList(ViewBag.Stations, "ID", "Name"), "All", new { @class = "hide" })
-
+<div><a href="#" class="sort_results">Sort Results</a></div>
 <div id="calendars"></div>
 <script>
 

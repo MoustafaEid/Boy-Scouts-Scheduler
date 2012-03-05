@@ -105,7 +105,8 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 		private static int[] PREF_PENALTIES = new int[5] { -100, -90, -70, -40, -20 };
 		private static int SAME_CATEGORY_PENALTY = -100;
 		private static int SAME_STATION_PENALTY = -200;
-		
+		private static int ASSIGNMENT_CHANGE_PENALTY = -5000;
+
 		private static int[] nSlots = new int[6];
 		private static int[] lunchSlot = new int[6];
 		private static List<Group> AllGroups;
@@ -130,6 +131,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 		// Schedule
 		private static Dictionary<int, int>[,] masterSchedule = new Dictionary<int, int>[MAXD, MAXS];
+		private static Dictionary<int, int>[,] oldMasterSchedule = new Dictionary<int, int>[MAXD, MAXS];
 
 		private static void convertTimeSlotsToDaySlots(IEnumerable<Models.TimeSlot> T)
 		{
@@ -258,11 +260,16 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 				KeyValuePair<int, int> DS = timeSlotToDaySlot(A.TimeSlot);
 
-				if (DS.Key > Day || DS.Key == Day && DS.Value >= Slot)
-					continue;
-
 				for (i = 0; i < AllGroups.Count; i++) if (AllGroups[i].ID == A.Group.ID) { groupIndex = i; break; }
 				for (i = 0; i < AllStations.Count; i++) if (AllStations[i].ID == A.Station.ID) { stationIndex = i; break; }
+
+				oldMasterSchedule[DS.Key, DS.Value].Add(groupIndex, stationIndex);
+
+				if( AllStations[stationIndex].isActivityPin )
+					oldMasterSchedule[DS.Key, DS.Value + 1].Add(groupIndex, stationIndex);
+
+				if (DS.Key > Day || DS.Key == Day && DS.Value >= Slot)
+					continue;
 
 				for(i=0;i<AllGroups.Count;i++)
 					for(j=0;j<5;j++)
@@ -345,7 +352,10 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			for (i = 0; i < MAXD; i++)
 				for (j = 0; j < MAXS; j++)
+				{
 					masterSchedule[i, j] = new Dictionary<int, int>();
+					oldMasterSchedule[i, j] = new Dictionary<int, int>();
+				}
 
 			for (i = 0; i < MAXN; i++)
 				for (j = 0; j < MAXN; j++)
@@ -633,6 +643,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			{
 				isGroupBusy[Day, Slot + 1, groupSelected] = true;
 				masterSchedule[Day, Slot + 1].Add(groupSelected, stationSelected);
+				StationSlotAssignmentsCounts[stationSelected, Day, Slot + 1]++;
 			}
 		}
 
@@ -835,6 +846,21 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			ret += SAME_CATEGORY_PENALTY * nSameCat;
 			ret += SAME_STATION_PENALTY * nSameStation;
+
+			// if there is any entries in the old schedule, try to minimize them.
+			bool isSameSched = false;
+
+			foreach(KeyValuePair<int,int> P in oldMasterSchedule[Day,Slot])
+			{
+				if (P.Key == groupIndex && P.Value == stationIndex)
+				{
+					isSameSched = true;
+					break;
+				}
+			}
+
+			if (!isSameSched)
+				ret += ASSIGNMENT_CHANGE_PENALTY;
 
 			return ret;
 		}
