@@ -28,7 +28,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
 				HillClimbingScore = Score.ScoreSchedule(HillClimbing, groups, stations, constraints, slots);
 
 				// compare scores
-				if (GreedyScore > HillClimbingScore)
+				if (GreedyScore >= HillClimbingScore)
 				    return Greedy;
 
 				return HillClimbing;
