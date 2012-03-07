@@ -28,7 +28,7 @@ namespace Boy_Scouts_Scheduler.Controllers
             IEnumerator<Activity> scheduleEnumerator;
 
             IEnumerable<Group> groupData = 
-                from item in db.Groups
+                from item in db.Groups.Include(g => g.Type) // Preloading GroupType so that it isn't lazy loaded in the GreedyScheduler.
                 where item.Event.ID == eventID
                 select item;
 
