@@ -42,6 +42,14 @@ namespace Boy_Scouts_Scheduler.Algorithm
         //remaining groups that are allowed to visit the current station
         private static IList<Models.Group> eligibleGroups = new List<Models.Group>();
 
+        //How many times each station can be assigned before it becomes unavailable
+        private static IDictionary<Models.Station, int> stationCapacities = new Dictionary<Models.Station, int>();
+
+        //What stations a group has already been assigned to on a given day
+        private static IDictionary<int, Dictionary<Models.Group, List<Models.Station>>> dailyAssignments = 
+            new Dictionary<int, Dictionary<Models.Group, List<Models.Station>>>();
+
+
         //used to contain minVisits and maxVisits -- now there is a single field that
         //keeps track of how many times, if any, that a group must visit a station
         public class StationAssignmentRange
@@ -104,6 +112,12 @@ namespace Boy_Scouts_Scheduler.Algorithm
                 if (timeSlot.isGeneral)
                     continue;
 
+                stationCapacities.Clear();
+                foreach (Models.Station station in modelStations)
+                {
+                    stationCapacities.Add(station, station.Capacity);
+                }
+
                 //all groups that did not take an activity pin last time slot are unassigned
                 //and all groups are eligible to be assigned to the next time slot
                 //all stations that are available at this time slot minus those that
@@ -150,6 +164,9 @@ namespace Boy_Scouts_Scheduler.Algorithm
                     //don't assign activity pins to non-webelos
                     filterEligibleStations(group, ref eligibleStations);
 
+                    //don't assign stations and categories visited on the same day
+                    removeSameDayStationsAndCategories(group, timeSlot, ref eligibleStations);
+
                     //if the current group is still required to visit a station, then
                     //assign them to one of those stations
                     if (greatestNumVisits > 0 && eligibleStations.Count > 0)
@@ -164,11 +181,13 @@ namespace Boy_Scouts_Scheduler.Algorithm
 
                 //for each group that was not required to visit one of the
                 //remaining stations, assign them to their top station pick
+                //no need to remove stations and categories visited on the same
+                //day here because a group only receives their top preference one time
                 for (int groupNum = 0; groupNum < unassignedGroups.Count; groupNum++)
                 {
                     Models.Group group = unassignedGroups[groupNum];
-                    
                     bool foundTopPick = false;
+
                     for (int topStationPick = 0; topStationPick < 5; topStationPick++)
                     {
                         Models.Station topStation;
@@ -256,6 +275,9 @@ namespace Boy_Scouts_Scheduler.Algorithm
                     //only assign activity pin stations to webelos
                     filterEligibleStations(group, ref eligibleStations);
 
+                    //don't assign stations and categories visited on the same day
+                    removeSameDayStationsAndCategories(group, timeSlot, ref eligibleStations);
+
                     if (assignStation(eligibleStations, group, timeSlot, sortedTimeSlots, generatedSchedule))
                     {
                         groupNum--;
@@ -278,10 +300,15 @@ namespace Boy_Scouts_Scheduler.Algorithm
 
                     //only assign activity pins to webelos groups
                     filterEligibleStations(group, ref eligibleStations);
+
+                    //don't assign stations and categories visited on the same day
+                    removeSameDayStationsAndCategories(group, timeSlot, ref eligibleStations);
+
                     if (assignStation(eligibleStations, group, timeSlot, sortedTimeSlots, generatedSchedule))
                         groupNum--;
                 }
             }
+
             return generatedSchedule;
         }
 
@@ -292,6 +319,57 @@ namespace Boy_Scouts_Scheduler.Algorithm
         //{
         //    return null;
         //}
+
+        private static void addAssignmentToDailyAssignments(Models.Activity assignment)
+        {
+            int dayNum = assignment.TimeSlot.Start.DayOfYear;
+            if (dailyAssignments.ContainsKey(dayNum))
+            {
+                if (dailyAssignments[dayNum].ContainsKey(assignment.Group))
+                {
+                    dailyAssignments[dayNum][assignment.Group].Add(assignment.Station);
+                }
+                else
+                {
+                    dailyAssignments[dayNum].Add(assignment.Group,
+                        new List<Models.Station> { assignment.Station });
+                }
+            }
+            else
+            {
+                Dictionary<Models.Group, List<Models.Station>> value = 
+                    new Dictionary<Models.Group, List<Models.Station>>();
+                value.Add(assignment.Group, new List<Models.Station> { assignment.Station });
+                dailyAssignments.Add(dayNum, value);
+            }
+        }
+
+        private static void removeSameDayStationsAndCategories(Models.Group group,
+            Models.TimeSlot timeSlot, ref IList<Models.Station> eligibleStations)
+        {
+            int dayNum = timeSlot.Start.DayOfYear;
+            if (dailyAssignments.ContainsKey(dayNum) && dailyAssignments[dayNum].ContainsKey(group))
+                foreach (Models.Station station in dailyAssignments[dayNum][group])
+                {
+                    //remove all eligible stations with the same category as the current station
+                    if (station.Category != null)
+                    {
+                        for (int eligibleStationNum = 0; eligibleStationNum < eligibleStations.Count; eligibleStationNum++)
+                        {
+                            Models.Station eligibleStation = eligibleStations[eligibleStationNum];
+                            if (eligibleStation.Category == station.Category)
+                            {
+                                eligibleStations.Remove(eligibleStation);
+                                eligibleStationNum--;
+                            }
+                        }
+                    }
+
+                    //remove the current station if it still exists
+                    if (eligibleStations.Contains(station))
+                        eligibleStations.Remove(station);
+                }
+        }
 
         //prevent activity pins from being assigned to non-webelos ranks
         private static void filterEligibleStations(Models.Group currentGroup,
@@ -387,6 +465,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
 
                     nextTimeSlotUnassignedStations.Remove(assignedStation);
                     nextTimeSlotUnassignedGroups.Remove(assignedGroup);
+                    addAssignmentToDailyAssignments(activity);
                 }
 
                 else
@@ -398,6 +477,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
                     activity.Station = assignedStation;
                     activity.TimeSlot = timeSlot;
                     generatedSchedule.Add(activity);
+                    addAssignmentToDailyAssignments(activity);
                 }
 
                 if (assignedGroup.Preference1 == assignedStation)
@@ -413,8 +493,11 @@ namespace Boy_Scouts_Scheduler.Algorithm
 
                 groupStationVisitRange[assignedGroup][assignedStation].decrementNumVisits();
                 groupStationAssignments[assignedGroup][assignedStation]++;
-                unassignedStations.Remove(assignedStation);
                 unassignedGroups.Remove(assignedGroup);
+
+                stationCapacities[assignedStation]--;
+                if (stationCapacities[assignedStation] <= 0)
+                    unassignedStations.Remove(assignedStation);
 
                 return true;
             }
@@ -434,6 +517,8 @@ namespace Boy_Scouts_Scheduler.Algorithm
             nextTimeSlotUnassignedStations.Clear();
             eligibleStations.Clear();
             eligibleGroups.Clear();
+            stationCapacities.Clear();
+            dailyAssignments.Clear();
         }
 
         private static void initializeGroupStationVisitRange(
