@@ -226,6 +226,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 		private static void addOldScheduleToNewScheduleTillTimeSlot(IEnumerable<Models.Activity> oldSchedule, int Day, int Slot)
 		{
+
 			int i, j, z, groupIndex = 0, stationIndex = 0, prefIndex = -1, constraintIndex = -1;
 
 			// take out the second scheduled activity pin
