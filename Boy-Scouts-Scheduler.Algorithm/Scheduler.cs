@@ -11,19 +11,29 @@ namespace Boy_Scouts_Scheduler.Algorithm
         public static IEnumerable<Models.Activity> Schedule(IEnumerable<Models.Group> groups, IEnumerable<Models.Station> stations, IEnumerable<Models.SchedulingConstraint> constraints, 
 				IEnumerable<Models.TimeSlot> slots, IEnumerable<Models.Activity> oldSchedule, Models.TimeSlot startingTimeSlot)
 		{
-            IEnumerable<Models.Activity> Greedy = GreedyAlgorithm.GreedyScheduler.getSchedule(groups, stations, constraints, slots, oldSchedule, startingTimeSlot);
-			//IEnumerable<Models.Activity> HillClimbing = HillClimbingAlgorithm.GenerateSchedule(groups, stations, constraints, slots, oldSchedule, startingTimeSlot);
-            //IEnumerable<Models.Activity> HillClimbing = HillClimbingAlgorithm.GenerateSchedule(groups, stations, constraints, slots);
+			IEnumerable<Models.Activity> Greedy = new List<Models.Activity>();
+			IEnumerable<Models.Activity> HillClimbing = new List<Models.Activity>();
 
-            // compare scores
+			long GreedyScore = 0;
+			long HillClimbingScore = 0;
 
-            //int GreedyScore = 0;
-            //int HillClimbingScore = 0;
+			Greedy = GreedyAlgorithm.GreedyScheduler.getSchedule(groups, stations, constraints, slots, oldSchedule, startingTimeSlot);
 
-            //if (GreedyScore > HillClimbingScore)
-            //    return Greedy;
+			// A schedule needs to be generated from scratch
+			if (slots.First().ID == startingTimeSlot.ID)
+			{
+				HillClimbing = HillClimbingAlgorithm.GenerateSchedule(groups, stations, constraints, slots);
 
-            //return HillClimbing;
+				GreedyScore = Score.ScoreSchedule(Greedy, groups, stations, constraints, slots);
+				HillClimbingScore = Score.ScoreSchedule(HillClimbing, groups, stations, constraints, slots);
+
+				// compare scores
+				if (GreedyScore > HillClimbingScore)
+				    return Greedy;
+
+				return HillClimbing;
+			}
+
 			return Greedy;
 		}
 	}

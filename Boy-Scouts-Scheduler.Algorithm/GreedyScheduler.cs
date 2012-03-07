@@ -103,8 +103,8 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 		private static int CONSTRAINT_PENALTY = -10;
 		private static int[] PREF_PENALTIES = new int[5] { -100, -90, -70, -40, -20 };
-		private static int SAME_CATEGORY_PENALTY = -100;
-		private static int SAME_STATION_PENALTY = -200;
+		private static int SAME_CATEGORY_PENALTY = -500;
+		private static int SAME_STATION_PENALTY = -1000;
 		private static int ASSIGNMENT_CHANGE_PENALTY = -5000;
 
 		private static int[] nSlots = new int[6];
@@ -132,6 +132,8 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 		// Schedule
 		private static Dictionary<int, int>[,] masterSchedule = new Dictionary<int, int>[MAXD, MAXS];
 		private static Dictionary<int, int>[,] oldMasterSchedule = new Dictionary<int, int>[MAXD, MAXS];
+
+		private static bool generateNewScheduleFromScracth = true;
 
 		private static void convertTimeSlotsToDaySlots(IEnumerable<Models.TimeSlot> T)
 		{
@@ -372,6 +374,11 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 				}
 
 			KeyValuePair<int, int> startDaySlot = timeSlotToDaySlot(startingTimeSlot);
+
+			if (startDaySlot.Key == 1 && startDaySlot.Value == 1)
+				generateNewScheduleFromScracth = true;
+			else
+				generateNewScheduleFromScracth = false;
 
 			addOldScheduleToNewScheduleTillTimeSlot(oldSchedule, startDaySlot.Key, startDaySlot.Value);
 
@@ -826,7 +833,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			for (i = 0; i < 5; i++)
 				ret += PREF_PENALTIES[i] * nNotGettingPicks[i];
 
-			// check if the same group was assigned to another station with the same group
+			// check if the same group was assigned to another station with the same category
 			int nSameCat = 0;
 			int nSameStation = 0;
 
@@ -859,7 +866,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 				}
 			}
 
-			if (!isSameSched)
+			if ( !generateNewScheduleFromScracth &&!isSameSched)
 				ret += ASSIGNMENT_CHANGE_PENALTY;
 
 			return ret;
