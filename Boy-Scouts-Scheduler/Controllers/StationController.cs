@@ -64,8 +64,12 @@ namespace Boy_Scouts_Scheduler.Controllers
             {
                 station.Event = db.Events.Find(eventID);
                 station.AvailableTimeSlots = new List<TimeSlot>();
-                foreach (var timeSlotID in TimeSlotIDs) {
-                    station.AvailableTimeSlots.Add(db.TimeSlots.Find(timeSlotID));
+                if (TimeSlotIDs != null)
+                {
+                    foreach (var timeSlotID in TimeSlotIDs)
+                    {
+                        station.AvailableTimeSlots.Add(db.TimeSlots.Find(timeSlotID));
+                    }
                 }
                 db.Stations.Add(station);
                 db.SaveChanges();
@@ -94,8 +98,12 @@ namespace Boy_Scouts_Scheduler.Controllers
             if (ModelState.IsValid)
             {
                 var availableTimeSlots = new List<TimeSlot>();
-                foreach (var timeSlotID in TimeSlotIDs) {
-                    availableTimeSlots.Add(db.TimeSlots.Find(timeSlotID));
+                if (TimeSlotIDs != null)
+                {
+                    foreach (var timeSlotID in TimeSlotIDs)
+                    {
+                        availableTimeSlots.Add(db.TimeSlots.Find(timeSlotID));
+                    }
                 }
                 db.Stations.Attach(station);
                 db.Entry(station).Collection(s => s.AvailableTimeSlots).Load();
