@@ -33,7 +33,9 @@ namespace Boy_Scouts_Scheduler.Controllers
                 select item;
 
             IEnumerable<Station> stationData =
-                from item in db.Stations
+                from item in db.Stations.Include(s => s.AvailableTimeSlots) // Workaround for not having MultipleActiveResultSets on AppHarbor
+                                                                            // since the GreedyScheduler was lazy loading AvailableTimeSlots
+                                                                            // after the DB had already been queried to clear the old schedule
                 where item.Event.ID == eventID
                 select item;
 
@@ -83,7 +85,7 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         public ActionResult ClearSchedule()
         {
-            db.Database.SqlQuery<object>("DELETE FROM [Boy_Scouts_Scheduler.Models.SchedulingContext].[dbo].[Activities] WHERE Event_ID={0}", eventID).ToList();
+            db.Database.SqlQuery<object>("DELETE FROM [dbo].[Activities] WHERE Event_ID={0}", eventID).ToList();
 
             return RedirectToAction("Index");
         }
