@@ -1,18 +1,18 @@
 ﻿@{
     ViewBag.Title = "Help";
-    ViewBag.Message = "Select your help topic.";
 }
 
 <hgroup class="title">
     <h1>@ViewBag.Title.</h1>
-    <h2>@ViewBag.Message</h2>
 </hgroup>
 
 <article>
     <p>
-        If help is needed beyond what is available in the help topics to the right, <br />
-        Please feel free to contact the 'Cub Scout Scheduler' developers below. <br />
-
+        If help is needed beyond what is available in the available user guide, <br />
+        Please feel free to contact the Cub Scout Scheduler developers below. <br />
+    <p>
+        <a href="@Url.Content("~/Documents/Cub_Scouts_User_Admin_Guide-Final.pdf")" target="_blank">Click Here to View User Guide</a>
+    </p>
         <table>
             <tr>
                 <td>Michael Diekema</td>
@@ -34,5 +34,3 @@
     </p>
 
 </article>
-
-<aside>@{ Html.RenderPartial("HelpAside"); }</aside>
