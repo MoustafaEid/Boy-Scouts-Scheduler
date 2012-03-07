@@ -380,13 +380,19 @@
                 }
             },
             eventNew: function (calEvent, event) {
+                function pad(d) {
+                    return (d < 10) ? '0' + d.toString() : d.toString();
+                }
+                var daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                calEvent.title = daysOfWeek[calEvent.start.getDay()] + ': ' + calEvent.start.getHours() + ':' + pad(calEvent.start.getMinutes()) + ' to ' + calEvent.end.getHours() + ':' + pad(calEvent.end.getMinutes()); 
                 $.post('/TimeSlot/Create', {
+                    Name: calEvent.title,
                     Start: calEvent.start.toISOString(),
                     End: calEvent.end.toISOString()
                 })
                         .done(function (data) {
                             calEvent.id = $(data).attr('data-pkey');
-                            $('#AjaxGrid tbody tr[data-pkey="' + calEvent.id + '"]').prepend(data);
+                            $('#AjaxGrid tbody').prepend(data);
                             //console.log('success', data, calEvent, $(data).attr('data-pkey'));
                         })
                         .fail(function (data) {
