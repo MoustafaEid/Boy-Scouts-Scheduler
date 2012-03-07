@@ -779,7 +779,11 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			int otherGroupsNeedThisStation = 0;
 
 			if (stationTotalAvailableSlotsLeft < 0)
-				throw new Exception("Error generating schedule. SC-1");
+			{
+				return -1000000;
+
+				//throw new Exception("Error generating schedule. SC-1");
+			}
 
 			// look for anyone else who wants this station.
 			for (i = 0; i < AllConstraints.Count; i++)
