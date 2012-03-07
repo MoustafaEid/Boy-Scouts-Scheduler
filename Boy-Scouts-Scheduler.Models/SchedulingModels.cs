@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.ComponentModel.DataAnnotations;
 
 namespace Boy_Scouts_Scheduler.Models
 {
@@ -41,6 +42,7 @@ namespace Boy_Scouts_Scheduler.Models
 
     public class Group {
         public int ID { get; set; }
+        [StringLength(25)]
         public string Name { get; set; }
         public int? TypeID { get; set; }
         public virtual Event Event { get; set; }
@@ -56,6 +58,7 @@ namespace Boy_Scouts_Scheduler.Models
     public class Station
     {
         public int ID { get; set;}
+        [StringLength(25)]
         public string Name { get; set; }
         public string Description { get; set; }
         public string Location { get; set; }
@@ -69,6 +72,7 @@ namespace Boy_Scouts_Scheduler.Models
     public class TimeSlot
     {
         public int ID { get; set; }
+        [StringLength(25)]
         public string Name { get; set; }
         public virtual Event Event { get; set; }
         public DateTime Start { get; set; }

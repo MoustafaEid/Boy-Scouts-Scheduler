@@ -42,175 +42,175 @@ namespace Boy_Scouts_Scheduler.Models
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Monday: 9:00AM-10:00AM",
+                Name = "Mon: 9:00AM-10:00AM",
                 Start = new DateTime(2012, 3, 5, 9, 0, 0),
                 End = new DateTime(2012, 3, 5, 10, 00, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Monday: 10:15AM-11:15PM",
+                Name = "Mon: 10:15AM-11:15PM",
                 Start = new DateTime(2012, 3, 5, 10, 15, 0),
                 End = new DateTime(2012, 3, 5, 11, 15, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Monday: 11:30PM-12:30PM",
+                Name = "Mon: 11:30PM-12:30PM",
                 Start = new DateTime(2012, 3, 5, 11, 30, 0),
                 End = new DateTime(2012, 3, 5, 12, 30, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Monday: 1:30PM-2:30PM",
+                Name = "Mon: 1:30PM-2:30PM",
                 Start = new DateTime(2012, 3, 5, 13, 30, 0),
                 End = new DateTime(2012, 3, 5, 14, 30, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Monday: 2:45PM-3:45PM",
+                Name = "Mon: 2:45PM-3:45PM",
                 Start = new DateTime(2012, 3, 5, 14, 45, 0),
                 End = new DateTime(2012, 3, 5, 15, 45, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Tuesday: 9:00AM-10:00AM",
+                Name = "Tues: 9:00AM-10:00AM",
                 Start = new DateTime(2012, 3, 6, 9, 0, 0),
                 End = new DateTime(2012, 3, 6, 10, 00, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Tuesday: 10:15AM-11:15PM",
+                Name = "Tues: 10:15AM-11:15PM",
                 Start = new DateTime(2012, 3, 6, 10, 15, 0),
                 End = new DateTime(2012, 3, 6, 11, 15, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Tuesday: 11:30PM-12:30PM",
+                Name = "Tues: 11:30PM-12:30PM",
                 Start = new DateTime(2012, 3, 6, 11, 30, 0),
                 End = new DateTime(2012, 3, 6, 12, 30, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Tuesday: 1:30PM-2:30PM",
+                Name = "Tues: 1:30PM-2:30PM",
                 Start = new DateTime(2012, 3, 6, 13, 30, 0),
                 End = new DateTime(2012, 3, 6, 14, 30, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Tuesday: 2:45PM-3:45PM",
+                Name = "Tues: 2:45PM-3:45PM",
                 Start = new DateTime(2012, 3, 6, 14, 45, 0),
                 End = new DateTime(2012, 3, 6, 15, 45, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Wednesday: 9:00AM-10:00AM",
+                Name = "Wed: 9:00AM-10:00AM",
                 Start = new DateTime(2012, 3, 7, 9, 0, 0),
                 End = new DateTime(2012, 3, 7, 10, 00, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Wednesday: 10:15AM-11:15PM",
+                Name = "Wed: 10:15AM-11:15PM",
                 Start = new DateTime(2012, 3, 7, 10, 15, 0),
                 End = new DateTime(2012, 3, 7, 11, 15, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Wednesday: 11:30PM-12:30PM",
+                Name = "Wed: 11:30PM-12:30PM",
                 Start = new DateTime(2012, 3, 7, 11, 30, 0),
                 End = new DateTime(2012, 3, 7, 12, 30, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Wednesday: 1:30PM-2:30PM",
+                Name = "Wed: 1:30PM-2:30PM",
                 Start = new DateTime(2012, 3, 7, 13, 30, 0),
                 End = new DateTime(2012, 3, 7, 14, 30, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Wednesday: 2:45PM-3:45PM",
+                Name = "Wed: 2:45PM-3:45PM",
                 Start = new DateTime(2012, 3, 7, 14, 45, 0),
                 End = new DateTime(2012, 3, 7, 15, 45, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Thursday: 9:00AM-10:00AM",
+                Name = "Thurs: 9:00AM-10:00AM",
                 Start = new DateTime(2012, 3, 8, 9, 0, 0),
                 End = new DateTime(2012, 3, 8, 10, 00, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Thursday: 10:15AM-11:15PM",
+                Name = "Thurs: 10:15AM-11:15PM",
                 Start = new DateTime(2012, 3, 8, 10, 15, 0),
                 End = new DateTime(2012, 3, 8, 11, 15, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Thursday: 11:30PM-12:30PM",
+                Name = "Thurs: 11:30PM-12:30PM",
                 Start = new DateTime(2012, 3, 8, 11, 30, 0),
                 End = new DateTime(2012, 3, 8, 12, 30, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Thursday: 1:30PM-2:30PM",
+                Name = "Thurs: 1:30PM-2:30PM",
                 Start = new DateTime(2012, 3, 8, 13, 30, 0),
                 End = new DateTime(2012, 3, 8, 14, 30, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Thursday: 2:45PM-3:45PM",
+                Name = "Thurs: 2:45PM-3:45PM",
                 Start = new DateTime(2012, 3, 8, 14, 45, 0),
                 End = new DateTime(2012, 3, 8, 15, 45, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Friday: 9:00AM-10:00AM",
+                Name = "Fri: 9:00AM-10:00AM",
                 Start = new DateTime(2012, 3, 9, 9, 0, 0),
                 End = new DateTime(2012, 3, 9, 10, 00, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Friday: 10:15AM-11:15PM",
+                Name = "Fri: 10:15AM-11:15PM",
                 Start = new DateTime(2012, 3, 9, 10, 15, 0),
                 End = new DateTime(2012, 3, 9, 11, 15, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Friday: 11:30PM-12:30PM",
+                Name = "Fri: 11:30PM-12:30PM",
                 Start = new DateTime(2012, 3, 9, 11, 30, 0),
                 End = new DateTime(2012, 3, 9, 12, 30, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Friday: 1:30PM-2:30PM",
+                Name = "Fri: 1:30PM-2:30PM",
                 Start = new DateTime(2012, 3, 9, 13, 30, 0),
                 End = new DateTime(2012, 3, 9, 14, 30, 0)
             });
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Friday: 2:45PM-3:45PM",
+                Name = "Fri: 2:45PM-3:45PM",
                 Start = new DateTime(2012, 3, 9, 14, 45, 0),
                 End = new DateTime(2012, 3, 9, 15, 45, 0)
             });
@@ -222,7 +222,7 @@ namespace Boy_Scouts_Scheduler.Models
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Monday Lunch",
+                Name = "Mon Lunch",
                 Start = new DateTime(2012, 3, 5, 12, 30, 0),
                 End = new DateTime(2012, 3, 5, 13, 30, 0),
                 isGeneral = true
@@ -230,7 +230,7 @@ namespace Boy_Scouts_Scheduler.Models
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Tuesday Lunch",
+                Name = "Tues Lunch",
                 Start = new DateTime(2012, 3, 6, 12, 30, 0),
                 End = new DateTime(2012, 3, 6, 13, 30, 0),
                 isGeneral = true
@@ -238,7 +238,7 @@ namespace Boy_Scouts_Scheduler.Models
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Wednesday Lunch",
+                Name = "Wed Lunch",
                 Start = new DateTime(2012, 3, 7, 12, 30, 0),
                 End = new DateTime(2012, 3, 7, 13, 30, 0),
                 isGeneral = true
@@ -246,7 +246,7 @@ namespace Boy_Scouts_Scheduler.Models
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Thursday Lunch",
+                Name = "Thurs Lunch",
                 Start = new DateTime(2012, 3, 8, 12, 30, 0),
                 End = new DateTime(2012, 3, 8, 13, 30, 0),
                 isGeneral = true
@@ -254,7 +254,7 @@ namespace Boy_Scouts_Scheduler.Models
             TimeSlots.Add(new TimeSlot
             {
                 Event = primaryEvent,
-                Name = "Friday Lunch",
+                Name = "Fri Lunch",
                 Start = new DateTime(2012, 3, 9, 12, 30, 0),
                 End = new DateTime(2012, 3, 9, 13, 30, 0),
                 isGeneral = true
@@ -373,7 +373,7 @@ namespace Boy_Scouts_Scheduler.Models
             Stations.Add(new Station
             {
                 Event = primaryEvent,
-                Name = "Webelos Craftsman Activity Pin",
+                Name = "Craftsman Activity Pin",
                 Description = "",
                 Location = "",
                 Capacity = 1,
@@ -383,7 +383,7 @@ namespace Boy_Scouts_Scheduler.Models
             Stations.Add(new Station
             {
                 Event = primaryEvent,
-                Name = "Webelos Forester Activity Pin",
+                Name = "Forester Activity Pin",
                 Description = "",
                 Location = "",
                 Capacity = 1,
@@ -393,7 +393,7 @@ namespace Boy_Scouts_Scheduler.Models
             Stations.Add(new Station
             {
                 Event = primaryEvent,
-                Name = "Webelos Naturalist Activity Pin",
+                Name = "Naturalist Activity Pin",
                 Description = "",
                 Location = "",
                 Capacity = 1,
@@ -403,7 +403,7 @@ namespace Boy_Scouts_Scheduler.Models
             Stations.Add(new Station
             {
                 Event = primaryEvent,
-                Name = "Webelos Artist Activity Pin",
+                Name = "Artist Activity Pin",
                 Description = "",
                 Location = "",
                 Capacity = 1,
@@ -413,7 +413,7 @@ namespace Boy_Scouts_Scheduler.Models
             Stations.Add(new Station
             {
                 Event = primaryEvent,
-                Name = "Webelos Aquanaut Activity Pin",
+                Name = "Aquanaut Activity Pin",
                 Description = "",
                 Location = "",
                 Capacity = 1,
