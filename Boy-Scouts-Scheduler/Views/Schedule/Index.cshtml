@@ -8,7 +8,12 @@
 	<script src="@Url.Content("~/Scripts/date.js")" type="text/javascript"></script>
 	<script src="@Url.Content("~/Scripts/jquery.weekcalendar.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Scripts/jquery.tinysort.min.js")" type="text/javascript"></script>
-
+    <style type="text/css">
+        .wc-time {
+            height: 1em;
+            overflow: hidden;
+        }
+    </style>
     <script type="text/javascript">
         $(document).ready(function () {
             $(".sort_results").click(function (e) {
@@ -89,6 +94,8 @@
     function addCalendar(eventData) {
         $('<div></div>').appendTo('#calendars').weekCalendar({
             date: new Date("@ViewBag.StartDate"),
+            allowCalEventOverlap: true,
+            overlapEventsSeparate: true,
             timeslotsPerHour: 2,
             firstDayOfWeek: 1,
             daysToShow: 5,
