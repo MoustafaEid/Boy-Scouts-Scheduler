@@ -80,7 +80,9 @@ namespace Boy_Scouts_Scheduler.Algorithm
                     }
                 }
                 if (numVisits != 0)
+                {
                     numViolatedConstraints++;
+                }
 
             }
             return (numViolatedConstraints * -20);
@@ -130,6 +132,7 @@ namespace Boy_Scouts_Scheduler.Algorithm
 
                 int dayNum = activity.TimeSlot.Start.DayOfYear;
 
+                //check if the same station category has already been assigned on the same day
                 if (dailyCategoryAssignments.ContainsKey(dayNum))
                 {
                     if (dailyCategoryAssignments[dayNum].ContainsKey(group))
@@ -166,8 +169,47 @@ namespace Boy_Scouts_Scheduler.Algorithm
                     groupAssignments.Add(group, stationAssignmentValue);
                     dailyCategoryAssignments.Add(dayNum, groupAssignments);
                 }
+
+                //check if the current station has already been assigned on the same day
+                if (dailyStationAssignments.ContainsKey(dayNum))
+                {
+                    if (dailyStationAssignments[dayNum].ContainsKey(group))
+                    {
+                        if (dailyStationAssignments[dayNum][group].ContainsKey(station))
+                        {
+                            int numVisits = dailyStationAssignments[dayNum][group][station];
+                            revisitedPenalty += numVisits;
+                            dailyStationAssignments[dayNum][group][station]++;
+                        }
+                        else
+                        {
+                            dailyStationAssignments[dayNum][group].Add(station, 1);
+                        }
+                    }
+
+                    else
+                    {
+                        Dictionary<Models.Station, int> stationAssignmentValue =
+                           new Dictionary<Models.Station, int>();
+                        stationAssignmentValue.Add(station, 1);
+                        dailyStationAssignments[dayNum].Add(group, stationAssignmentValue);
+                    }
+                }
+
+                else
+                {
+                    Dictionary<Models.Group, Dictionary<Models.Station, int>> groupAssignments =
+                        new Dictionary<Models.Group, Dictionary<Models.Station, int>>();
+                    Dictionary<Models.Station, int> stationAssignmentValue =
+                        new Dictionary<Models.Station, int>();
+
+                    stationAssignmentValue.Add(station, 1);
+                    groupAssignments.Add(group, stationAssignmentValue);
+                    dailyStationAssignments.Add(dayNum, groupAssignments);
+                }
+
             }
-            return (revisitedPenalty * -20);
+            return (revisitedPenalty * -10);
         }
     }
 }
