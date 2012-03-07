@@ -42,7 +42,8 @@ namespace Boy_Scouts_Scheduler.Controllers
             ObjectQuery<Group> groups = (db as IObjectContextAdapter).ObjectContext.CreateObjectSet<Group>();
             groups = groups.OrderBy("it." + orderBy + (desc ? " desc" : ""));
 
-            return PartialView(groups.Where(g => g.Event.ID == eventID).Skip(start).Take(itemsPerPage));
+            return PartialView(groups.Where(g => g.Event.ID == eventID).Skip(start).Take(itemsPerPage)
+                                     .Include(t => t.Type));
         }
 
         //

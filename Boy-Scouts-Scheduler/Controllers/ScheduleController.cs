@@ -62,7 +62,7 @@ namespace Boy_Scouts_Scheduler.Controllers
                 select item;
 
             // call algorithm to generate schedule
-            schedule = Boy_Scouts_Scheduler.Algorithm.Scheduler.Schedule(groupData, stationData, constraintData, timeslotData, activityData, startSlot);
+            schedule = Boy_Scouts_Scheduler.Algorithm.Scheduler.Schedule(groupData.ToList(), stationData, constraintData, timeslotData, activityData, startSlot);
 
 	        ClearSchedule();
 
