@@ -343,7 +343,7 @@
         })
                 .done(function (data) {
                     calEvent.key = $(data).attr('data-pkey');
-                    displayMessage('<strong>Moved Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
+                    //displayMessage('<strong>Moved Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
                     //console.log('success', data, calEvent, $(data).attr('data-pkey'));
                 })
                 .fail(function (data) {
@@ -396,18 +396,6 @@
             },
             eventDrop: updateEvent,
             eventResize: updateEvent,
-            eventClick: function (calEvent, event) {
-                displayMessage('<strong>Clicked Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
-            },
-            eventMouseover: function (calEvent, $event) {
-                displayMessage('<strong>Mouseover Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
-            },
-            eventMouseout: function (calEvent, event) {
-                displayMessage('<strong>Mouseout Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
-            },
-            noEvents: function () {
-                displayMessage('There are no events for this week');
-            },
             data: eventData
         });
 
