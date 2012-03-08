@@ -43,7 +43,12 @@ namespace Boy_Scouts_Scheduler.Controllers
             groups = groups.OrderBy("it." + orderBy + (desc ? " desc" : ""));
 
             return PartialView(groups.Where(g => g.Event.ID == eventID).Skip(start).Take(itemsPerPage)
-                                     .Include(t => t.Type));
+                                                                                   .Include(t => t.Type)
+                                                                                   .Include(t => t.Preference1)
+                                                                                   .Include(t => t.Preference2)
+                                                                                   .Include(t => t.Preference3)
+                                                                                   .Include(t => t.Preference4)
+                                                                                   .Include(t => t.Preference5));
         }
 
         //
@@ -71,37 +76,16 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             if (ModelState.IsValid)
             {
-                //group.Event = db.Events.Find(eventID);
-                //group.Type = db.GroupTypes.Find(group.TypeID);
-                //group.Preference1 = db.Stations.Find(group.Preference1.ID);
-                //group.Preference2 = db.Stations.Find(group.Preference2.ID);
-                //group.Preference3 = db.Stations.Find(group.Preference3.ID);
-                //group.Preference4 = db.Stations.Find(group.Preference4.ID);
-                //group.Preference5 = db.Stations.Find(group.Preference5.ID);
-                //db.Groups.Add(group);
-                //db.SaveChanges();
-                //return PartialView("GridData", new Group[] { group });
-
-                Group origGroup = db.Groups
-                                    .Include(g => g.Event)
-                                    .Include(g => g.TypeID)
-                                    .Include(g => g.Preference1)
-                                    .Include(g => g.Preference2)
-                                    .Include(g => g.Preference3)
-                                    .Include(g => g.Preference4)
-                                    .Include(g => g.Preference5)
-                                    .Single(g => g.ID == group.ID);
-                db.Entry(origGroup).CurrentValues.SetValues(group);
-                origGroup.Preference1 = db.Stations.Find(group.Preference1.ID);
-                origGroup.Preference2 = db.Stations.Find(group.Preference2.ID);
-                origGroup.Preference3 = db.Stations.Find(group.Preference3.ID);
-                origGroup.Preference4 = db.Stations.Find(group.Preference4.ID);
-                origGroup.Preference5 = db.Stations.Find(group.Preference5.ID);
-                db.Groups.Add(origGroup);
+                group.Event = db.Events.Find(eventID);
+                group.Type = db.GroupTypes.Find(group.TypeID);
+                group.Preference1 = db.Stations.Find(group.Preference1.ID);
+                group.Preference2 = db.Stations.Find(group.Preference2.ID);
+                group.Preference3 = db.Stations.Find(group.Preference3.ID);
+                group.Preference4 = db.Stations.Find(group.Preference4.ID);
+                group.Preference5 = db.Stations.Find(group.Preference5.ID);
+                db.Groups.Add(group);
                 db.SaveChanges();
-                return PartialView("GridData", new Group[] { origGroup });
-
-
+                return PartialView("GridData", new Group[] { group });
             }
             return PartialEditView(group);
         }
