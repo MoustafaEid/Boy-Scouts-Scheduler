@@ -15,36 +15,5 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             return View();
         }
-
-        public ActionResult ImportHelp()
-        {
-            return View();
-        }
-
-        public ActionResult TimeSlotHelp()
-        {
-            return View();
-        }
-
-        public ActionResult GroupHelp()
-        {
-            return View();
-        }
-
-        public ActionResult StationHelp()
-        {
-            return View();
-        }
-
-        public ActionResult ConstraintHelp()
-        {
-            return View();
-        }
-
-        public ActionResult ScheduleHelp()
-        {
-            return View();
-        }
-
     }
 }
