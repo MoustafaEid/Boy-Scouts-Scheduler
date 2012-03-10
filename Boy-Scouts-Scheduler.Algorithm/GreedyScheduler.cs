@@ -757,7 +757,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			for (i = 0; i < AllGroups.Count; i++)
 			{
-				if (AllStations[i].ID == g.ID)
+                if (AllGroups[i].ID == g.ID)
 					return i;
 			}
 
