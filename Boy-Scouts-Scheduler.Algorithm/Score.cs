@@ -13,16 +13,18 @@ namespace Boy_Scouts_Scheduler.Algorithm
            IEnumerable<Models.TimeSlot> timeSlots)
         {
             return ScoreTopPicks(schedule, groups) + deductConstraintsViolatedScore(schedule, constraints)
-                + deductStationRevisitedOnSameDayScore(schedule, groups, stations, timeSlots);
+                + deductStationRevisitedOnSameDayScore(schedule, groups, stations, timeSlots) +
+                scoreScheduleDiversity(schedule);
         }
 
         public static uint ScoreTopPicks(IEnumerable<Models.Activity> schedule, IEnumerable<Models.Group> groups)
         {
-            uint[] scores = new uint[5] { 20, 7, 4, 2, 1 };
+            uint[] scores = new uint[5] {100, 70, 50, 35, 23};
             uint score = 0;
 
             foreach (Models.Group group in groups)
             {
+                uint numGroupPicks = 0;
                 for (int lcv = 0; lcv < scores.Length; lcv++)
                 {
                     Models.Station preference = new Models.Station();
@@ -41,10 +43,17 @@ namespace Boy_Scouts_Scheduler.Algorithm
                     {
                         if (activity.Group == group && activity.Station == preference)
                         {
+                            numGroupPicks++;
                             score += scores[lcv];
                             break;
                         }
                     }
+                }
+
+                //a group is only supposed to receive three out of their top five station picks
+                if (numGroupPicks == 3)
+                {
+                    score += 200;
                 }
             }
 
@@ -79,13 +88,15 @@ namespace Boy_Scouts_Scheduler.Algorithm
                         numVisits--;
                     }
                 }
-                if (numVisits != 0)
-                {
-                    numViolatedConstraints++;
-                }
+
+                //it is considered worse to undervisit a station twice instead of once
+                //in that case, we act as if two constraints were violated
+                //note that if numVisits == 0, then there is no penalty, since
+                //the group visited the station the correct number of times
+                numViolatedConstraints += Math.Abs(numVisits);
 
             }
-            return (numViolatedConstraints * -20);
+            return (numViolatedConstraints * -500);
         }
 
         public static int deductConstraintsViolatedScore(
@@ -97,17 +108,19 @@ namespace Boy_Scouts_Scheduler.Algorithm
             {
                 foreach (var station in group.Value)
                 {
+                    //must check if numVisits is not equal to zero or null here
                     if (station.Value.numVisits > 0 || station.Value.numVisits < 0)
-                        numConstraintsViolated++;
+                        numConstraintsViolated += Math.Abs((int)station.Value.numVisits);
                 }
             }
-            return (numConstraintsViolated * -20);
+            return (numConstraintsViolated * -500);
         }
 
         public static int deductStationRevisitedOnSameDayScore(
             IEnumerable<Models.Activity> schedule, IEnumerable<Models.Group> groups,
             IEnumerable<Models.Station> stations, IEnumerable<Models.TimeSlot> timeSlots)
         {
+            DateTime a = DateTime.Now;
             int revisitedPenalty = 0;
 
             //assignments for station categories on each day of camp
@@ -209,7 +222,84 @@ namespace Boy_Scouts_Scheduler.Algorithm
                 }
 
             }
-            return (revisitedPenalty * -10);
+
+            DateTime b = DateTime.Now;
+            TimeSpan c = b.Subtract(a);
+            return (revisitedPenalty * -90);
         }
+
+        //attempts to give a higher score to schedule that are more diverse
+        //diverse means that if the same activity is assigned to the same group, then
+        //those activities are spread out as far as possible
+        //maximum score is 1000 points
+        public static int scoreScheduleDiversity(IEnumerable<Models.Activity> schedule)
+        {
+            double score = 0;
+            double maxScore = 0;
+
+            var sortedSchedule =
+                from activity in schedule
+                orderby activity.Group.Name ascending, activity.TimeSlot.Start ascending
+                select activity;
+
+            IDictionary<Models.Group, List<Models.Activity>> groupSchedules =
+                new Dictionary<Models.Group, List<Models.Activity>>();
+
+            //create a dictionary with the groups mapping to their schedules
+            foreach (Models.Activity activity in sortedSchedule)
+            {
+                if (groupSchedules.ContainsKey(activity.Group))
+                {
+                    groupSchedules[activity.Group].Add(activity);
+                }
+                else
+                {
+                    List<Models.Activity> activities = new List<Models.Activity> { activity };
+                    groupSchedules.Add(activity.Group, activities);
+                }
+            }
+
+            foreach (Models.Group group in groupSchedules.Keys)
+            {
+                maxScore += groupSchedules[group].Count() * groupSchedules[group].Count() * 2;
+                bool[] isVisited = new bool[groupSchedules[group].Count()];
+                for (int startingActivityNum = 0;  startingActivityNum < groupSchedules[group].Count;
+                    startingActivityNum++)
+                {
+                    if (isVisited[startingActivityNum])
+                        continue;
+
+                    bool matchFound = false;
+                    for (int nextActivityNum = startingActivityNum + 1; nextActivityNum < groupSchedules[group].Count;
+                        nextActivityNum++)
+                    {
+                        if (groupSchedules[group][startingActivityNum].Station.isActivityPin)
+                        {
+                            nextActivityNum++;
+                            if (nextActivityNum >= groupSchedules[group].Count)
+                                break;
+                        }
+
+                        if (groupSchedules[group][startingActivityNum].Station.Name ==
+                            groupSchedules[group][nextActivityNum].Station.Name)
+                        {
+                            matchFound = true;
+                            isVisited[nextActivityNum] = true;
+                            score += nextActivityNum - startingActivityNum;
+                        }
+                    }
+                    if (!matchFound)
+                        score += groupSchedules[group].Count * 2;
+                }
+             
+            }
+
+            if (score == 0 || maxScore == 0)
+                return 0;
+
+            double scoreRatio = score / maxScore;
+            return (int) (scoreRatio * 1000);
+        }
+
     }
 }

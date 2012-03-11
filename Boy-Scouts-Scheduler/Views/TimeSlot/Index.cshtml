@@ -140,6 +140,13 @@
             var postParams = getPostParams(row);
             $.post('@Html.Raw(Url.Action("Create"))', postParams)
                 .done(function(newRow) {
+                    var children = $(newRow).children();
+                    $('#calendar').weekCalendar('updateEvent', {
+                        id: $(newRow).attr('data-pkey'),
+                        title: $.trim(children.eq(0).html()),
+                        start: new Date(children.eq(1).html()),
+                        end: new Date(children.eq(2).html())
+                    });
                     row.replaceWith(newRow);
                     totalRowCount++;
                     clearUnloadWarning();
@@ -161,6 +168,13 @@
             postParams.push({name: 'ID', value: row.data('pkey')});
             $.post('@Html.Raw(Url.Action("Edit", new { id = "__ID__" }))'.replace(/__ID__/, row.data('pkey')), postParams)
                 .done(function(newRow) {
+                    var children = $(newRow).children();
+                    $('#calendar').weekCalendar('updateEvent', {
+                        id: $(newRow).attr('data-pkey'),
+                        title: $.trim(children.eq(0).html()),
+                        start: new Date(children.eq(1).html()),
+                        end: new Date(children.eq(2).html())
+                    });
                     row.replaceWith(newRow);
                     clearUnloadWarning();
                 })
@@ -173,6 +187,7 @@
             if (confirm('Are you sure you want to delete this row?')) {
                 $.post('@Html.Raw(Url.Action("Delete", new { id = "__ID__" }))'.replace(/__ID__/, row.data('pkey')))
                     .done(function() {
+                        $('#calendar').weekCalendar('removeEvent', row.data('pkey').toString());
                         row.remove();
                         totalRowCount--;
                     })
@@ -329,12 +344,26 @@
     var eventData = {
         events: []
     };
+    var daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    function pad(d) {
+        return (d < 10) ? '0' + d.toString() : d.toString();
+    }
+
+    function generateTimeSlotName(calEvent) {
+        return daysOfWeek[calEvent.start.getDay()] + ': ' + calEvent.start.getHours() + ':' + pad(calEvent.start.getMinutes())
+               + ' to ' + calEvent.end.getHours() + ':' + pad(calEvent.end.getMinutes());
+    }
 
     function displayMessage(message) {
         $('#message').html(message).fadeIn();
     }
 
     function updateEvent(calEvent, event) {
+        if (calEvent.title.match(/^\w\w\w: \d\d?:\d\d to \d\d?:\d\d$/)) {
+            calEvent.title = generateTimeSlotName(calEvent);
+        }
+        $('#calendar').weekCalendar('updateEvent', calEvent);
         $.post('/TimeSlot/Edit', {
             ID: calEvent.id,
             Name: calEvent.title,
@@ -342,7 +371,9 @@
             End: calEvent.end.toISOString()
         })
                 .done(function (data) {
-                    calEvent.key = $(data).attr('data-pkey');
+                    calEvent.id = $(data).attr('data-pkey');
+                    $('#AjaxGrid tbody tr[data-pkey="' + calEvent.id + '"]').replaceWith(data);
+                    $('#AjaxGrid tbody td').filter(':last-child').removeClass('hidden');
                     //displayMessage('<strong>Moved Event</strong><br/>Start: ' + calEvent.start + '<br/>End: ' + calEvent.end);
                     //console.log('success', data, calEvent, $(data).attr('data-pkey'));
                 })
@@ -380,11 +411,7 @@
                 }
             },
             eventNew: function (calEvent, event) {
-                function pad(d) {
-                    return (d < 10) ? '0' + d.toString() : d.toString();
-                }
-                var daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                calEvent.title = daysOfWeek[calEvent.start.getDay()] + ': ' + calEvent.start.getHours() + ':' + pad(calEvent.start.getMinutes()) + ' to ' + calEvent.end.getHours() + ':' + pad(calEvent.end.getMinutes()); 
+                calEvent.title = generateTimeSlotName(calEvent);
                 $.post('/TimeSlot/Create', {
                     Name: calEvent.title,
                     Start: calEvent.start.toISOString(),
@@ -392,7 +419,9 @@
                 })
                         .done(function (data) {
                             calEvent.id = $(data).attr('data-pkey');
+                            $('#calendar').weekCalendar('updateEvent', calEvent);
                             $('#AjaxGrid tbody').prepend(data);
+                            $('#AjaxGrid tbody td').filter(':last-child').removeClass('hidden');
                             //console.log('success', data, calEvent, $(data).attr('data-pkey'));
                         })
                         .fail(function (data) {
