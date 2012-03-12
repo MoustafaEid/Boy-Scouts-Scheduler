@@ -32,6 +32,12 @@
                 }
                 });
             });
+
+            $("#generateSchedule").click(function () {
+                $(this).attr("disabled", "disabled");
+                $(this).parents("form").first().submit();
+            });
+
         });
     </script>
 

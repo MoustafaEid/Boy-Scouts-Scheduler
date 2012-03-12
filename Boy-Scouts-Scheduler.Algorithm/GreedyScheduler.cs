@@ -47,7 +47,6 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 		public int Capacity;
 		public string Category;
 		public List<Availability> Avail;
-		public int totalAvailabltSlots;
 		public bool isActivityPin;
 
 		public Station(int id, string N, int C, string Cat, bool Pin, List<Availability> A)
@@ -59,13 +58,6 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			isActivityPin = Pin;
 			
 			Avail = A;
-			
-			totalAvailabltSlots = 0;
-			
-			foreach (Availability x in A)
-				totalAvailabltSlots += x.Slots.Count;
-
-			totalAvailabltSlots *= Capacity;
 		}
 	}
 
@@ -106,9 +98,12 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 		private static int SAME_CATEGORY_PENALTY = -500;
 		private static int SAME_STATION_PENALTY = -1000;
 		private static int ASSIGNMENT_CHANGE_PENALTY = -5000;
+		private static double NOT_SPACED_OUT_PENALTY = 0;
 
-		private static int[] nSlots = new int[6];
-		private static int[] lunchSlot = new int[6];
+		private static int[] nSlots = new int[MAXD];
+		private static int[] lunchSlot = new int[MAXD];
+		private static int totalTimeSlots;
+
 		private static List<Group> AllGroups;
 		private static List<Station> AllStations;
 		private static List<Constraint> AllConstraints;
@@ -125,7 +120,11 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 		// station day slot
 		private static int[, ,] StationSlotAssignmentsCounts = new int[MAXN, MAXN, MAXN];
 		private static int[] StationAssignmentsCounts = new int[MAXN];
+		private static int[, ,] stationTotalAvailabilityCounts = new int[MAXN, MAXN, MAXN];
 
+		private static KeyValuePair<int, int>[,] lastDaySlotAssignedToStation = new KeyValuePair<int, int>[MAXN, MAXN];
+		private static KeyValuePair<int, int>[] lastDaySlotAssignedToPin = new KeyValuePair<int, int>[MAXN];
+		
 		private static Dictionary<int, KeyValuePair<int, int>> timeSlotsDaySlotsPairs = new Dictionary<int, KeyValuePair<int, int>>();
 		private static int[,] daySlotsTimeSlotsPairs = new int[MAXN, MAXN];
 
@@ -180,6 +179,9 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 						lunchSlot[D] = S;
 				}
 			}
+
+			for (i = 0; i < MAXD; i++)
+				totalTimeSlots += nSlots[i];
 		}
 
 		private static KeyValuePair<int, int> timeSlotToDaySlot(Models.TimeSlot T)
@@ -293,9 +295,40 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 				scheduleGroupToStationAtDaySlot(groupIndex, stationIndex, DS.Key, DS.Value, constraintIndex, prefIndex);
 			}
 		}
+
+		private static void ZeroOut()
+		{
+			int i, j, k;
+
+			for (i = 0; i < MAXD; i++)
+				for (j = 0; j < MAXS; j++)
+				{
+					masterSchedule[i, j] = new Dictionary<int, int>();
+					oldMasterSchedule[i, j] = new Dictionary<int, int>();
+				}
+
+			for (i = 0; i < MAXN; i++)
+				for (j = 0; j < MAXN; j++)
+				{
+					GroupStationAssignments[i, j] = GroupRankStationAssignments[i, j] = GroupAssignments[i] = StationAssignmentsCounts[i] = 0;
+
+					lastDaySlotAssignedToStation[i, j] = new KeyValuePair<int, int>(-1, -1);
+					lastDaySlotAssignedToPin[i] = new KeyValuePair<int, int>(-1, -1);
+
+					for (k = 0; k < MAXN; k++)
+					{
+						StationSlotAssignmentsCounts[i, j, k] = stationTotalAvailabilityCounts[i, j, k] = 0;
+						isGroupBusy[i, j, k] = false;
+					}
+
+					ConstraintMet[i] = false;
+				}
+		}
 		public static IEnumerable<Models.Activity> getSchedule(IEnumerable<Models.Group> groups, IEnumerable<Models.Station> stations, IEnumerable<Models.SchedulingConstraint> constraints, 
 				IEnumerable<Models.TimeSlot> slots, IEnumerable<Models.Activity> oldSchedule, Models.TimeSlot startingTimeSlot)
 		{
+			ZeroOut();
+
 			List<Models.Activity> schedule = new List<Models.Activity>();
 
 			AllGroups = new List<Group>();
@@ -352,27 +385,6 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 					for (i = 0; i < AllGroups.Count; i++)
 						AllConstraints.Add(new Constraint(AllGroups[i], s, c.VisitNum));
 			}
-
-			for (i = 0; i < MAXD; i++)
-				for (j = 0; j < MAXS; j++)
-				{
-					masterSchedule[i, j] = new Dictionary<int, int>();
-					oldMasterSchedule[i, j] = new Dictionary<int, int>();
-				}
-
-			for (i = 0; i < MAXN; i++)
-				for (j = 0; j < MAXN; j++)
-				{
-					GroupStationAssignments[i, j] = GroupRankStationAssignments[i, j] = GroupAssignments[i] = StationAssignmentsCounts[i] = 0;
-
-					for (k = 0; k < MAXN; k++)
-					{
-						StationSlotAssignmentsCounts[i, j, k] = 0;
-						isGroupBusy[i, j, k] = false;
-					}
-
-					ConstraintMet[i] = false;
-				}
 
 			KeyValuePair<int, int> startDaySlot = timeSlotToDaySlot(startingTimeSlot);
 
@@ -433,6 +445,8 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			int dayStart = startingDay, dayEnd = 5;
 			int Day, Slot, i, j, k;
 
+			populateStationAvailabilities(dayEnd);
+
 			for (Day = dayStart; Day <= dayEnd; Day++)
 			{
 				if (Day == dayStart)
@@ -475,10 +489,10 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 							curGroup = groupsSortedByLeastAssgined[i];
 							groupIndex = getGroupIndex(curGroup);
 
+							tmpIndex = -1;
+
 							if (curGroup.nStationsPicked >= 3 || isGroupBusy[Day, Slot, groupIndex])
 								continue;
-
-							tmpIndex = -1;
 
 							for (j = 0; j < 5; j++)
 							{
@@ -647,12 +661,17 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			masterSchedule[Day, Slot].Add(groupSelected, stationSelected);
 
+			lastDaySlotAssignedToStation[groupSelected, stationSelected] = new KeyValuePair<int, int>(Day, Slot);
+
 			if (AllStations[stationSelected].isActivityPin)
 			{
 				isGroupBusy[Day, Slot + 1, groupSelected] = true;
 				masterSchedule[Day, Slot + 1].Add(groupSelected, stationSelected);
 				StationSlotAssignmentsCounts[stationSelected, Day, Slot + 1]++;
+				lastDaySlotAssignedToPin[groupSelected] = new KeyValuePair<int, int>(Day, Slot);
 			}
+
+
 		}
 
 		private static bool canScheduleGroupToStationAtDaySlot(int groupIndex, int stationIndex, int Day, int Slot)
@@ -774,15 +793,13 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			// check if other constraints will be violated if this assignment happens.
 			// station cap - 1 for the current assigmment
 			int stationIndex = getStationIndex(S);
-			int stationTotalAvailableSlotsLeft = S.totalAvailabltSlots - StationAssignmentsCounts[stationIndex] - 1;
+			int stationTotalAvailableSlotsLeft = stationTotalAvailabilityCounts[stationIndex, Day, Slot] - 1;
 
 			int otherGroupsNeedThisStation = 0;
 
 			if (stationTotalAvailableSlotsLeft < 0)
 			{
 				return -1000000;
-
-				//throw new Exception("Error generating schedule. SC-1");
 			}
 
 			// look for anyone else who wants this station.
@@ -804,8 +821,8 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			// Check how many groups get their second pick instead of first, and how many groups aren't getting any picks
 
-			// Copy the total assignment count for stations.
-			int[] StationAssignmentsCountsTemp = (int[])StationAssignmentsCounts.Clone();
+			// Copy the total assignment count for station, starting at this timeslot.
+			int[] StationAssignmentsCountsTemp = new int[MAXN];
 			StationAssignmentsCountsTemp[stationIndex]++;
 
 			int stationPickAvailableSlots;
@@ -823,8 +840,10 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 					if (AllGroups[i].StationPicks[j] == -1 || AllGroups[i].StationPicked[j] || AllStations[AllGroups[i].StationPicks[j]] != S)
 						continue;
 
+					int prefStationIndex = AllGroups[i].StationPicks[j];
 					nPossible++;
-					stationPickAvailableSlots = AllStations[AllGroups[i].StationPicks[j]].totalAvailabltSlots - StationAssignmentsCountsTemp[AllGroups[i].StationPicks[j]];
+					stationPickAvailableSlots = stationTotalAvailabilityCounts[prefStationIndex, Day, Slot] - 
+												StationSlotAssignmentsCounts[prefStationIndex, Day, Slot] - StationAssignmentsCountsTemp[prefStationIndex];
 
 					if (stationPickAvailableSlots <= 0)
 						nNotGettingPicks[j]++;
@@ -841,6 +860,7 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			// check if the same group was assigned to another station with the same category
 			int nSameCat = 0;
 			int nSameStation = 0;
+			int nPins = 0;
 
 			for (i = 1; i <= Slot; i++)
 			{
@@ -848,17 +868,19 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 				{
 					if( groupIndex == P.Key )
 					{
-						if(P.Value != stationIndex && S.Category != "" && AllStations[P.Value].Category == S.Category)
+						if (P.Value != stationIndex && S.Category != "" && AllStations[P.Value].Category == S.Category)
 							nSameCat++;
-						else if(P.Value == stationIndex)
+						else if (P.Value == stationIndex)
 							nSameStation++;
+						else if (AllStations[P.Value].isActivityPin && S.isActivityPin)
+							nPins++;
 					}
 				}
 			}
 
 			ret += SAME_CATEGORY_PENALTY * nSameCat;
 			ret += SAME_STATION_PENALTY * nSameStation;
-
+			ret += SAME_STATION_PENALTY * ( nPins / 2);
 			// if there is any entries in the old schedule, try to minimize them.
 			bool isSameSched = false;
 
@@ -873,6 +895,26 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 
 			if ( !generateNewScheduleFromScracth &&!isSameSched)
 				ret += ASSIGNMENT_CHANGE_PENALTY;
+
+			// space the station out, if it is a pin, space it out from another pin too
+			
+			int slotDifference = totalTimeSlots;
+			KeyValuePair<int, int> Q;
+
+			if( S.isActivityPin )
+				Q = lastDaySlotAssignedToPin[groupIndex];
+			else
+				Q = lastDaySlotAssignedToStation[groupIndex, stationIndex];
+
+			if( Q.Key != -1 )
+				slotDifference = getNumberOfSlotDifference(Q.Key, Q.Value, Day, Slot);
+
+			ret += (int)(1.0 * (totalTimeSlots - slotDifference) * NOT_SPACED_OUT_PENALTY);
+			
+			// if this station is a pin, and the group already got their preferences, don't schedule it
+
+			if (S.isActivityPin && G.nStationsPicked == 3)
+				ret += -1000;
 
 			return ret;
 		}
@@ -919,6 +961,51 @@ namespace Boy_Scouts_Scheduler.GreedyAlgorithm
 			}
 
 			return false;
+		}
+
+		private static void populateStationAvailabilities(int dayEnd)
+		{
+			int i, j, k;
+			int next;
+			for (i = 0; i < AllStations.Count; i++)
+			{
+				for (j = dayEnd; j >= 0; j--)
+					for (k = nSlots[j]; k >= 0; k--)
+					{
+						if (k == nSlots[j])
+							next = stationTotalAvailabilityCounts[i, j + 1, 0];
+						else
+							next = stationTotalAvailabilityCounts[i, j, k + 1];
+
+						if (isStationAvailableAtSlot(AllStations[i], j, k) && (!AllStations[i].isActivityPin ||
+												AllStations[i].isActivityPin && canSchedulePinnedStation(j, k)))
+							stationTotalAvailabilityCounts[i, j, k] = AllStations[i].Capacity + next;
+						else
+							stationTotalAvailabilityCounts[i, j, k] = next;
+					}
+			}
+
+		}
+
+		private static int getNumberOfSlotDifference( int dayStart, int slotStart, int dayEnd, int slotEnd )
+		{
+			int i, j;
+			int ret = 0;
+
+			if( dayStart == dayEnd )
+				return Math.Abs( slotEnd - slotStart );
+
+			for (i = dayStart; i <= dayEnd; i++)
+			{
+				if (i == dayStart)
+					ret += nSlots[i] - slotStart;
+				else if (i == dayEnd)
+					ret += slotEnd - 1;
+				else
+					ret += nSlots[i];
+			}
+
+			return ret;
 		}
 	}
 }
