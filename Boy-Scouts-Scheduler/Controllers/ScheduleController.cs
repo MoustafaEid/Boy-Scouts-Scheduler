@@ -14,6 +14,7 @@ namespace Boy_Scouts_Scheduler.Controllers
     public class ScheduleController : Controller
     {
         private SchedulingContext db = new SchedulingContext();
+
         private int eventID
         {
             get { return Convert.ToInt32(Request.Cookies["event"].Value); }
@@ -61,10 +62,10 @@ namespace Boy_Scouts_Scheduler.Controllers
                 where item.Event.ID == eventID
                 select item;
 
-            // call algorithm to generate schedule
-            schedule = Boy_Scouts_Scheduler.Algorithm.Scheduler.Schedule(groupData.ToList(), stationData, constraintData, timeslotData, activityData, startSlot);
+            ClearSchedule();
 
-	        ClearSchedule();
+            // call algorithm to generate schedule
+            schedule = Boy_Scouts_Scheduler.Algorithm.Scheduler.Schedule(groupData.ToList(), stationData, constraintData, timeslotData, activityData, startSlot);	        
 
             scheduleEnumerator = schedule.GetEnumerator();
             while (scheduleEnumerator.MoveNext())
@@ -105,6 +106,17 @@ namespace Boy_Scouts_Scheduler.Controllers
             ViewBag.Groups = db.Groups.Where(g => g.Event.ID == eventID).OrderBy(g => g.Name);
             ViewBag.Stations = db.Stations.Where(s => s.Event.ID == eventID).OrderBy(s => s.Name);
             ViewBag.TimeSlots = db.TimeSlots.Where(t => t.Event.ID == eventID);
+            ViewBag.Activites = db.Activities.Where(a => a.Event.ID == eventID).OrderBy(a => a.Group);
+            ViewBag.Days = db.TimeSlots.Where(t => t.Event.ID == eventID).OrderBy(t => t.Start);
+            //ViewBag.Days =
+                 //(from slot in db.TimeSlots
+                 // where slot.Event.ID == eventID
+                 // select new
+                 // {
+                 //     y = slot.Start.Year,
+                 //     m = slot.Start.Month,
+                 //     d = slot.Start.Day
+                 // }).Distinct();
 
             return View();
         }
@@ -156,6 +168,43 @@ namespace Boy_Scouts_Scheduler.Controllers
                             Start = a.Start.ToString(),
                             End = a.End.ToString()
                         }));
+        }
+
+        public ActionResult DayActivities(int ID)
+        {
+            List<Activity> slotActivities = db.Activities.Where(a => a.Event.ID == eventID).Where(a => a.TimeSlot.ID == ID).ToList();
+            IEnumerator<Activity> slotActivitiesEnumerator = slotActivities.GetEnumerator();
+            
+            IEnumerable<Group> groupData = 
+                from item in db.Groups
+                where item.Event.ID == eventID
+                orderby item.ID ascending
+                select item;
+
+            IEnumerable<TimeSlot> timeslotData =
+                from item in db.TimeSlots
+                where item.Event.ID == eventID && item.ID == ID
+                orderby item.Start ascending
+                select item;
+
+            string htmlString = "<tr><td></td>";
+
+            foreach (Group g in groupData)
+            {
+                htmlString += "<th>" + g.Name.ToString() + "</th>";
+            }
+            htmlString += "</tr>";
+
+            htmlString += "<tr><th>" + db.TimeSlots.Find(ID).Name.ToString() + "</th>";
+
+            while (slotActivitiesEnumerator.MoveNext())
+            {
+                htmlString += "<td>" + slotActivitiesEnumerator.Current.Station.Name.ToString() + "</td>";
+            }
+
+            htmlString += "</tr>";
+
+            return Json(htmlString);
         }
 
         //
