@@ -48,12 +48,10 @@ namespace Boy_Scouts_Scheduler.Algorithm
                             break;
                         }
                     }
-                }
 
-                //a group is only supposed to receive three out of their top five station picks
-                if (numGroupPicks == 3)
-                {
-                    score += 200;
+                    //only score the group for their top three picks
+                    if (numGroupPicks == 3)
+                        break;
                 }
             }
 
@@ -74,6 +72,11 @@ namespace Boy_Scouts_Scheduler.Algorithm
             foreach (Models.SchedulingConstraint constraint in constraints)
             {
                 int numVisits = constraint.VisitNum;
+
+                //activity pins last for two slots, so if a constraint says a group must
+                //visit an activity pin once, they really need to visit it at two time slots
+                if (constraint.Station.isActivityPin)
+                    numVisits *= 2;
                 foreach (Models.Activity activity in schedule)
                 {
                     bool constraintAppliesToGroup =
