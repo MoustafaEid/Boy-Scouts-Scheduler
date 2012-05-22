@@ -11,6 +11,7 @@ using Boy_Scouts_Scheduler.Models;
 
 namespace Boy_Scouts_Scheduler.Controllers
 {
+	[Authorize]
     public class TimeSlotController : Controller
     {
         private SchedulingContext db = new SchedulingContext();

@@ -10,7 +10,8 @@ using System.Web.Mvc;
 using Boy_Scouts_Scheduler.Models;
 
 namespace Boy_Scouts_Scheduler.Controllers
-{ 
+{
+	[Authorize]
     public class StationController : Controller
     {
         private SchedulingContext db = new SchedulingContext();
