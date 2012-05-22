@@ -62,12 +62,13 @@
     </table>
 }
 
-
 <p>Select Schedule For:</p>
 <input type="radio" name="scheduleFor" value="group" id="scheduleForGroup" checked="checked" /><label for="scheduleForGroup">Group</label>
 <input type="radio" name="scheduleFor" value="station" id="scheduleForStation" /><label for="scheduleForStation">Station</label>
+<input type="radio" name="scheduleFor" value="day" id="scheduleForDay" /><label for="scheduleForDay">Day</label>
 @Html.DropDownList("groupDropDown", new SelectList(ViewBag.Groups, "ID", "Name"), "All")
 @Html.DropDownList("stationDropDown", new SelectList(ViewBag.Stations, "ID", "Name"), "All", new { @class = "hide" })
+@Html.DropDownList("dayDropDown", new SelectList(ViewBag.Days, "ID", "Name"), "All", new { @class = "hide" })
 <div><a href="#" class="sort_results">Sort Results</a></div>
 <div id="calendars"></div>
 <script>
@@ -125,14 +126,20 @@
         $('input[name="scheduleFor"]').change(function () {
             if ($(this).val() === 'group') {
                 $('#stationDropDown').addClass('hide');
+                $('#dayDropDown').addClass('hide');
                 $('#groupDropDown').removeClass('hide').change();
-            } else {
+            } else if ($(this).val() === 'station') {
                 $('#groupDropDown').addClass('hide');
+                $('#dayDropDown').addClass('hide');
                 $('#stationDropDown').removeClass('hide').change();
+            } else {
+                $('#dayDropDown').removeClass('hide').change();
+                $('#groupDropDown').addClass('hide');
+                $('#stationDropDown').addClass('hide');
             }
         });
 
-        $('#groupDropDown, #stationDropDown').change(function () {
+        $('#groupDropDown, #stationDropDown, #dayDropDown').change(function () {
             var lookup = {
                 'group': {
                     'dropDownID': 'groupDropDown',
@@ -141,14 +148,29 @@
                 'station': {
                     'dropDownID': 'stationDropDown',
                     'actionUrl': '@Html.Raw(Url.Action("StationActivities"))'
+                },
+                'day': {
+                    'dropDownID': 'dayDropDown',
+                    'actionUrl': '@Html.Raw(Url.Action("DayActivities"))'
                 }
             };
-            var dropDownType = this.id === 'groupDropDown' ? 'group' : 'station';
+            var dropDownType;
+            if (this.id === 'groupDropDown') {
+                dropDownType = 'group';
+            } else if (this.id === 'stationDropDown') {
+                dropDownType = 'station';
+            } else {
+                dropDownType = 'day';
+            }
             if ($(this).val()) {
                 $.post(lookup[dropDownType].actionUrl, { ID: $(this).val() })
                     .done(function (data) {
                         $('#calendars').children().remove();
-                        addCalendar(convertActivitiesToEvents(data));
+                        if (dropDownType == 'day') {
+                            $("#calendars").append(data);
+                        } else {
+                            addCalendar(convertActivitiesToEvents(data));
+                        }
                     });
             } else {
                 $('#calendars').children().remove();
@@ -156,13 +178,17 @@
                     var name = $(this).text();
                     $.post(lookup[dropDownType].actionUrl, { ID: $(this).val() })
                         .done(function (data) {
-                            $('#calendars').append('<h2 class="page-break">' + name + '</h2>');
-                            addCalendar(convertActivitiesToEvents(data));
+                            if (dropDownType == 'day') {
+                                $("#calendars").append(data);
+                            } else {
+                                $('#calendars').append('<h2 class="page-break">' + name + '</h2>');
+                                addCalendar(convertActivitiesToEvents(data));
+                            }
                         });
                 });
             }
             $('#clearSchedule').click(clearSchedule);
-            $('#generateSchedule, #clearSchedule').click(function() {
+            $('#generateSchedule, #clearSchedule').click(function () {
                 $('#clearSchedule').attr('disabled', 'disabled');
             });
         });
