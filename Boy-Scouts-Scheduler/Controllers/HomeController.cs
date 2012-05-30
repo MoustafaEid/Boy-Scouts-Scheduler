@@ -19,6 +19,13 @@ namespace Boy_Scouts_Scheduler.Controllers
         {
             ViewBag.Events = db.Events.ToList();
             return View();
-        }   
+        }
+
+		[Authorize]
+		public ActionResult Welcome()
+		{
+			ViewBag.Events = db.Events.ToList();
+			return View();
+		}
     }
 }

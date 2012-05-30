@@ -11,6 +11,7 @@ using Boy_Scouts_Scheduler.Models;
 
 namespace Boy_Scouts_Scheduler.Controllers
 {
+	[Authorize]
     public class GroupController : Controller
     {
         private SchedulingContext db = new SchedulingContext();
@@ -21,7 +22,7 @@ namespace Boy_Scouts_Scheduler.Controllers
 
         //
         // GET: /Group/
-
+		
         public ViewResult Index(int start = 0, int itemsPerPage = 20, string orderBy = "ID", bool desc = false)
         {
             ViewBag.Count = db.Groups.Count(g => g.Event.ID == eventID);

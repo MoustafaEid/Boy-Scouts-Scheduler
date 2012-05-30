@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Data.Entity;
 using Boy_Scouts_Scheduler.Models;
+using System.Web.Security;
 
 namespace Boy_Scouts_Scheduler
 {
@@ -46,14 +47,22 @@ namespace Boy_Scouts_Scheduler
 
         protected void Application_BeginRequest(object sender, EventArgs args)
 		{
-            HttpCookie cookie = HttpContext.Current.Request.Cookies["Event"];
-            if ((cookie == null || string.IsNullOrEmpty(cookie.Value)) &&
-                (Request.Path.StartsWith("/Group") || Request.Path.StartsWith("/Schedule")
-                || Request.Path.StartsWith("/SchedulingConstraint") || Request.Path.StartsWith("/Station")
-                || Request.Path.StartsWith("/TimeSlot")))
-			{
-				HttpContext.Current.Response.Redirect("/");
-			}
+				HttpCookie cookie = HttpContext.Current.Request.Cookies["Event"];
+				if ((cookie == null || string.IsNullOrEmpty(cookie.Value)) &&
+					(Request.Path.StartsWith("/Group") || Request.Path.StartsWith("/Schedule")
+					|| Request.Path.StartsWith("/SchedulingConstraint") || Request.Path.StartsWith("/Station")
+					|| Request.Path.StartsWith("/TimeSlot")))
+				{
+					if (HttpContext.Current.Request.Cookies[".ASPXAUTH"] != null)
+					{
+						
+						HttpContext.Current.Response.Redirect("/home/welcome");
+					}
+					else
+					{
+						HttpContext.Current.Response.Redirect("/Account/LogOn");
+					}
+				}
 		}
     }
 }

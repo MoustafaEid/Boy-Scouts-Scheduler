@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace Boy_Scouts_Scheduler.Controllers
 {
+	[Authorize]
     public class HelpController : Controller
     {
         //

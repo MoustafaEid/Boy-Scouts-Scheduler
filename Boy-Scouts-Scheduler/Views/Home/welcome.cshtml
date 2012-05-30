@@ -34,12 +34,62 @@
     </style>
 }
 
+<div id="eventSelector">
+    <h3>Select Event</h3>
+    @Html.DropDownList("eventDropDown", new SelectList(ViewBag.Events, "ID", "Name", Request.Cookies["event"] != null ? Request.Cookies["event"].Value : null))
+    <input type="submit" value="Select" id="selectEventButton" />
+    <h3>Or Create Event</h3>
+    @using (Html.BeginForm("Create", "Event", FormMethod.Post, new { id = "createEventForm" }))
+    {
+        @Html.ValidationSummary(true)
+        <fieldset>
+            <legend>Event</legend>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Name, "Event Name")
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Name)
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Start, "Start Date")
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Start)
+                @Html.ValidationMessageFor(model => model.Start)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.End, "End Date")
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.End)
+                @Html.ValidationMessageFor(model => model.End)
+            </div>
+
+            <p>
+                <input type="submit" value="Create" id="createEventButton" />
+            </p>
+        </fieldset>
+    }
+</div>
+
 <div id="appIntro">
     <h2>Welcome to the Cub Scouts Scheduling Application</h2>
     
     <p>
-    Please @Html.ActionLink("Log on", "LogOn", "Account", routeValues: null, htmlAttributes: new { id = "logonLink", data_dialog_title = "Identification" })
+        The Cub Scouts Scheduler is an application used to streamline the summer camp scheduling <br />
+        process. Use it to enter activity times, stations, and groups. Next you can constrain your <br />
+        schedule under the "Constraints" tab. When you are satisfied with your entries, continue to <br />
+        the "Schedule" tab to generate your camp schedule.
     </p>
+    <span id="appIntroImageWrapper">
+        <img src="@Url.Content("~/images/cub_happy_color.jpg")" alt="ASP.NET" />
+        <img src="@Url.Content("~/images/cub_at_bat_color.jpg")" alt="ASP.NET" />
+        <img src="@Url.Content("~/images/Archer.jpg")" alt="ASP.NET" />
+    </span>
 </div>
 
 <script type="text/javascript">

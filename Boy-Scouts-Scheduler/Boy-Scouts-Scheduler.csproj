@@ -94,6 +94,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\GroupController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
@@ -188,7 +189,7 @@
     <Content Include="Images\findHosting.png" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Help\Index.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\welcome.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_LogOnPartial.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
@@ -262,6 +263,13 @@
     <Content Include="Content\Cub_Scouts_User_Admin_Guide-Final.pdf" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Views\Home\index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\Account\ChangePasswordSuccess.cshtml" />
+    <Content Include="Views\Account\LogOn.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Schedule\DayTable.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
