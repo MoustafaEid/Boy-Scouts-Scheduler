@@ -65,10 +65,8 @@
 <p>Select Schedule For:</p>
 <input type="radio" name="scheduleFor" value="group" id="scheduleForGroup" checked="checked" /><label for="scheduleForGroup">Group</label>
 <input type="radio" name="scheduleFor" value="station" id="scheduleForStation" /><label for="scheduleForStation">Station</label>
-<input type="radio" name="scheduleFor" value="day" id="scheduleForDay" /><label for="scheduleForDay">Day</label>
 @Html.DropDownList("groupDropDown", new SelectList(ViewBag.Groups, "ID", "Name"), "All")
 @Html.DropDownList("stationDropDown", new SelectList(ViewBag.Stations, "ID", "Name"), "All", new { @class = "hide" })
-@Html.DropDownList("dayDropDown", new SelectList(ViewBag.Days, "ID", "Name"), "All", new { @class = "hide" })
 <div><a href="#" class="sort_results">Sort Results</a></div>
 <div id="calendars"></div>
 <script>
