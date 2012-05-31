@@ -260,9 +260,6 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Cub_Scouts_User_Admin_Guide-Final.pdf" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\Home\index.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -273,6 +270,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Schedule\DayTable.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\Cub_Scouts_User_Guide-Final.pdf" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
